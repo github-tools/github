@@ -90,7 +90,7 @@
 
         function postBlob(content, cb) {
           var data = {
-            "content": "Content of the blob",
+            "content": content,
             "encoding": "utf-8"
           };
           _request("POST", repoPath + "/git/blobs", data, function(err, res) {
@@ -153,7 +153,7 @@
 
         getLatestCommit(function(err, latestCommit) {
           getTree(latestCommit, function(err, tree) {
-            postBlob("It's supposed to be content, baby!", function(err, blob) {
+            postBlob(content, function(err, blob) {
               postTree(tree, path, blob, function(err, tree) {
                 createCommit(latestCommit, tree, function(err, commit) {
                   updateHead(commit, function(err) {

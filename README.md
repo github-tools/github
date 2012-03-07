@@ -1,7 +1,7 @@
 Github.js
 =============
 
-Ever wanted to store a file on Github right from the browser? Here you are:
+Ever wanted to store a file on Github right from the browser? Here you are.
 
 ```js
 var github = new Github({
