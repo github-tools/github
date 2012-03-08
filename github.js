@@ -37,7 +37,7 @@
     Github.User = function(options) {
       this.username = options.username;
       var userPath = "/users/" + options.username;
-      this.repos = function() {
+      this.repos = function(cb) {
         _request("GET", userPath + "/repos", null, function(err, res) {
           cb(err, res);
         });
