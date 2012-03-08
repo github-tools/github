@@ -36,8 +36,12 @@
 
     Github.User = function(options) {
       this.username = options.username;
-
-      // TODO: implement
+      var userPath = "/users/" + options.username;
+      this.repos = function() {
+        _request("GET", userPath + "/repos", null, function(err, res) {
+          cb(err, res);
+        });
+      }
     };
 
     // Repository API
@@ -174,8 +178,8 @@
       return new Github.Repository({name: repo});
     };
 
-    this.getUser = function() {
-      return new Github.User({name: repo});
+    this.getUser = function(user) {
+      return new Github.User({username: user});
     };
   };
 }).call(this);
