@@ -17,7 +17,7 @@ var repo = github.getRepo(reponame);
 // Store contents at a certain path (assumes UTF-8)
 // Files that doesn't exist are created on the fly.
 
-repo.write('path/to/file', 'YOUR_NEW_CONTENTS', function(err) {
+repo.write('path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', function(err) {
   
 });
 ```
