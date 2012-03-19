@@ -192,6 +192,16 @@
         });
       };
 
+      // List all commits
+      // -------
+
+      this.list_commits = function (cb) {
+        _request("GET", repoPath + "/commits", null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res);
+        });
+      };
+
       // Write file contents on a given path
       // -------
 

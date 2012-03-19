@@ -32,6 +32,15 @@
         });
       });
 
+      test('should be capable of returning all commits', function () {
+        var github = new Github({username: USERNAME, password: PASSWORD, auth: "basic"});
+        var repo = github.getRepo(REPO);
+
+        repo.list_commits(function(err, res) {
+          //console.log(err, res)
+        });
+      })
+
       test('should be capable of writing files', function() {
         var github = new Github({username: USERNAME, password: PASSWORD, auth: "basic"});
         var repo = github.getRepo(REPO);
