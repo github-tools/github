@@ -49,3 +49,19 @@ repo.list('master', 'path/to/file', function(err, data) {
   
 });
 ```
+
+
+Node.js
+--------------
+
+To use Github.js on a node.js server, include it with require():
+
+```js
+var Github = require("/path/to/github.js");
+
+var github = new Github({
+  username: "YOU_USER",
+  password: "YOUR_PASSWORD",
+  auth: "basic"
+});
+```
