@@ -19,7 +19,7 @@ var repo = github.getRepo(reponame);
 Retrieve all available branches (aka heads) of a repository.
 
 ```js
-repo.listBranches, function(err, branches) {
+repo.listBranches(function(err, branches) {
   
 });
 ```
