@@ -35,6 +35,8 @@ repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE',
 Not only can you can write files, you can of course read them.
 
 ```js
+// Retrieve contents of a certain file (assumes UTF-8)
+
 repo.read('master', 'path/to/file', function(err, data) {
   
 });
@@ -43,8 +45,6 @@ repo.read('master', 'path/to/file', function(err, data) {
 Listing all files of a repository is easy too.
 
 ```js
-// Retrieve contents of a certain file (assumes UTF-8)
-
 repo.list('master', 'path/to/file', function(err, data) {
   
 });
