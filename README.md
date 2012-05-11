@@ -43,8 +43,6 @@ repo.read('master', 'path/to/file', function(err, data) {
 Listing all files of a repository is easy too.
 
 ```js
-// Retrieve contents of a certain file (assumes UTF-8)
-
 repo.list('master', 'path/to/file', function(err, data) {
   
 });
