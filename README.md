@@ -46,7 +46,7 @@ Move a file from A to B.
 repo.move('master', 'path/to/file', 'path/to/new_file', function(err) {
   
 });
-
+```
 
 Remove a file.
 
@@ -54,6 +54,7 @@ Remove a file.
 repo.remove('master', 'path/to/file', function(err) {
   
 });
+```
 
 Listing all files of a repository is easy too.
 
