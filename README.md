@@ -35,6 +35,8 @@ repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE',
 Not only can you can write files, you can of course read them.
 
 ```js
+// Retrieve contents of a certain file (assumes UTF-8)
+
 repo.read('master', 'path/to/file', function(err, data) {
   
 });
@@ -45,5 +47,21 @@ Listing all files of a repository is easy too.
 ```js
 repo.list('master', 'path/to/file', function(err, data) {
   
+});
+```
+
+
+Node.js
+--------------
+
+To use Github.js on a node.js server, include it with require():
+
+```js
+var Github = require("/path/to/github.js");
+
+var github = new Github({
+  username: "YOU_USER",
+  password: "YOUR_PASSWORD",
+  auth: "basic"
 });
 ```

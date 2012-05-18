@@ -5,10 +5,10 @@
 // http://substance.io/michael/github
 
 (function() {
-  var Github;
+  
   var API_URL = 'https://api.github.com';
-
-  Github = window.Github = function(options) {
+  
+  var Github = function(options) {
     var username = options.username;
     var password = options.password;
 
@@ -233,4 +233,18 @@
       return new Github.User();
     };
   };
+
+  // Export the Github object for Node.js, with
+  // backwards-compatibility for the old `require()` API. If we're in
+  // the browser, add `Github` as a global object via a string identifier,
+  // for Closure Compiler "advanced" mode.
+  if (typeof exports !== "undefined") {
+    if (typeof module !== "undefined" && module.exports) {
+      exports = module.exports = Github;
+    }
+    exports.Github = Github;
+  } else {
+    this['Github'] = Github;
+  }
+  
 }).call(this);
