@@ -1,4 +1,4 @@
-// Github.js 0.4.0
+// Github.js 0.5.0
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -9,13 +9,17 @@
   var API_URL = 'https://api.github.com';
 
   Github = window.Github = function(options) {
-    var username = options.username;
-    var password = options.password;
 
     // Util
     // =======
 
     function _request(method, path, data, cb) {
+      function headers() {
+        return options.auth == 'oauth'
+               ? { Authorization: 'Token '+ options.token }
+               : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
+      }
+
       $.ajax({
         type: method,
         url: API_URL + path,
@@ -24,7 +28,7 @@
         contentType: 'application/x-www-form-urlencoded',
         success: function(res) { cb(null, res); },
         error: function(err) { cb(err); },
-        headers : { Authorization : 'Basic ' + Base64.encode(username + ':' + password) }
+        headers : headers()
       });
     }
 
@@ -156,7 +160,7 @@
         var data = {
           "message": message,
           "author": {
-            "name": username
+            "name": options.username
           },
           "parents": [
             parent

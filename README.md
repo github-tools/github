@@ -4,7 +4,7 @@ Github.js
 Ever wanted to store a file on Github right from the browser? Here you are.
 
 
-Expose API for a given repository.
+Create a Github instance.
 
 ```js
 var github = new Github({
@@ -12,7 +12,20 @@ var github = new Github({
   password: "YOUR_PASSWORD",
   auth: "basic"
 });
+```
 
+Or if you prefer OAuth, it looks like this:
+
+```js
+var github = new Github({
+  token: "OAUTH_TOKEN"
+  auth: "oauth"
+});
+```
+
+Expose API for a given repository.
+
+```js
 var repo = github.getRepo(reponame);
 ```
 
