@@ -1,4 +1,4 @@
-// Github.js 0.5.1
+// Github.js 0.5.2
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -14,9 +14,12 @@
     // =======
 
     function headers() {
+      var headers = {}
+      if (options.auth === 'oauth' && !options.token) return { Accept: 'application/vnd.github.raw' };
+      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
       return options.auth == 'oauth'
              ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
-             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password) }
+             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
     }
 
     function _request(method, path, data, cb) {
@@ -66,6 +69,23 @@
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
 
+      var currentTree = {
+        "branch": null,
+        "sha": null
+      };
+
+      // Uses the cache if branch has not been changed
+      // -------
+
+      function updateTree(branch, cb) {
+        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
+        that.getRef(branch, function(err, sha) {
+          currentTree.branch = branch;
+          currentTree.sha = sha;
+          cb(err, sha);
+        });
+      }
+
       // Get a particular reference
       // -------
 
@@ -90,9 +110,7 @@
       // -------
 
       this.getBlob = function(sha, cb) {
-        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, function(err, res) {
-          cb(err, res);
-        });
+        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, cb);
       };
 
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -100,6 +118,8 @@
       // -------
 
       this.getSha = function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef(branch, cb);
         that.getTree(branch+"?recursive=true", function(err, tree) {
           var file = _.select(tree, function(file) {
             return file.path === path;
@@ -181,6 +201,7 @@
         };
 
         _request("POST", repoPath + "/git/commits", data, function(err, res) {
+          currentTree.sha = res.sha; // update latest commit
           if (err) return cb(err);
           cb(null, res.sha);
         });
@@ -210,7 +231,6 @@
       this.read = function(branch, path, cb) {
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
-
           that.getBlob(sha, cb);
         });
       };
@@ -219,7 +239,7 @@
       // -------
 
       this.remove = function(branch, path, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
             var newTree = _.reject(tree, function(ref) { return ref.path === path });
@@ -242,7 +262,7 @@
       // -------
 
       this.move = function(branch, path, newPath, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
             _.each(tree, function(ref) {
@@ -265,13 +285,11 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        that.getRef(branch, function(err, latestCommit) {
+        updateTree(branch, function(err, latestCommit) {
           that.postBlob(content, function(err, blob) {
             that.updateTree(latestCommit, path, blob, function(err, tree) {
               that.commit(latestCommit, tree, message, function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
+                that.updateHead(branch, commit, cb);
               });
             });
           });
