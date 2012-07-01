@@ -1,8 +1,8 @@
-Github.js
-=============
+# Github.js
 
-Ever wanted to store a file on Github right from the browser? Here you are.
+Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of Prose, a content editor for GitHub.
 
+## Usage
 
 Create a Github instance.
 
@@ -23,7 +23,8 @@ var github = new Github({
 });
 ```
 
-Expose API for a given repository.
+## Repository API
+
 
 ```js
 var repo = github.getRepo(reponame);
@@ -76,3 +77,81 @@ repo.list('master', 'path/to/file', function(err, data) {
   
 });
 ```
+
+## User API
+
+
+```js
+var user = github.getUser();
+```
+
+List all repositories of the authenticated user.
+
+```js
+user.repos(username, function(err, orgs) {
+  
+});
+```
+
+List organizations the autenticated user belongs to.
+
+```js
+user.orgs(function(err, orgs) {
+  
+});
+```
+
+Show user information for a particular username. Also works for organizations.
+
+```js
+user.show(username, function(err, user) {
+  
+});
+```
+
+List public repositories for a particular user.
+
+```js
+user.userRepos(username, function(err, repos) {
+  
+});
+```
+
+List repositories for a particular organization. Includes private repositories if you are authorized.
+
+```js
+user.orgRepos(orgname, function(err, repos) {
+  
+});
+```
+
+## Tests
+
+Github.js is automatically™ tested by the users of [Prose](http://prose.io). Because of that, we decided to save some time by not maintaining a test suite. Yes, you heard right. :)
+
+
+## Change Log
+
+### O.6.X
+
+Adds support for organizations and fixes an encoding issue.
+
+### O.5.X
+
+Smart caching of latest commit sha. 
+
+### 0.4.X
+
+Added support for [OAuth](http://developer.github.com/v3/oauth/).
+
+### 0.3.X
+
+Support for Moving and removing files.
+
+### 0.2.X
+
+Consider commit messages.
+
+### 0.1.X
+
+Initial version.
