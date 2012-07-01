@@ -2,7 +2,7 @@
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
-// http://substance.io/michael/github
+// http://github.com/michael/github
 
 (function() {
   var Github;
