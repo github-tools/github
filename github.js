@@ -92,6 +92,16 @@
           cb(err, res);
         });
       };
+
+      // List all user gists
+      // This will return all public gists if user is not authenticated
+      // -------
+
+      this.userGists = function(username,cb) {
+        _request("GET", "/gists", null, function(err, res) {
+          cb(err,res);
+        });
+      };
     };
 
 
@@ -333,6 +343,110 @@
       };
     };
 
+    // Gists API
+    // =======
+
+    Github.Gist = function(options) {
+      var id = options.id;
+      var that = this;
+      var gistPath = "/gists/"+id;
+
+      // Read the gist
+      // --------
+
+      this.show = function(cb) {
+        _request("GET", gistPath, null, function(err,info) {
+          cb(err,info);
+        });
+      };
+
+      // Star the gist
+      // --------
+
+      this.star = function(cb) {
+        _request("PUT", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      }
+
+      // Check if the Gist is starred
+      // --------
+
+      this.isStarred = function(cb) {
+        _request("GET", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Unstar the gist
+      // --------
+
+      this.unstar = function(cb) {
+        _request("DELETE", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Delete the gist
+      // --------
+
+      this.delete = function(cb) {
+        _request("DELETE", gistPath, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Fork a gist
+      // --------
+
+      this.fork = function(cb) {
+        _request("POST", gistPath+"/fork", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update a gist with the new stuff
+      // --------
+
+      this.edit = function(cb,options) {
+        _request("PATCH", gistPath, options, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Update Gist Description
+      // --------
+
+      this.updateDescription = function(cb,description) {
+        that.edit(cb,{description: description});
+      };
+
+      // Rename a file in the gist
+      // --------
+
+      this.renameFile = function(oldName, newName, cb) {
+        var options = {files:{}};
+        options.files[oldName] = newName;
+        that.edit(cb, options);
+      };
+
+      // Delete a file in the gist
+      // --------
+
+      this.deleteFile = function(fileName, cb) {
+        var options = {files:{}};
+        options.files[fileName] = null;
+        that.edit(cb,options);
+      };
+
+      // Update a particular file in the gist
+      this.updateFile = function(filename, contents, cb) {
+        var options = {files:{}};
+        options.files[filename] = {content: contents};
+        that.edit(cb,options);
+      }
+    };
+
     // Top Level API
     // -------
 
@@ -342,6 +456,10 @@
 
     this.getUser = function() {
       return new Github.User();
+    };
+
+    this.getGist = function(id) {
+      return new Github.Gist({id: id});
     };
   };
 }).call(this);
