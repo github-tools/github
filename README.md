@@ -132,11 +132,11 @@ Github.js is automatically™ tested by the users of [Prose](http://prose.io). B
 
 ## Change Log
 
-### O.6.X
+### 0.6.X
 
 Adds support for organizations and fixes an encoding issue.
 
-### O.5.X
+### 0.5.X
 
 Smart caching of latest commit sha. 
 
