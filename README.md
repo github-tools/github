@@ -129,6 +129,22 @@ user.orgRepos(orgname, function(err, repos) {
 
 Github.js is automatically™ tested by the users of [Prose](http://prose.io). Because of that, we decided to save some time by not maintaining a test suite. Yes, you heard right. :) However, you can still consider it stable since it is used in production.
 
+##Setup
+
+Github.js has the following dependencies:
+
+- jQuery (for ajax)
+- Underscore
+- Base64 (for basic auth). You can leave this if you are not using basic auth.
+
+Include these before github.js :
+
+```
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+<script src="lib/underscore-min.js">
+<script src="lib/base64.js">
+<script src="github.js">
+```
 
 ## Change Log
 
