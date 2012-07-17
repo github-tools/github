@@ -1,4 +1,4 @@
-// Github.js 0.6.1
+﻿// Github.js 0.6.2
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -16,35 +16,22 @@
     function headers() {
       var headers = {}
       if (options.auth === 'oauth' && !options.token) return { Accept: 'application/vnd.github.raw' };
-      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
+      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
       return options.auth == 'oauth'
-             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
+             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
              : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
     }
 
-    function _request(method, path, data, cb) {
-      $.ajax({
-        type: method,
-        url: API_URL + path,
-        data: JSON.stringify(data),
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(res) { cb(null, res); },
-        error: function(err) { cb(err); },
-        headers : headers()
-      });
-    }
-
-    function _raw_request(method, path, data, cb) {
-      $.ajax({
-        type: method,
-        url: API_URL + path,
-        data: JSON.stringify(data),
-        contentType: 'application/x-www-form-urlencoded',
-        success: function(res) { cb(null, res); },
-        error: function(err) { cb(err); },
-        headers : headers()
-      });
+    function _request(method, path, data, cb, raw) {
+      var xhr = new XMLHttpRequest();
+      if (!raw) {xhr.dataType = "json"}
+      xhr.open(method, API_URL + path);
+      xhr.onreadystatechange = function () {
+        if (this.readyState == 4) {
+          this.status == 200 ? cb(null, JSON.parse(this.responseText)) : cb(this.status);
+        }
+      }
+      data ? xhr.send(JSON.stringify(data)) : xhr.send();
     }
 
     // User API
@@ -156,7 +143,7 @@
       // -------
 
       this.getBlob = function(sha, cb) {
-        _raw_request("GET", repoPath + "/git/blobs/" + sha, null, cb);
+        _request("GET", repoPath + "/git/blobs/" + sha, null, cb, 'raw');
       };
 
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
