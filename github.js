@@ -13,15 +13,6 @@
     // Util
     // =======
 
-    function headers() {
-      var headers = {}
-      if (options.auth === 'oauth' && !options.token) return { Accept: 'application/vnd.github.raw' };
-      if (options.auth === 'basic' && (!options.username || !options.password)) return { Accept: 'application/vnd.github.raw' };
-      return options.auth == 'oauth'
-             ? { Authorization: 'token '+ options.token, Accept: 'application/vnd.github.raw' }
-             : { Authorization : 'Basic ' + Base64.encode(options.username + ':' + options.password), Accept: 'application/vnd.github.raw' }
-    }
-
     function _request(method, path, data, cb, raw) {
       var xhr = new XMLHttpRequest();
       if (!raw) {xhr.dataType = "json"}
@@ -31,6 +22,16 @@
           this.status == 200 ? cb(null, JSON.parse(this.responseText)) : cb(this.status);
         }
       }
+      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      if (
+         (options.auth == 'oauth' && options.token) ||
+         (options.auth == 'basic' && options.username && options.password)
+         ) {
+           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
+             ? 'token '+ options.token
+             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
+           );
+         }
       data ? xhr.send(JSON.stringify(data)) : xhr.send();
     }
 
