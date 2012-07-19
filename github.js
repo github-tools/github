@@ -19,7 +19,7 @@
       xhr.open(method, API_URL + path);
       xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
-          if (this.status >= 200 && this.status < 300) {
+          if (this.status >= 200 && this.status < 300 || this.status === 304) {
             cb(null, raw ? this.responseText : JSON.parse(this.responseText));
           } else {
             cb(this.status);
@@ -27,6 +27,7 @@
         }
       }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
       if (
          (options.auth == 'oauth' && options.token) ||
          (options.auth == 'basic' && options.username && options.password)
