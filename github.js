@@ -1,4 +1,4 @@
-﻿// Github.js 0.6.2
+// Github.js 0.6.2
 // (c) 2012 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
@@ -19,7 +19,11 @@
       xhr.open(method, API_URL + path);
       xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
-          this.status == 200 ? cb(null, JSON.parse(this.responseText)) : cb(this.status);
+          if (this.status >= 200 && this.status < 300) {
+            cb(null, raw ? this.responseText : JSON.parse(this.responseText));
+          } else {
+            cb(this.status);
+          }
         }
       }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
@@ -201,6 +205,7 @@
           ]
         };
         _request("POST", repoPath + "/git/trees", data, function(err, res) {
+          console.log('RES', res, "ERR", err);
           if (err) return cb(err);
           cb(null, res.sha);
         });
