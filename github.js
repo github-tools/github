@@ -205,7 +205,6 @@
           ]
         };
         _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          console.log('RES', res, "ERR", err);
           if (err) return cb(err);
           cb(null, res.sha);
         });
