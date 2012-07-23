@@ -27,7 +27,7 @@ var github = new Github({
 
 
 ```js
-var repo = github.getRepo(reponame);
+var repo = github.getRepo(username, reponame);
 ```
 
 Retrieve all available branches (aka heads) of a repository.
@@ -70,13 +70,30 @@ repo.remove('master', 'path/to/file', function(err) {
 });
 ```
 
-Listing all files of a repository is easy too.
+Exploring files of a repository is easy too by accessing the top level tree object.
 
 ```js
-repo.list('master', 'path/to/file', function(err, data) {
+repo.getTree('master', function(err, tree) {
   
 });
 ```
+
+If you want to access all blobs and trees recursively, you can add `?recursive=true`.
+
+```js
+repo.getTree('master?recursive=true', function(err, tree) {
+  
+});
+```
+
+Given a filepath, retrieve the reference blob or tree sha.
+
+```js
+repo.getSha('master', '/path/to/file', function(err, sha) {
+  
+});
+```
+
 
 ## User API
 
@@ -133,7 +150,6 @@ Github.js is automatically™ tested by the users of [Prose](http://prose.io). B
 
 Github.js has the following dependencies:
 
-- jQuery (for ajax)
 - Underscore
 - Base64 (for basic auth). You can leave this if you are not using basic auth.
 
