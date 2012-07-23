@@ -118,6 +118,14 @@ user.orgs(function(err, orgs) {
 });
 ```
 
+List authenticated user's gists.
+
+```js
+user.gists(username, function(err, gists) {
+  
+});
+```
+
 Show user information for a particular username. Also works for organizations.
 
 ```js
@@ -138,6 +146,14 @@ List repositories for a particular organization. Includes private repositories i
 
 ```js
 user.orgRepos(orgname, function(err, repos) {
+  
+});
+```
+
+List all gists of a particular user. If username is ommitted gists of the current authenticated user are returned.
+
+```js
+user.userGists(username, function(err, gists) {
   
 });
 ```
