@@ -158,6 +158,46 @@ user.userGists(username, function(err, gists) {
 });
 ```
 
+## Gist API
+
+```js
+var gist = github().getGist(3165654);
+```
+
+Read the contents of a Gist.
+
+```js
+gist.read(function(err, gist) {
+
+});
+```
+
+Updating the contents of a Git. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/). 
+
+```js
+var delta = {
+  "description": "the description for this gist",
+  "files": {
+    "file1.txt": {
+      "content": "updated file contents"
+    },
+    "old_name.txt": {
+      "filename": "new_name.txt",
+      "content": "modified contents"
+    },
+    "new_file.txt": {
+      "content": "a new file"
+    },
+    "delete_this_file.txt": null
+  }
+};
+
+gist.update(delta, function(err, gist) {
+  
+});
+```
+
+
 ## Tests
 
 Github.js is automatically™ tested by the users of [Prose](http://prose.io). Because of that, we decided to save some time by not maintaining a test suite. Yes, you heard right. :) However, you can still consider it stable since it is used in production.
