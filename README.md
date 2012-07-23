@@ -148,6 +148,11 @@ Include these before github.js :
 
 ## Change Log
 
+
+### 0.7.X
+
+Switched to a native `request` implementation (thanks @mattpass). Adds support for GitHub gists, forks and pull requests.
+
 ### 0.6.X
 
 Adds support for organizations and fixes an encoding issue.
