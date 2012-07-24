@@ -20,7 +20,7 @@
       xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
           if (this.status >= 200 && this.status < 300 || this.status === 304) {
-            cb(null, raw ? this.responseText : JSON.parse(this.responseText));
+            cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
           } else {
             cb(this.status);
           }
