@@ -22,12 +22,12 @@
           if (this.status >= 200 && this.status < 300 || this.status === 304) {
             cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
           } else {
-            cb(this.status);
+            cb({request: this, error: this.status});
           }
         }
       }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+      xhr.setRequestHeader('Content-Type','application/json');
       if (
          (options.auth == 'oauth' && options.token) ||
          (options.auth == 'basic' && options.username && options.password)
@@ -335,9 +335,13 @@
 
       this.write = function(branch, path, content, message, cb) {
         updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
           that.postBlob(content, function(err, blob) {
+            if (err) return cb(err);
             that.updateTree(latestCommit, path, blob, function(err, tree) {
+              if (err) return cb(err);
               that.commit(latestCommit, tree, message, function(err, commit) {
+                if (err) return cb(err);
                 that.updateHead(branch, commit, cb);
               });
             });
