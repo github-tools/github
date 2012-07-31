@@ -134,7 +134,7 @@
 
       function updateTree(branch, cb) {
         if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef(branch, function(err, sha) {
+        that.getRef("heads/"+branch, function(err, sha) {
           currentTree.branch = branch;
           currentTree.sha = sha;
           cb(err, sha);
@@ -145,7 +145,7 @@
       // -------
 
       this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/heads/" + ref, null, function(err, res) {
+        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
           if (err) return cb(err);
           cb(null, res.object.sha);
         });
@@ -195,7 +195,7 @@
 
       this.getSha = function(branch, path, cb) {
         // Just use head if path is empty
-        if (path === "") return that.getRef(branch, cb);
+        if (path === "") return that.getRef("heads/"+branch, cb);
         that.getTree(branch+"?recursive=true", function(err, tree) {
           var file = _.select(tree, function(file) {
             return file.path === path;
@@ -313,9 +313,7 @@
       // -------
 
       this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, function(err, forkedRepo) {
-          cb(null, forkedRepo);
-        });
+        _request("POST", repoPath + "/forks", null, cb);
       };
 
       // Create pull request
