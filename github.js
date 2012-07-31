@@ -10,13 +10,21 @@
 
   Github = window.Github = function(options) {
 
-    // Util
+    // HTTP Request Abstraction
     // =======
+    // 
+    // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
     function _request(method, path, data, cb, raw) {
+      function getURL() {
+        var url = API_URL + path;
+        return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
+      }
+
       var xhr = new XMLHttpRequest();
       if (!raw) {xhr.dataType = "json"}
-      xhr.open(method, API_URL + path);
+
+      xhr.open(method, getURL());
       xhr.onreadystatechange = function () {
         if (this.readyState == 4) {
           if (this.status >= 200 && this.status < 300 || this.status === 304) {
@@ -141,6 +149,28 @@
           if (err) return cb(err);
           cb(null, res.object.sha);
         });
+      };
+
+      // Create a new reference
+      // --------
+      //
+      // {
+      //   "ref": "refs/heads/my-new-branch-name",
+      //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      // }
+
+      this.createRef = function(options, cb) {
+        _request("POST", repoPath + "/git/refs", options, cb);
+      };
+
+      // Delete a reference
+      // --------
+      // 
+      // repo.deleteRef('heads/gh-pages')
+      // repo.deleteRef('tags/v1.0')
+
+      this.deleteRef = function(ref, cb) {
+        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
       };
 
       // List all branches of a repository
@@ -269,9 +299,30 @@
       // -------
 
       this.show = function(cb) {
-        _request("GET", repoPath, null, function(err, info) {
-          cb(null, info);
+        _request("GET", repoPath, null, cb);
+      };
+
+      // Get contents
+      // --------
+
+      this.contents = function(path, cb) {
+        _request("GET", repoPath + "/contents", { path: path }, cb);
+      };
+
+      // Fork repository
+      // -------
+
+      this.fork = function(cb) {
+        _request("POST", repoPath + "/forks", null, function(err, forkedRepo) {
+          cb(null, forkedRepo);
         });
+      };
+
+      // Create pull request
+      // --------
+
+      this.createPullRequest = function(options, cb) {
+        _request("POST", repoPath + "/pulls", options, cb);
       };
 
       // Read file at given path
@@ -280,7 +331,9 @@
       this.read = function(branch, path, cb) {
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
-          that.getBlob(sha, cb);
+          that.getBlob(sha, function(err, content) {
+            cb(err, content, sha);
+          });
         });
       };
 
