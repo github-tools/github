@@ -33,65 +33,71 @@ var repo = github.getRepo(username, reponame);
 Retrieve all available branches (aka heads) of a repository.
 
 ```js
-repo.listBranches(function(err, branches) {
-  
-});
+repo.listBranches(function(err, branches) {});
 ```
 
 Store contents at a certain path, where files that don't yet exist are created on the fly.
 
 ```js
-repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', function(err) {
-  
-});
+repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', function(err) {});
 ```
 
 Not only can you can write files, you can of course read them.
 
 ```js
-repo.read('master', 'path/to/file', function(err, data) {
-  
-});
+repo.read('master', 'path/to/file', function(err, data) {});
 ```
 
 Move a file from A to B.
 
 ```js
-repo.move('master', 'path/to/file', 'path/to/new_file', function(err) {
-  
-});
+repo.move('master', 'path/to/file', 'path/to/new_file', function(err) {});
 ```
 
 Remove a file.
 
 ```js
-repo.remove('master', 'path/to/file', function(err) {
-  
-});
+repo.remove('master', 'path/to/file', function(err) {});
 ```
 
 Exploring files of a repository is easy too by accessing the top level tree object.
 
 ```js
-repo.getTree('master', function(err, tree) {
-  
-});
+repo.getTree('master', function(err, tree) {});
 ```
 
 If you want to access all blobs and trees recursively, you can add `?recursive=true`.
 
 ```js
-repo.getTree('master?recursive=true', function(err, tree) {
-  
-});
+repo.getTree('master?recursive=true', function(err, tree) {});
 ```
 
 Given a filepath, retrieve the reference blob or tree sha.
 
 ```js
-repo.getSha('master', '/path/to/file', function(err, sha) {
-  
-});
+repo.getSha('master', '/path/to/file', function(err, sha) {});
+```
+
+For a given reference, get the corresponding commit sha.
+
+```js
+repo.getRef('heads/master', function(err, sha) {});
+```
+
+Create a new reference.
+
+```js
+var refSpec = {
+  "ref": "refs/heads/my-new-branch-name",
+  "sha": "827efc6d56897b048c772eb4087f854f46256132"
+};
+repo.createRef(refSpec, function(err) {});
+```
+
+Delete a reference.
+
+```js
+repo.deleteRef('heads/gh-pages', function(err) {});
 ```
 
 
@@ -105,57 +111,43 @@ var user = github.getUser();
 List all repositories of the authenticated user.
 
 ```js
-user.repos(username, function(err, orgs) {
-  
-});
+user.repos(username, function(err, orgs) {});
 ```
 
 List organizations the autenticated user belongs to.
 
 ```js
-user.orgs(function(err, orgs) {
-  
-});
+user.orgs(function(err, orgs) {});
 ```
 
 List authenticated user's gists.
 
 ```js
-user.gists(username, function(err, gists) {
-  
-});
+user.gists(username, function(err, gists) {});
 ```
 
 Show user information for a particular username. Also works for organizations.
 
 ```js
-user.show(username, function(err, user) {
-  
-});
+user.show(username, function(err, user) {});
 ```
 
 List public repositories for a particular user.
 
 ```js
-user.userRepos(username, function(err, repos) {
-  
-});
+user.userRepos(username, function(err, repos) {});
 ```
 
 List repositories for a particular organization. Includes private repositories if you are authorized.
 
 ```js
-user.orgRepos(orgname, function(err, repos) {
-  
-});
+user.orgRepos(orgname, function(err, repos) {});
 ```
 
 List all gists of a particular user. If username is ommitted gists of the current authenticated user are returned.
 
 ```js
-user.userGists(username, function(err, gists) {
-  
-});
+user.userGists(username, function(err, gists) {});
 ```
 
 ## Gist API
