@@ -184,7 +184,7 @@ user.userGists(username, function(err, gists) {});
 ## Gist API
 
 ```js
-var gist = github().getGist(3165654);
+var gist = github.getGist(3165654);
 ```
 
 Read the contents of a Gist.
