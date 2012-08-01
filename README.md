@@ -142,7 +142,7 @@ var user = github.getUser();
 List all repositories of the authenticated user.
 
 ```js
-user.repos(username, function(err, orgs) {});
+user.repos(username, function(err, repos) {});
 ```
 
 List organizations the autenticated user belongs to.
