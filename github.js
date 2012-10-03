@@ -406,7 +406,6 @@
 
     Github.Gist = function(options) {
       var id = options.id;
-      var that = this;
       var gistPath = "/gists/"+id;
 
       // Read the gist
