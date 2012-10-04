@@ -22,7 +22,7 @@
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json"}
+      if (!raw) {xhr.dataType = "json";}
 
       xhr.open(method, getURL());
       xhr.onreadystatechange = function () {
@@ -33,7 +33,7 @@
             cb({request: this, error: this.status});
           }
         }
-      }
+      };
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
       xhr.setRequestHeader('Content-Type','application/json');
       if (
@@ -83,7 +83,7 @@
         _request("GET", "/users/"+username, null, function(err, res) {
           cb(err, res);
         });
-      }
+      };
 
       // List user repositories
       // -------
@@ -342,7 +342,7 @@
         updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path });
+            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
             _.each(newTree, function(ref) {
               if (ref.type === "tree") delete ref.sha;
             });
