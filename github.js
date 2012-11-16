@@ -80,6 +80,8 @@
       // -------
 
       this.show = function(username, cb) {
+        var command = username ? "/users/"+username : "/user";
+
         _request("GET", "/users/"+username, null, function(err, res) {
           cb(err, res);
         });
