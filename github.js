@@ -193,14 +193,71 @@
         _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
       };
 
-      // List all branches of a repository
+      // Get all raw ref info of a repository
+      // -------
+
+      this.refs = function(cb, refType, namesOnly) {
+        var refPath = refType || "/git/refs";
+        _request("GET", repoPath + refPath, null, function(err, heads) {
+          if (err) return cb(err);
+          if (namesOnly) {
+            if (refPath.match(/^\/git\/refs/)) {
+              return cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));;
+            } else if (heads[0]["heads"]) {
+              return cb(null, _.map(heads, function(head) { return heads.name }));;
+            }
+          }
+          cb(null, heads);
+        });
+      };
+
+      // Get all ref branch info of a repository
+      // -------
+
+      this.refBranches = function(cb) {
+        this.refs(cb, "/git/refs/heads");
+      };
+
+      // Get all ref tag info of a repository
+      // -------
+
+      this.refTags = function(cb) {
+        this.refs(cb, "/git/refs/tags");
+      };
+
+      // List all ref names of a repository
+      // -------
+
+      this.listRefs = function(cb) {
+        this.refs(cb, null, true);
+      };
+
+      // List all branch names of a repository
       // -------
 
       this.listBranches = function(cb) {
-        _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
-          if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
-        });
+        this.refs(cb, "/git/refs/heads", true);
+      };
+
+      // List all tag names of a repository
+      // -------
+
+      this.listTags = function(cb) {
+        this.refs(cb, "/git/refs/tags", true);
+      };
+
+      // Get all branches of a repository
+      // -------
+
+      this.branches = function(cb) {
+        this.refs(cb, "/branches", true);
+      };
+
+      // Get all tags of a repository
+      // -------
+
+      this.tags = function(cb) {
+        this.refs(cb, "/tags", true);
       };
 
       // Retrieve the contents of a blob
