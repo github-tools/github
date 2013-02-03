@@ -48,6 +48,12 @@ Fork repository. This operation runs asynchronously. You may want to poll for `r
 repo.fork(function(err) {});
 ```
 
+Branch repository.
+
+```js
+repo.branch(oldBranchName,newBranchName, function(err) {});
+```
+
 Create Pull Request.
 
 ```js
