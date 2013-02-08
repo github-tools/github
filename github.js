@@ -12,7 +12,7 @@
 
     // HTTP Request Abstraction
     // =======
-    // 
+    //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
     function _request(method, path, data, cb, raw) {
@@ -140,7 +140,7 @@
     Github.Repository = function(options) {
       var repo = options.name;
       var user = options.user;
-      
+
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
 
@@ -185,7 +185,7 @@
 
       // Delete a reference
       // --------
-      // 
+      //
       // repo.deleteRef('heads/gh-pages')
       // repo.deleteRef('tags/v1.0')
 
@@ -448,7 +448,7 @@
       //      }
       //    }
       // }
-      
+
       this.create = function(options, cb){
         _request("POST","/gists", options, cb);
       };
