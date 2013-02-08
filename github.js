@@ -343,6 +343,13 @@
         _request("POST", repoPath + "/pulls", options, cb);
       };
 
+      // Create issue
+      // --------
+
+      this.createIssue = function(options, cb) {
+        _request("POST", repoPath + "/issues", options, cb);
+      };
+
       // Read file at given path
       // -------
 
