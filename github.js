@@ -450,7 +450,9 @@
       // }
       
       this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
+        _request("POST","/gists", options, function(err,res) {
+          cb(err,res);
+        });
       };
 
       // Delete the gist
