@@ -139,10 +139,10 @@ repo.deleteRef('heads/gh-pages', function(err) {});
 var user = github.getUser();
 ```
 
-List all repositories of the authenticated user.
+List all repositories of the authenticated user, including private repositories and repositories in which the user is a collaborator and not an owner.
 
 ```js
-user.repos(username, function(err, repos) {});
+user.repos(function(err, repos) {});
 ```
 
 List organizations the autenticated user belongs to.
