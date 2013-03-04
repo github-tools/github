@@ -219,7 +219,13 @@ gist.update(delta, function(err, gist) {
   
 });
 ```
+## Issues API
 
+To read all the issues of a given repository
+
+```js
+github.getIssues(owner, repo, function(err, issues) {})
+```
 
 ## Tests
 

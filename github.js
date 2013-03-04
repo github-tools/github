@@ -481,8 +481,25 @@
       };
     };
 
+    // Issues API
+    // ==========
+
+    Github.Issue = function(options) {
+      var path = "/repos/" + options.owner + "/" + options.repo + "/issues";
+
+      this.list = function(options, cb) {
+        _request("GET", path, options, function(err, res) {
+          cb(err,res)
+        });
+      };
+    };
+
     // Top Level API
     // -------
+
+    this.getIssues = function(owner, repo) {
+      return new Github.Issue({owner: owner, repo: repo});
+    };
 
     this.getRepo = function(user, repo) {
       return new Github.Repository({user: user, name: repo});
