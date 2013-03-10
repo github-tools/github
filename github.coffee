@@ -12,7 +12,7 @@
 #     Github.js is freely distributable under the MIT license.
 #     For all details and documentation:
 #     http://substance.io/michael/github
-window.Github = class Github
+class Github
 
   # HTTP Request Abstraction
   # =======
@@ -499,3 +499,5 @@ window.Github = class Github
 
   getGist: (id) ->
     new Gist(id: id)
+
+@Github = Github

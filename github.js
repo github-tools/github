@@ -2,7 +2,7 @@
 (function() {
   var Github;
 
-  window.Github = Github = (function() {
+  Github = (function() {
     var Gist, Repository, User, listeners, _request;
 
     _request = null;
@@ -493,5 +493,7 @@
     return Github;
 
   })();
+
+  this.Github = Github;
 
 }).call(this);
