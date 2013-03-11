@@ -26,6 +26,9 @@ class Github
     # Provide an option to override the default URL
     options.rootURL = options.rootURL or 'https://api.github.com'
 
+    # **HACK:** Reset rateLimit listeners when credentials change
+    listeners = []
+
     _request = (method, path, data, raw) ->
       getURL = ->
         url = options.rootURL + path

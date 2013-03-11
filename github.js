@@ -11,6 +11,7 @@
 
     function Github(options) {
       options.rootURL = options.rootURL || 'https://api.github.com';
+      listeners = [];
       _request = function(method, path, data, raw) {
         var deferred, getURL, xhr,
           _this = this;
