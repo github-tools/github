@@ -13,7 +13,7 @@
       options.rootURL = options.rootURL || 'https://api.github.com';
       listeners = [];
       _request = function(method, path, data, raw) {
-        var deferred, getURL, xhr,
+        var getURL, xhr,
           _this = this;
         getURL = function() {
           var url;
@@ -50,19 +50,22 @@
             });
           }
         });
-        deferred = new jQuery.Deferred();
-        xhr.done(function() {
-          return deferred.resolve.apply(this, arguments);
-        });
-        xhr.fail(function(xhr, msg, desc) {
+        return xhr.then(null, function(xhr, msg, desc) {
           var json;
           if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
-            return deferred.reject(xhr.responseText, xhr.status, xhr);
+            return {
+              error: xhr.responseText,
+              status: xhr.status,
+              _xhr: xhr
+            };
           }
           json = JSON.parse(xhr.responseText);
-          return deferred.reject(json, xhr.status, xhr);
-        });
-        return deferred.promise();
+          return {
+            error: json,
+            status: xhr.status,
+            _xhr: xhr
+          };
+        }).promise();
       };
     }
 
@@ -132,32 +135,22 @@
       }
 
       updateTree = function(branch) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
+        var _this = this;
         if (branch === this.currentTree.branch && this.currentTree.sha) {
-          return deferred.resolve(this.currentTree.sha);
+          return (new jQuery.Deferred()).resolve(this.currentTree.sha);
         }
-        this.getRef("heads/" + branch).done(function(sha) {
+        return this.getRef("heads/" + branch).then(function(sha) {
           _this.currentTree.branch = branch;
           _this.currentTree.sha = sha;
-          return deferred.resolve(sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+          return sha;
+        }).promise();
       };
 
       Repository.prototype.getRef = function(ref) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        _request('GET', "" + this.repoPath + "/git/refs/" + ref, null).done(function(res) {
-          return deferred.resolve(res.object.sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        var _this = this;
+        return _request('GET', "" + this.repoPath + "/git/refs/" + ref, null).then(function(res) {
+          return res.object.sha;
+        }).promise();
       };
 
       Repository.prototype.createRef = function(options) {
@@ -169,17 +162,12 @@
       };
 
       Repository.prototype.listBranches = function() {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        _request('GET', "" + this.repoPath + "/git/refs/heads", null).done(function(heads) {
-          return deferred.resolve(_.map(heads, function(head) {
+        var _this = this;
+        return _request('GET', "" + this.repoPath + "/git/refs/heads", null).then(function(heads) {
+          return _.map(heads, function(head) {
             return _.last(head.ref.split("/"));
-          }));
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+          });
+        }).promise();
       };
 
       Repository.prototype.getBlob = function(sha) {
@@ -187,56 +175,41 @@
       };
 
       Repository.prototype.getSha = function(branch, path) {
-        var deferred,
-          _this = this;
+        var _this = this;
         if (path === '') {
           return this.getRef("heads/" + branch);
         }
-        deferred = new jQuery.Deferred();
-        this.getTree("" + branch + "?recursive=true").done(function(tree) {
+        return this.getTree("" + branch + "?recursive=true").then(function(tree) {
           var file;
           file = _.select(tree, function(file) {
             return file.path === path;
           })[0];
-          return deferred.resolve((file != null ? file.sha : void 0) || null);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+          return (file != null ? file.sha : void 0) || null;
+        }).promise();
       };
 
       Repository.prototype.getTree = function(tree) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        _request('GET', "" + this.repoPath + "/git/trees/" + tree, null).done(function(res) {
-          return deferred.resolve(res.tree);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        var _this = this;
+        return _request('GET', "" + this.repoPath + "/git/trees/" + tree, null).then(function(res) {
+          return res.tree;
+        }).promise();
       };
 
       Repository.prototype.postBlob = function(content) {
-        var deferred,
-          _this = this;
+        var _this = this;
         if (typeof content === 'string') {
           content = {
             content: content,
             encoding: 'utf-8'
           };
         }
-        deferred = new jQuery.Deferred();
-        _request('POST', "" + this.repoPath + "/git/blobs", content).done(function(res) {
-          return deferred.resolve(res.sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        return _request('POST', "" + this.repoPath + "/git/blobs", content).then(function(res) {
+          return res.sha;
+        }).promise();
       };
 
       Repository.prototype.updateTree = function(baseTree, path, blob) {
-        var data, deferred,
+        var data,
           _this = this;
         data = {
           base_tree: baseTree,
@@ -249,31 +222,22 @@
             }
           ]
         };
-        deferred = new jQuery.Deferred();
-        _request('POST', "" + this.repoPath + "/git/trees", data).done(function(res) {
-          return deferred.resolve(res.sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        return _request('POST', "" + this.repoPath + "/git/trees", data).then(function(res) {
+          return res.sha;
+        }).promise();
       };
 
       Repository.prototype.postTree = function(tree) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        _request('POST', "" + this.repoPath + "/git/trees", {
+        var _this = this;
+        return _request('POST', "" + this.repoPath + "/git/trees", {
           tree: tree
-        }).done(function(res) {
-          return deferred.resolve(res.sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        }).then(function(res) {
+          return res.sha;
+        }).promise();
       };
 
       Repository.prototype.commit = function(parent, tree, message) {
-        var data, deferred,
+        var data,
           _this = this;
         data = {
           message: message,
@@ -283,14 +247,10 @@
           parents: [parent],
           tree: tree
         };
-        deferred = new jQuery.Deferred();
-        _request('POST', "" + this.repoPath + "/git/commits", data).done(function(res) {
+        return _request('POST', "" + this.repoPath + "/git/commits", data).then(function(res) {
           _this.currentTree.sha = res.sha;
-          return deferred.resolve(res.sha);
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+          return res.sha;
+        }).promise();
       };
 
       Repository.prototype.updateHead = function(head, commit) {
@@ -318,30 +278,19 @@
       };
 
       Repository.prototype.read = function(branch, path) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        this.getSha(branch, path).done(function(sha) {
+        var _this = this;
+        return this.getSha(branch, path).then(function(sha) {
           if (!sha) {
-            deferred.fail("not found");
+            throw 'SHA NOT FOUND';
           }
-          return _this.getBlob(sha).done(function(content) {
-            return deferred.resolve(content, sha);
-          }).fail(function() {
-            return deferred.reject.apply(_this, arguments);
-          });
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+          return _this.getBlob(sha);
+        }).promise();
       };
 
       Repository.prototype.remove = function(branch, path) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        updateTree(branch).done(function(latestCommit) {
-          return _this.getTree("" + latestCommit + "?recursive=true").done(function(tree) {
+        var _this = this;
+        return updateTree(branch).then(function(latestCommit) {
+          return _this.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
             var newTree;
             newTree = _.reject(tree, function(ref) {
               return ref.path === path;
@@ -351,34 +300,21 @@
                 return delete ref.sha;
               }
             });
-            return _this.postTree(newTree).done(function(rootTree) {
-              return _this.commit(latestCommit, rootTree, "Deleted " + path).done(function(commit) {
-                return _this.updateHead(branch, commit).done(function(res) {
-                  return deferred.resolve(res);
-                }).fail(function() {
-                  return deferred.reject.apply(_this, arguments);
+            return _this.postTree(newTree).then(function(rootTree) {
+              return _this.commit(latestCommit, rootTree, "Deleted " + path).then(function(commit) {
+                return _this.updateHead(branch, commit).then(function(res) {
+                  return res;
                 });
-              }).fail(function() {
-                return deferred.reject.apply(_this, arguments);
               });
-            }).fail(function() {
-              return deferred.reject.apply(_this, arguments);
             });
-          }).fail(function() {
-            return deferred.reject.apply(_this, arguments);
           });
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        }).promise();
       };
 
       Repository.prototype.move = function(branch, path, newPath) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        updateTree(branch).done(function(latestCommit) {
-          return _this.getTree("" + latestCommit + "?recursive=true").done(function(tree) {
+        var _this = this;
+        return updateTree(branch).then(function(latestCommit) {
+          return _this.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
             _.each(tree, function(ref) {
               if (ref.path === path) {
                 ref.path = newPath;
@@ -387,54 +323,30 @@
                 return delete ref.sha;
               }
             });
-            return _this.postTree(tree).done(function(rootTree) {
-              return _this.commit(latestCommit, rootTree, "Deleted " + path).done(function(commit) {
-                return _this.updateHead(branch, commit).done(function(res) {
-                  return deferred.resolve(res);
-                }).fail(function() {
-                  return deferred.reject.apply(_this, arguments);
+            return _this.postTree(tree).then(function(rootTree) {
+              return _this.commit(latestCommit, rootTree, "Deleted " + path).then(function(commit) {
+                return _this.updateHead(branch, commit).then(function(res) {
+                  return res;
                 });
-              }).fail(function() {
-                return deferred.reject.apply(_this, arguments);
               });
-            }).fail(function() {
-              return deferred.reject.apply(_this, arguments);
             });
-          }).fail(function() {
-            return deferred.reject.apply(_this, arguments);
           });
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        }).promise();
       };
 
       Repository.prototype.write = function(branch, path, content, message) {
-        var deferred,
-          _this = this;
-        deferred = new jQuery.Deferred();
-        updateTree(branch).done(function(latestCommit) {
-          return _this.postBlob(content).done(function(blob) {
-            return _this.updateTree(latestCommit, path, blob).done(function(tree) {
-              return _this.commit(latestCommit, tree, message).done(function(commit) {
-                return _this.updateHead(branch, commit).done(function(res) {
-                  return deferred.resolve(res);
-                }).fail(function() {
-                  return deferred.reject.apply(_this, arguments);
+        var _this = this;
+        return updateTree(branch).then(function(latestCommit) {
+          return _this.postBlob(content).then(function(blob) {
+            return _this.updateTree(latestCommit, path, blob).then(function(tree) {
+              return _this.commit(latestCommit, tree, message).then(function(commit) {
+                return _this.updateHead(branch, commit).then(function(res) {
+                  return res;
                 });
-              }).fail(function() {
-                return deferred.reject.apply(_this, arguments);
               });
-            }).fail(function() {
-              return deferred.reject.apply(_this, arguments);
             });
-          }).fail(function() {
-            return deferred.reject.apply(_this, arguments);
           });
-        }).fail(function() {
-          return deferred.reject.apply(_this, arguments);
-        });
-        return deferred.promise();
+        }).promise();
       };
 
       return Repository;

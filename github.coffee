@@ -65,17 +65,17 @@ class Github
       }
 
 
-
-      deferred = new jQuery.Deferred()
-      xhr.done -> deferred.resolve.apply @, arguments
-      xhr.fail (xhr, msg, desc) ->
+      # Parse the error if one occurs
+      xhr
+      .then null, (xhr, msg, desc) ->
         if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
-          return deferred.reject xhr.responseText, xhr.status, xhr
+          return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
 
         json = JSON.parse xhr.responseText
-        deferred.reject json, xhr.status, xhr
+        return {error: json, status: xhr.status, _xhr: xhr}
+
       # Return the promise
-      return deferred.promise()
+      .promise()
 
   # Add a listener that fires when the `rateLimitRemaining` changes as a result of
   # communicating with github.
@@ -145,28 +145,25 @@ class Github
     # Uses the cache if branch has not been changed
     # -------
     updateTree = (branch) ->
-      deferred = new jQuery.Deferred()
-      return deferred.resolve(@currentTree.sha) if branch is @currentTree.branch and @currentTree.sha
+      # Since this method always returns a promise, wrap the result in a deferred
+      return (new jQuery.Deferred()).resolve(@currentTree.sha) if branch is @currentTree.branch and @currentTree.sha
 
       @getRef("heads/#{branch}")
-      .done (sha) =>
+      .then (sha) =>
         @currentTree.branch = branch
         @currentTree.sha = sha
-        deferred.resolve sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
-
+        return sha
+      # Return the promise
+      .promise()
 
     # Get a particular reference
     # -------
     getRef: (ref) ->
-      deferred = new jQuery.Deferred()
-
       _request('GET', "#{@repoPath}/git/refs/#{ref}", null)
-      .done (res) =>
-        deferred.resolve res.object.sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      .then (res) =>
+        return res.object.sha
+      # Return the promise
+      .promise()
 
 
     # Create a new reference
@@ -192,15 +189,13 @@ class Github
     # List all branches of a repository
     # -------
     listBranches: ->
-      deferred = new jQuery.Deferred()
-
       _request('GET', "#{@repoPath}/git/refs/heads", null)
-      .done (heads) =>
-        deferred.resolve _.map(heads, (head) ->
+      .then (heads) =>
+        return _.map(heads, (head) ->
           _.last head.ref.split("/")
         )
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      # Return the promise
+      .promise()
 
 
     # Retrieve the contents of a blob
@@ -212,32 +207,27 @@ class Github
     # For a given file path, get the corresponding sha (blob for files, tree for dirs)
     # -------
     getSha: (branch, path) ->
-
       # Just use head if path is empty
       return @getRef "heads/#{branch}" if path is ''
 
-      deferred = new jQuery.Deferred()
-
       @getTree("#{branch}?recursive=true")
-      .done (tree) =>
+      .then (tree) =>
         file = _.select(tree, (file) ->
           file.path is path
         )[0]
-        deferred.resolve file?.sha or null
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
-
+        return file?.sha or null
+      # Return the promise
+      .promise()
 
 
     # Retrieve the tree a commit points to
     # -------
     getTree: (tree) ->
-      deferred = new jQuery.Deferred()
       _request('GET', "#{@repoPath}/git/trees/#{tree}", null)
-      .done (res) =>
-        deferred.resolve res.tree
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      .then (res) =>
+        return res.tree
+      # Return the promise
+      .promise()
 
 
     # Post a new blob object, getting a blob SHA back
@@ -247,13 +237,12 @@ class Github
         content =
           content: content
           encoding: 'utf-8'
-      deferred = new jQuery.Deferred()
 
       _request('POST', "#{@repoPath}/git/blobs", content)
-      .done (res) =>
-        deferred.resolve res.sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      .then (res) =>
+        return res.sha
+      # Return the promise
+      .promise()
 
 
     # Update an existing tree adding a new blob object getting a tree SHA back
@@ -268,25 +257,22 @@ class Github
           sha: blob
         ]
 
-      deferred = new jQuery.Deferred()
-
       _request('POST', "#{@repoPath}/git/trees", data)
-      .done (res) =>
-        deferred.resolve res.sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      .then (res) =>
+        return res.sha
+      # Return the promise
+      .promise()
 
 
     # Post a new tree object having a file path pointer replaced
     # with a new blob SHA getting a tree SHA back
     # -------
     postTree: (tree) ->
-      deferred = new jQuery.Deferred()
       _request('POST', "#{@repoPath}/git/trees", {tree: tree})
-      .done (res) =>
-        deferred.resolve res.sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      .then (res) =>
+        return res.sha
+      # Return the promise
+      .promise()
 
 
     # Create a new commit object with the current commit SHA as the parent
@@ -301,14 +287,12 @@ class Github
         parents: [parent]
         tree: tree
 
-      deferred = new jQuery.Deferred()
-
       _request('POST', "#{@repoPath}/git/commits", data)
-      .done (res) =>
+      .then (res) =>
         @currentTree.sha = res.sha # update latest commit
-        deferred.resolve res.sha
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+        return res.sha
+      # Return the promise
+      .promise()
 
 
     # Update the reference of your head to point to the new commit SHA
@@ -344,28 +328,21 @@ class Github
     # Read file at given path
     # -------
     read: (branch, path) ->
-      deferred = new jQuery.Deferred()
-
       @getSha(branch, path)
-      .done (sha) =>
-        deferred.fail "not found" unless sha
+      .then (sha) =>
+        throw 'SHA NOT FOUND' unless sha
         @getBlob(sha)
-        .done (content) =>
-          deferred.resolve content, sha
-        .fail => deferred.reject.apply @, arguments
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+      # Return the promise
+      .promise()
 
 
     # Remove a file from the tree
     # -------
     remove: (branch, path) ->
-      deferred = new jQuery.Deferred()
-
       updateTree(branch)
-      .done (latestCommit) =>
+      .then (latestCommit) =>
         @getTree("#{latestCommit}?recursive=true")
-        .done (tree) =>
+        .then (tree) =>
 
           # Update Tree
           newTree = _.reject(tree, (ref) ->
@@ -375,30 +352,25 @@ class Github
             delete ref.sha  if ref.type is 'tree'
 
           @postTree(newTree)
-          .done (rootTree) =>
+          .then (rootTree) =>
             @commit(latestCommit, rootTree, "Deleted #{path}")
-            .done (commit) =>
+            .then (commit) =>
               @updateHead(branch, commit)
-              .done (res) =>
-                deferred.resolve res
-              .fail => deferred.reject.apply @, arguments
-            .fail => deferred.reject.apply @, arguments
-          .fail => deferred.reject.apply @, arguments
-        .fail => deferred.reject.apply @, arguments
-      .fail => deferred.reject.apply @, arguments
+              .then (res) =>
+                # Finally, return the result
+                return res
 
-      return deferred.promise()
+      # Return the promise
+      .promise()
 
 
     # Move a file to a new location
     # -------
     move: (branch, path, newPath) ->
-      deferred = new jQuery.Deferred()
-
       updateTree(branch)
-      .done (latestCommit) =>
+      .then (latestCommit) =>
         @getTree("#{latestCommit}?recursive=true")
-        .done (tree) =>
+        .then (tree) =>
 
           # Update Tree
           _.each tree, (ref) ->
@@ -406,42 +378,34 @@ class Github
             delete ref.sha  if ref.type is 'tree'
 
           @postTree(tree)
-          .done (rootTree) =>
+          .then (rootTree) =>
             @commit(latestCommit, rootTree, "Deleted #{path}")
-            .done (commit) =>
+            .then (commit) =>
               @updateHead(branch, commit)
-              .done (res) =>
-                deferred.resolve res
-              .fail => deferred.reject.apply @, arguments
-            .fail => deferred.reject.apply @, arguments
-          .fail => deferred.reject.apply @, arguments
-        .fail => deferred.reject.apply @, arguments
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+              .then (res) =>
+                # Finally, return the result
+                return res
+      # Return the promise
+      .promise()
 
 
     # Write file contents to a given branch and path
     # -------
     write: (branch, path, content, message) ->
-      deferred = new jQuery.Deferred()
-
       updateTree(branch)
-      .done (latestCommit) =>
+      .then (latestCommit) =>
         @postBlob(content)
-        .done (blob) =>
+        .then (blob) =>
           @updateTree(latestCommit, path, blob)
-          .done (tree) =>
+          .then (tree) =>
             @commit(latestCommit, tree, message)
-            .done (commit) =>
+            .then (commit) =>
               @updateHead(branch, commit)
-              .done (res) =>
-                deferred.resolve res
-              .fail => deferred.reject.apply @, arguments
-            .fail => deferred.reject.apply @, arguments
-          .fail => deferred.reject.apply @, arguments
-        .fail => deferred.reject.apply @, arguments
-      .fail => deferred.reject.apply @, arguments
-      return deferred.promise()
+              .then (res) =>
+                # Finally, return the result
+                return res
+      # Return the promise
+      .promise()
 
 
   class Gist
