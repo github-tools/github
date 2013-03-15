@@ -144,7 +144,7 @@ class Github
 
     # Uses the cache if branch has not been changed
     # -------
-    updateTree = (branch) ->
+    _updateTree: (branch) ->
       # Since this method always returns a promise, wrap the result in a deferred
       return (new jQuery.Deferred()).resolve(@currentTree.sha) if branch is @currentTree.branch and @currentTree.sha
 
@@ -342,7 +342,7 @@ class Github
     # Remove a file from the tree
     # -------
     remove: (branch, path) ->
-      updateTree(branch)
+      @_updateTree(branch)
       .then (latestCommit) =>
         @getTree("#{latestCommit}?recursive=true")
         .then (tree) =>
@@ -370,7 +370,7 @@ class Github
     # Move a file to a new location
     # -------
     move: (branch, path, newPath) ->
-      updateTree(branch)
+      @_updateTree(branch)
       .then (latestCommit) =>
         @getTree("#{latestCommit}?recursive=true")
         .then (tree) =>
