@@ -215,7 +215,11 @@ class Github
         file = _.select(tree, (file) ->
           file.path is path
         )[0]
-        return file?.sha or null
+        return file?.sha if file?.sha
+
+        # Return a promise that has failed if no sha was found
+        (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+
       # Return the promise
       .promise()
 
@@ -330,7 +334,6 @@ class Github
     read: (branch, path) ->
       @getSha(branch, path)
       .then (sha) =>
-        throw 'SHA NOT FOUND' unless sha
         @getBlob(sha)
       # Return the promise
       .promise()

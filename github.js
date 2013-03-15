@@ -28,7 +28,7 @@
             'Accept': 'application/vnd.github.raw'
           },
           processData: false,
-          data: data,
+          data: !raw && data && JSON.stringify(data) || data,
           dataType: !raw ? 'json' : void 0,
           beforeSend: function(xhr) {
             var auth;
@@ -120,7 +120,6 @@
     })();
 
     Repository = (function() {
-      var updateTree;
 
       function Repository(options) {
         var repo, user;
@@ -134,7 +133,7 @@
         };
       }
 
-      updateTree = function(branch) {
+      Repository.prototype._updateTree = function(branch) {
         var _this = this;
         if (branch === this.currentTree.branch && this.currentTree.sha) {
           return (new jQuery.Deferred()).resolve(this.currentTree.sha);
@@ -184,7 +183,12 @@
           file = _.select(tree, function(file) {
             return file.path === path;
           })[0];
-          return (file != null ? file.sha : void 0) || null;
+          if (file != null ? file.sha : void 0) {
+            return file != null ? file.sha : void 0;
+          }
+          return (new jQuery.Deferred()).reject({
+            message: 'SHA_NOT_FOUND'
+          });
         }).promise();
       };
 
@@ -280,16 +284,13 @@
       Repository.prototype.read = function(branch, path) {
         var _this = this;
         return this.getSha(branch, path).then(function(sha) {
-          if (!sha) {
-            throw 'SHA NOT FOUND';
-          }
           return _this.getBlob(sha);
         }).promise();
       };
 
       Repository.prototype.remove = function(branch, path) {
         var _this = this;
-        return updateTree(branch).then(function(latestCommit) {
+        return this._updateTree(branch).then(function(latestCommit) {
           return _this.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
             var newTree;
             newTree = _.reject(tree, function(ref) {
@@ -313,7 +314,7 @@
 
       Repository.prototype.move = function(branch, path, newPath) {
         var _this = this;
-        return updateTree(branch).then(function(latestCommit) {
+        return this._updateTree(branch).then(function(latestCommit) {
           return _this.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
             _.each(tree, function(ref) {
               if (ref.path === path) {
@@ -336,7 +337,7 @@
 
       Repository.prototype.write = function(branch, path, content, message) {
         var _this = this;
-        return updateTree(branch).then(function(latestCommit) {
+        return this._updateTree(branch).then(function(latestCommit) {
           return _this.postBlob(content).then(function(blob) {
             return _this.updateTree(latestCommit, path, blob).then(function(tree) {
               return _this.commit(latestCommit, tree, message).then(function(commit) {
