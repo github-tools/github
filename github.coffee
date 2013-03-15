@@ -44,7 +44,7 @@ class Github
         }
 
         processData: false # Don't convert to QueryString
-        data: data
+        data: !raw and data and JSON.stringify(data) or data
         dataType: 'json' unless raw
 
         beforeSend: (xhr) =>
@@ -395,7 +395,7 @@ class Github
     # Write file contents to a given branch and path
     # -------
     write: (branch, path, content, message) ->
-      updateTree(branch)
+      @_updateTree(branch)
       .then (latestCommit) =>
         @postBlob(content)
         .then (blob) =>
