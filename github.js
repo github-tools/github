@@ -434,11 +434,18 @@
       return new Github;
     };
   } else if (typeof define !== "undefined" && define !== null) {
-    define('github', ['underscore', 'jquery', 'base64'], function(_, jQuery, Base64) {
-      return makeGithub(_, jQuery, Base64.encode);
-    });
-  } else if (this._ && this.jQuery && this.Base64) {
-    this.Github = makeGithub(this._, this.jQuery, Base64.encode);
+    if (this.btoa) {
+      define('github', ['underscore', 'jquery'], function(_, jQuery) {
+        return makeGithub(_, jQuery, this.btoa);
+      });
+    } else {
+      define('github', ['underscore', 'jquery', 'base64'], function(_, jQuery, Base64) {
+        return makeGithub(_, jQuery, Base64.encode);
+      });
+    }
+  } else if (this._ && this.jQuery && (this.btoa || this.Base64)) {
+    encode = this.btoa || Base64.encode;
+    this.Github = makeGithub(this._, this.jQuery, encode);
   } else {
     err = function(msg) {
       if (typeof console !== "undefined" && console !== null) {
@@ -448,14 +455,14 @@
       }
       throw msg;
     };
-    if (!this.Base64) {
-      err('Base64 not included');
-    }
     if (!this._) {
       err('Underscore not included');
     }
     if (!this.jQuery) {
       err('jQuery not included');
+    }
+    if (!this.Base64 && !this.btoa) {
+      err('Base64 not included');
     }
   }
 

@@ -490,7 +490,7 @@ if exports?
   jQuery = require 'jquery-deferred'
   najax = require 'najax'
   jQuery.ajax = najax
-  # Encode using Base64
+  # Encode using native Base64
   encode = (str) ->
     buffer = new Buffer str, 'binary'
     buffer.toString 'base64'
@@ -499,12 +499,21 @@ if exports?
 
 # If requirejs is detected then load this module asynchronously
 else if define?
-  define 'github', ['underscore', 'jquery', 'base64'], (_, jQuery, Base64) ->
-    return makeGithub _, jQuery, Base64.encode
+  # If the browser has the native Base64 encode function `btoa` use it.
+  # Otherwise, try to use the javascript Base64 code.
+  if @btoa
+    define 'github', ['underscore', 'jquery'], (_, jQuery) ->
+      return makeGithub _, jQuery, @btoa
+  else
+    define 'github', ['underscore', 'jquery', 'base64'], (_, jQuery, Base64) ->
+      return makeGithub _, jQuery, Base64.encode
 
 # If a global jQuery and underscore is loaded then use it
-else if @_ and @jQuery and @Base64
-  @Github = makeGithub @_, @jQuery, Base64.encode
+else if @_ and @jQuery and (@btoa or @Base64)
+  # Use the `btoa` function if it is defined (Webkit/Mozilla) and fail back to
+  # `Base64.encode` otherwise (IE)
+  encode = @btoa or Base64.encode
+  @Github = makeGithub @_, @jQuery, encode
 
 # Otherwise, throw an error
 else
@@ -512,6 +521,6 @@ else
     console?.error? msg
     throw msg
 
-  err 'Base64 not included' if not @Base64
   err 'Underscore not included' if not @_
   err 'jQuery not included' if not @jQuery
+  err 'Base64 not included' if not @Base64 and not @btoa
