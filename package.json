@@ -1,0 +1,25 @@
+{
+  "name": "github-js",
+  "version": "0.0.0",
+  "description": "Javascript github client for nodejs or a web browser using promises",
+  "main": "github.js",
+  "dependencies": {
+    "underscore": ">=1.4.2",
+    "jquery-deferred": ">=0.3.0",
+    "najax": ">=0.1.05"
+  },
+  "devDependencies": {
+    "docco": "~0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/philschatz/github-js.git"
+  },
+  "keywords": [
+    "javascript",
+    "github",
+    "client",
+    "promise"
+  ],
+  "author": "Philip Schatz"
+}
