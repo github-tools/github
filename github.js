@@ -332,8 +332,8 @@
       // Fork repository
       // -------
 
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
+      this.fork = function(organization, cb) {
+        _request("POST", repoPath + "/forks", { organization: organization }, cb);
       };
 
       // Create pull request
