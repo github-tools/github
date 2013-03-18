@@ -27,23 +27,10 @@ var github = new Github({
 });
 ```
 
-### In Nodejs
-
-In nodejs:
-
-```js
-var Github = require('github3');
-var github = new Github({
-  username: "YOU_USER",
-  password: "YOUR_PASSWORD",
-  auth: "basic"
-});
-```
-
 ### In a browser using requirejs
 
 ```js
-define(['github3'], function(Github) {
+define(['github-js'], function(Github) {
   github = new Github({
     username: "YOU_USER",
     password: "YOUR_PASSWORD",
@@ -51,6 +38,22 @@ define(['github3'], function(Github) {
   });
 });
 ```
+
+### In Nodejs
+
+Install instructions:
+
+    npm install github-js
+
+```js
+var Github = require('github-js');
+var github = new Github({
+  username: "YOU_USER",
+  password: "YOUR_PASSWORD",
+  auth: "basic"
+});
+```
+
 
 ## Repository API
 
