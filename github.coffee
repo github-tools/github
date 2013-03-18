@@ -12,7 +12,13 @@
 #     Github.js is freely distributable under the MIT license.
 #     For all details and documentation:
 #     http://substance.io/michael/github
-makeGithub = (_, jQuery) =>
+
+# Generate a Github class
+# =========
+#
+# Depending on how this is loaded (nodejs, requirejs, globals)
+# the actual underscore, jQuery.ajax/Deferred, and base64 encode functions may differ.
+makeGithub = (_, jQuery, base64encode) =>
   class Github
 
     # HTTP Request Abstraction
@@ -53,7 +59,7 @@ makeGithub = (_, jQuery) =>
               if options.auth is 'oauth'
                 auth = "token #{options.token}"
               else
-                auth = 'Basic ' + Base64.encode("#{options.username}:#{options.password}")
+                auth = 'Basic ' + base64encode("#{options.username}:#{options.password}")
               xhr.setRequestHeader 'Authorization', auth
 
           # Update the `rateLimit*`
@@ -484,18 +490,28 @@ if exports?
   jQuery = require 'jquery-deferred'
   najax = require 'najax'
   jQuery.ajax = najax
-  exports.Github = makeGithub _, jQuery
+  # Encode using Base64
+  encode = (str) ->
+    buffer = new Buffer str, 'binary'
+    buffer.toString 'base64'
+  Github = makeGithub _, jQuery, encode
+  exports.new = (options) -> new Github
 
 # If requirejs is detected then load this module asynchronously
 else if define?
-  define 'github', ['underscore', 'jquery'], (_, jQuery) ->
-    return makeGithub _, jQuery
+  define 'github', ['underscore', 'jquery', 'base64'], (_, jQuery, Base64) ->
+    return makeGithub _, jQuery, Base64.encode
 
 # If a global jQuery and underscore is loaded then use it
-else if @_ and @jQuery
-  @Github = makeGithub @_, @jQuery
+else if @_ and @jQuery and @Base64
+  @Github = makeGithub @_, @jQuery, Base64.encode
 
 # Otherwise, throw an error
 else
-  console?.error? 'jQuery or underscore not found'
-  throw 'jQuery or underscore not found'
+  err = (msg) ->
+    console?.error? msg
+    throw msg
+
+  err 'Base64 not included' if not @Base64
+  err 'Underscore not included' if not @_
+  err 'jQuery not included' if not @jQuery

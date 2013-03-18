@@ -47,7 +47,7 @@ Install instructions:
 
 ```js
 var Github = require('github-js');
-var github = new Github({
+var github = Github.new({
   username: "YOU_USER",
   password: "YOUR_PASSWORD",
   auth: "basic"
