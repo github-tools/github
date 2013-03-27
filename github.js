@@ -15,7 +15,7 @@
     // 
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw) {
+    function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
@@ -24,16 +24,18 @@
       var xhr = new XMLHttpRequest();
       if (!raw) {xhr.dataType = "json";}
 
-      xhr.open(method, getURL());
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4) {
-          if (this.status >= 200 && this.status < 300 || this.status === 304) {
-            cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
-          } else {
-            cb({request: this, error: this.status});
+      xhr.open(method, getURL(), !sync);
+      if (!sync) {
+        xhr.onreadystatechange = function () {
+          if (this.readyState == 4) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
+            } else {
+              cb({request: this, error: this.status});
+            }
           }
-        }
-      };
+        };
+      }
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
       xhr.setRequestHeader('Content-Type','application/json');
       if (
@@ -46,6 +48,7 @@
            );
          }
       data ? xhr.send(JSON.stringify(data)) : xhr.send();
+      if (sync) return xhr.response;
     }
 
     // User API
@@ -327,6 +330,10 @@
 
       this.contents = function(branch, path, cb) {
         _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
+      };
+
+      this.contentsSync = function(branch, path) {
+        return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch, null, null, 'raw', true);
       };
 
       // Fork repository
