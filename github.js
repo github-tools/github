@@ -419,6 +419,13 @@
           });
         });
       };
+
+      // List commits on a repository
+      // -------
+
+      this.getCommits = function(cb) {
+          _request("GET", repoPath + "/commits", null, cb);
+      };
     };
 
     // Gists API
