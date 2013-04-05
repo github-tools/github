@@ -2,7 +2,7 @@
 
 Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of [Prose](http://prose.io), a content editor for GitHub.
 
-This repo is now officially maintained by [DevelopmentSeed](https://github.com/developmentseed), who are using Github.js to power [Prose.io](http://prose.io).
+This repo is now officially maintained by [DevelopmentSeed](https://github.com/developmentseed), who are the people behind [Prose.io](http://prose.io).
 
 
 ## Usage
