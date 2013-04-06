@@ -18,7 +18,7 @@
         }
         options.rootURL = options.rootURL || 'https://api.github.com';
         listeners = [];
-        _request = function(method, path, data, raw) {
+        _request = function(method, path, data, raw, isBinary) {
           var getURL, xhr,
             _this = this;
           getURL = function() {
@@ -38,7 +38,9 @@
             dataType: !raw ? 'json' : void 0,
             beforeSend: function(xhr) {
               var auth;
-              xhr.overrideMimeType('text/plain; charset=x-user-defined');
+              if (isBinary) {
+                xhr.overrideMimeType('text/plain; charset=x-user-defined');
+              }
               if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
                 if (options.auth === 'oauth') {
                   auth = "token " + options.token;
@@ -179,8 +181,8 @@
           }).promise();
         };
 
-        Repository.prototype.getBlob = function(sha) {
-          return _request('GET', "" + this.repoPath + "/git/blobs/" + sha, null, 'raw');
+        Repository.prototype.getBlob = function(sha, isBinary) {
+          return _request('GET', "" + this.repoPath + "/git/blobs/" + sha, null, 'raw', isBinary);
         };
 
         Repository.prototype.getSha = function(branch, path) {
@@ -291,10 +293,10 @@
           return _request('POST', "" + this.repoPath + "/pulls", options);
         };
 
-        Repository.prototype.read = function(branch, path) {
+        Repository.prototype.read = function(branch, path, isBinary) {
           var _this = this;
           return this.getSha(branch, path).then(function(sha) {
-            return _this.getBlob(sha);
+            return _this.getBlob(sha, isBinary);
           }).promise();
         };
 

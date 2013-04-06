@@ -36,7 +36,7 @@ makeGithub = (_, jQuery, base64encode) =>
       # **HACK:** Reset rateLimit listeners when credentials change
       listeners = []
 
-      _request = (method, path, data, raw) ->
+      _request = (method, path, data, raw, isBinary) ->
         getURL = ->
           url = options.rootURL + path
           url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
@@ -56,7 +56,7 @@ makeGithub = (_, jQuery, base64encode) =>
 
           beforeSend: (xhr) =>
             # Support binary data by overriding the response mimeType
-            xhr.overrideMimeType 'text/plain; charset=x-user-defined'
+            xhr.overrideMimeType 'text/plain; charset=x-user-defined' if isBinary
 
             if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
               if options.auth is 'oauth'
@@ -210,8 +210,8 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Retrieve the contents of a blob
       # -------
-      getBlob: (sha) ->
-        _request 'GET', "#{@repoPath}/git/blobs/#{sha}", null, 'raw'
+      getBlob: (sha, isBinary) ->
+        _request 'GET', "#{@repoPath}/git/blobs/#{sha}", null, 'raw', isBinary
 
 
       # For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -341,10 +341,10 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Read file at given path
       # -------
-      read: (branch, path) ->
+      read: (branch, path, isBinary) ->
         @getSha(branch, path)
         .then (sha) =>
-          @getBlob(sha)
+          @getBlob(sha, isBinary)
         # Return the promise
         .promise()
 
