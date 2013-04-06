@@ -77,6 +77,19 @@ makeGithub = (_, jQuery, base64encode) =>
 
         # Parse the error if one occurs
         xhr
+        .then (data, textStatus, jqXHR) ->
+          ret = new jQuery.Deferred()
+          if isBinary
+            # Convert raw data to binary chopping off the higher-order bytes in each char.
+            # Useful for Base64 encoding.
+            converted = ''
+            for i in [0..data.length]
+              converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
+            converted
+
+            ret.resolve(converted, textStatus, jqXHR)
+          else
+            ret.resolve(data, textStatus, jqXHR)
         .then null, (xhr, msg, desc) ->
           if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
             return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
@@ -341,10 +354,20 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Read file at given path
       # -------
-      read: (branch, path, isBinary) ->
+      read: (branch, path) ->
         @getSha(branch, path)
         .then (sha) =>
-          @getBlob(sha, isBinary)
+          @getBlob(sha, false) # `isBinary==false`
+        # Return the promise
+        .promise()
+
+
+      # Read binary file at given path
+      # -------
+      readBinary: (branch, path) ->
+        @getSha(branch, path)
+        .then (sha) =>
+          @getBlob(sha, true) # `isBinary==true`
         # Return the promise
         .promise()
 

@@ -62,7 +62,21 @@
               return _results;
             }
           });
-          return xhr.then(null, function(xhr, msg, desc) {
+          return xhr.then(function(data, textStatus, jqXHR) {
+            var converted, i, ret, _i, _ref;
+            ret = new jQuery.Deferred();
+            if (isBinary) {
+              converted = '';
+              for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+                converted += String.fromCharCode(data.charCodeAt(i) & 0xff);
+              }
+              converted;
+
+              return ret.resolve(converted, textStatus, jqXHR);
+            } else {
+              return ret.resolve(data, textStatus, jqXHR);
+            }
+          }).then(null, function(xhr, msg, desc) {
             var json;
             if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
               return {
@@ -293,10 +307,17 @@
           return _request('POST', "" + this.repoPath + "/pulls", options);
         };
 
-        Repository.prototype.read = function(branch, path, isBinary) {
+        Repository.prototype.read = function(branch, path) {
           var _this = this;
           return this.getSha(branch, path).then(function(sha) {
-            return _this.getBlob(sha, isBinary);
+            return _this.getBlob(sha, false);
+          }).promise();
+        };
+
+        Repository.prototype.readBinary = function(branch, path) {
+          var _this = this;
+          return this.getSha(branch, path).then(function(sha) {
+            return _this.getBlob(sha, true);
           }).promise();
         };
 

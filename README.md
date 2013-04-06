@@ -124,6 +124,15 @@ repo.read('master', 'path/to/file')
 .fail(function(err) {});
 ```
 
+You can also read binary files.
+
+```js
+repo.readBinary('master', 'path/to/binaryfile')
+.done(function(data) {})
+.fail(function(err) {});
+```
+
+
 Move a file from A to B.
 
 ```js
