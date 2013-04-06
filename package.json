@@ -1,5 +1,5 @@
 {
-  "name": "github-js",
+  "name": "github-client",
   "version": "0.1.3",
   "description": "Javascript github client for nodejs or a web browser using promises",
   "main": "github.js",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/philschatz/github-js.git"
+    "url": "https://github.com/philschatz/github-client.git"
   },
   "keywords": [
     "javascript",
