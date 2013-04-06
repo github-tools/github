@@ -38,6 +38,7 @@
             dataType: !raw ? 'json' : void 0,
             beforeSend: function(xhr) {
               var auth;
+              xhr.overrideMimeType('text/plain; charset=x-user-defined');
               if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
                 if (options.auth === 'oauth') {
                   auth = "token " + options.token;

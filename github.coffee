@@ -55,6 +55,9 @@ makeGithub = (_, jQuery, base64encode) =>
           dataType: 'json' unless raw
 
           beforeSend: (xhr) =>
+            # Support binary data by overriding the response mimeType
+            xhr.overrideMimeType 'text/plain; charset=x-user-defined'
+
             if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
               if options.auth is 'oauth'
                 auth = "token #{options.token}"
