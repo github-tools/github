@@ -1,14 +1,22 @@
-// Github.js 0.7.0
-// (c) 2012 Michael Aufreiter, Development Seed
+// Github.js 0.8.0
+// (c) 2013 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
 // http://substance.io/michael/github
 
 (function() {
-  var Github;
+
+  // Initial Setup
+  // -------------
+
+  if (typeof exports !== 'undefined') {
+    var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+    var _ = require('underscore');
+  }
+  
   var API_URL = 'https://api.github.com';
 
-  Github = window.Github = function(options) {
+  var Github = function(options) {
 
     // HTTP Request Abstraction
     // =======
@@ -47,6 +55,8 @@
          }
       data ? xhr.send(JSON.stringify(data)) : xhr.send();
     }
+
+
 
     // User API
     // =======
@@ -496,4 +506,12 @@
       return new Github.Gist({id: id});
     };
   };
+
+
+  if (typeof exports !== 'undefined') {
+    // Github = exports;
+    module.exports = Github;
+  } else {
+    window.Github = Github;
+  }
 }).call(this);
