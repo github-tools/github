@@ -13,14 +13,14 @@
     var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
     var _ = require('underscore');
   }
-  
+
   var API_URL = 'https://api.github.com';
 
   var Github = function(options) {
 
     // HTTP Request Abstraction
     // =======
-    // 
+    //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
     function _request(method, path, data, cb, raw) {
@@ -97,6 +97,28 @@
         });
       };
 
+      // Show who follows user
+      // -------
+
+      this.followers = function(username, cb) {
+        var command = username ? "/users/"+username+"/followers" : "/user/followers";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
+      // Show who user is following
+      // -------
+
+      this.following = function(username, cb) {
+        var command = username ? "/users/"+username+"/following" : "/user/following";
+
+        _request("GET", command, null, function(err, res) {
+          cb(err, res);
+        });
+      };
+
       // List user repositories
       // -------
 
@@ -150,7 +172,7 @@
     Github.Repository = function(options) {
       var repo = options.name;
       var user = options.user;
-      
+
       var that = this;
       var repoPath = "/repos/" + user + "/" + repo;
 
@@ -195,7 +217,7 @@
 
       // Delete a reference
       // --------
-      // 
+      //
       // repo.deleteRef('heads/gh-pages')
       // repo.deleteRef('tags/v1.0')
 
@@ -458,7 +480,7 @@
       //      }
       //    }
       // }
-      
+
       this.create = function(options, cb){
         _request("POST","/gists", options, cb);
       };
