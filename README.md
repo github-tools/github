@@ -42,7 +42,10 @@ repo.show(function(err, repo) {});
 Get contents at a particular path.
 
 ```js
-repo.contents("path/to/dir", function(err, contents) {});
+repo.contents(branch, "path/to/file", function(err, contents) {});
+```
+```js
+var contents = repo.contents(branch, "path/to/file");
 ```
 
 Fork repository. This operation runs asynchronously. You may want to poll for `repo.contents` until the forked repo is ready.
