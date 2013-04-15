@@ -9,7 +9,7 @@
   // Initial Setup
   // -------------
 
-  if (typeof exports !== 'undefined') {
+  if (typeof this.exports !== 'undefined') {
     var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
     var _ = require('underscore');
   }
