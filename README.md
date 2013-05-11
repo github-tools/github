@@ -156,7 +156,13 @@ user.orgs(function(err, orgs) {});
 List authenticated user's gists.
 
 ```js
-user.gists(username, function(err, gists) {});
+user.gists(function(err, gists) {});
+```
+
+List unread notifications for the authenticated user.
+
+```js
+user.notifications(function(err, notifications) {});
 ```
 
 Show user information for a particular username. Also works for organizations.

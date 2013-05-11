@@ -86,6 +86,15 @@
         });
       };
 
+      // List authenticated user's unread notifications
+      // -------
+
+      this.notifications = function(cb) {
+        _request("GET", "/notifications", null, function(err, res) {
+          cb(err,res);
+        });
+      };
+
       // Show user information
       // -------
 
