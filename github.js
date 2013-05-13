@@ -9,10 +9,10 @@
   // Initial Setup
   // -------------
 
-  if (typeof this.exports !== 'undefined') {
-    var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-    var _ = require('underscore');
-  }
+  // if (typeof this.exports !== 'undefined') {
+  //   var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+  //   var _ = require('underscore');
+  // }
 
   var API_URL = 'https://api.github.com';
 
@@ -232,6 +232,26 @@
         _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
           if (err) return cb(err);
           cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+        });
+      };
+
+      // Gets the commit to a sha value
+      // -------
+
+      this.getCommit = function (sha, cb) {
+        _request("GET", repoPath + "/git/commits/" + sha, null, function (err, data) {;
+          if (err) return cb(err);
+          cb(null, data);
+        });
+      };
+
+      // Gets the commit to a branch name
+      // -------
+
+      this.getBranch = function (branch, cb) {
+        _request("GET", repoPath + "/branches/" + branch, null, function (err, data) {
+          if (err) return cb(err);
+          that.getCommit(data.commit.sha, cb);
         });
       };
 
