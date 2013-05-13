@@ -4,7 +4,6 @@ Github.js provides a minimal higher-level wrapper around git's [plumbing command
 
 This repo is now officially maintained by [DevelopmentSeed](https://github.com/developmentseed), the people behind [Prose.io](http://prose.io).
 
-
 ## Usage
 
 Create a Github instance.
