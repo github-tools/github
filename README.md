@@ -234,7 +234,32 @@ user.getGists()
 .fail(function(err) {});
 ```
 
+List users following this user.
+
+```js
+user.getFollowers()
+.done(function(users) {})
+.fail(function(err) {});
+```
+
+List users this user is following.
+
+```js
+user.getFollowing()
+.done(function(users) {})
+.fail(function(err) {});
+```
+
+
 ## Authenticated User API
+
+The Authenticated User contains the following methods in addition to all the methods in the User API .
+
+Get the authenticated user.
+
+```js
+var user = gh.getUser();
+```
 
 List private and public repositories of the current authenticated user.
 
@@ -244,10 +269,28 @@ user.getRepos()
 .fail(function(err) {});
 ```
 
-List organizations the autenticated user belongs to.
+List unread notifications for the user.
 
 ```js
-user.getOrgs()
+user.getNotifications()
+.done(function(notifications) {})
+.fail(function(err) {});
+```
+
+Follow another user.
+
+```js
+var username "SOME_OTHER_USERNAME";
+user.follow(username)
+.done(function(orgs) {})
+.fail(function(err) {});
+```
+
+Stop following another user.
+
+```js
+var username "SOME_OTHER_USERNAME";
+user.unfollow(username)
 .done(function(orgs) {})
 .fail(function(err) {});
 ```

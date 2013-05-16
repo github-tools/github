@@ -122,24 +122,54 @@ makeGithub = (_, jQuery, base64encode) =>
       _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
 
 
-    # Authenticated User API
+    # Github Users API
     # =======
-    class Authenticated
+    class User
 
-      # Retrieve information for the currently authenticated user
+      # Private var that stores the root path
+      _rootPath = null
+
+      # Store the username
+      constructor: (username=null) ->
+        if username
+          _rootPath = "/users/#{username}"
+        else
+          _rootPath = "/user"
+
+      # Retrieve user information
       # -------
       getInfo: ->
-        _request 'GET', "/user", null
+        _request 'GET', "#{_rootPath}", null
 
-      # List repositories owned by this user
+      # List user repositories
       # -------
       getRepos: ->
-        _request 'GET', '/user/repos?type=all&per_page=1000&sort=updated', null
+        _request 'GET', "#{_rootPath}/repos?type=all&per_page=1000&sort=updated", null
 
       # List user organizations
       # -------
       getOrgs: ->
-        _request 'GET', '/user/orgs', null
+        _request 'GET', "#{_rootPath}/orgs", null
+
+      # List a user's gists
+      # -------
+      getGists: ->
+        _request 'GET', "#{_rootPath}/gists", null
+
+      # List followers of a user
+      # -------
+      getFollowers: ->
+        _request 'GET', "#{_rootPath}/followers", null
+
+      # List who this user is following
+      # -------
+      getFollowing: ->
+        _request 'GET', "#{_rootPath}/following", null
+
+
+    # Authenticated User API
+    # =======
+    class AuthenticatedUser extends User
 
       # List authenticated user's gists
       # -------
@@ -151,43 +181,15 @@ makeGithub = (_, jQuery, base64encode) =>
       getNotifications: ->
         _request 'GET', '/notifications', null
 
-
-    # Github Users API
-    # =======
-    class User
-
-      # Store the username
-      constructor: (@username) ->
-
-      # Retrieve user information
+      # Follow a user
       # -------
-      getInfo: ->
-        _request 'GET', "/users/#{@username}", null
-
-      # List user repositories
-      # -------
-      getRepos: ->
-        _request 'GET', "/users/#{@username}/repos?type=all&per_page=1000&sort=updated", null
-
-      # List user organizations
-      # -------
-      getOrgs: ->
-        _request 'GET', "/users/#{@username}/orgs", null
-
-      # List a user's gists
-      # -------
-      getGists: ->
-        _request 'GET', "/users/#{@username}/gists", null
-
-      # Follow user
-      # -------
-      follow: ->
-        _request 'PUT', "/user/following/#{@username}", null
+      follow: (username) ->
+        _request 'PUT', "/user/following/#{username}", null
 
       # Unfollow user
       # -------
-      unfollow: ->
-        _request 'DELETE', "/user/following/#{@username}", null
+      unfollow: (username) ->
+        _request 'DELETE', "/user/following/#{username}", null
 
 
     # Repository API
@@ -533,13 +535,13 @@ makeGithub = (_, jQuery, base64encode) =>
         name: repo
       )
 
-    # Methods for the currently-authenticated user
-    getAuthenticated: ->
-      new Authenticated()
-
-    # API for viewing info for arbitrary users
-    getUser: (username) ->
-      new User(username)
+    # API for viewing info for arbitrary users or the current user
+    # if no arguments are provided.
+    getUser: (username=null) ->
+      if username
+        new User(username)
+      else
+        new AuthenticatedUser()
 
     getGist: (id) ->
       new Gist(id: id)
