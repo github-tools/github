@@ -99,6 +99,10 @@
         return listeners.push(listener);
       };
 
+      Github.prototype.zen = function() {
+        return _request('GET', '/zen', null);
+      };
+
       User = (function() {
 
         function User() {}

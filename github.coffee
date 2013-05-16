@@ -106,6 +106,10 @@ makeGithub = (_, jQuery, base64encode) =>
     onRateLimitChanged: (listener) ->
       listeners.push listener
 
+    # Request a random zen quote (test the API)
+    # -------
+    zen: -> _request 'GET', '/zen', null
+
     # User API
     # =======
     class User
