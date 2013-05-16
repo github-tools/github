@@ -36,7 +36,7 @@ makeGithub = (_, jQuery, base64encode) =>
       # **HACK:** Reset rateLimit listeners when credentials change
       listeners = []
 
-      _request = (method, path, data, raw, isBinary) ->
+      _request = (method, path, data, raw, isBase64) ->
         getURL = ->
           url = options.rootURL + path
           url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
@@ -56,7 +56,7 @@ makeGithub = (_, jQuery, base64encode) =>
 
           beforeSend: (xhr) =>
             # Support binary data by overriding the response mimeType
-            xhr.overrideMimeType 'text/plain; charset=x-user-defined' if isBinary
+            xhr.overrideMimeType 'text/plain; charset=x-user-defined' if isBase64
 
             if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
               if options.auth is 'oauth'
@@ -79,7 +79,8 @@ makeGithub = (_, jQuery, base64encode) =>
         xhr
         .then (data, textStatus, jqXHR) ->
           ret = new jQuery.Deferred()
-          if isBinary
+          # Convert the response to a Base64 encoded string
+          if 'GET' == method and isBase64
             # Convert raw data to binary chopping off the higher-order bytes in each char.
             # Useful for Base64 encoding.
             converted = ''
@@ -259,11 +260,13 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Post a new blob object, getting a blob SHA back
       # -------
-      postBlob: (content) ->
+      postBlob: (content, isBase64) ->
         if typeof (content) is 'string'
           content =
             content: content
             encoding: 'utf-8'
+
+        content.encoding = 'base64' if isBase64
 
         _request('POST', "#{@repoPath}/git/blobs", content)
         .then (res) =>
@@ -354,20 +357,11 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Read file at given path
       # -------
-      read: (branch, path) ->
+      # Set `isBase64=true` to get back a base64 encoded binary file
+      read: (branch, path, isBase64) ->
         @getSha(branch, path)
         .then (sha) =>
-          @getBlob(sha, false) # `isBinary==false`
-        # Return the promise
-        .promise()
-
-
-      # Read binary file at given path
-      # -------
-      readBinary: (branch, path) ->
-        @getSha(branch, path)
-        .then (sha) =>
-          @getBlob(sha, true) # `isBinary==true`
+          @getBlob(sha, isBase64)
         # Return the promise
         .promise()
 
@@ -427,10 +421,11 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Write file contents to a given branch and path
       # -------
-      write: (branch, path, content, message) ->
+      # To write base64 encoded data set `isBase64==true`
+      write: (branch, path, content, message, isBase64) ->
         @_updateTree(branch)
         .then (latestCommit) =>
-          @postBlob(content)
+          @postBlob(content, isBase64)
           .then (blob) =>
             @updateTree(latestCommit, path, blob)
             .then (tree) =>

@@ -18,7 +18,7 @@
         }
         options.rootURL = options.rootURL || 'https://api.github.com';
         listeners = [];
-        _request = function(method, path, data, raw, isBinary) {
+        _request = function(method, path, data, raw, isBase64) {
           var getURL, xhr,
             _this = this;
           getURL = function() {
@@ -38,7 +38,7 @@
             dataType: !raw ? 'json' : void 0,
             beforeSend: function(xhr) {
               var auth;
-              if (isBinary) {
+              if (isBase64) {
                 xhr.overrideMimeType('text/plain; charset=x-user-defined');
               }
               if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
@@ -65,7 +65,7 @@
           return xhr.then(function(data, textStatus, jqXHR) {
             var converted, i, ret, _i, _ref;
             ret = new jQuery.Deferred();
-            if (isBinary) {
+            if ('GET' === method && isBase64) {
               converted = '';
               for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
                 converted += String.fromCharCode(data.charCodeAt(i) & 0xff);
@@ -225,13 +225,16 @@
           }).promise();
         };
 
-        Repository.prototype.postBlob = function(content) {
+        Repository.prototype.postBlob = function(content, isBase64) {
           var _this = this;
           if (typeof content === 'string') {
             content = {
               content: content,
               encoding: 'utf-8'
             };
+          }
+          if (isBase64) {
+            content.encoding = 'base64';
           }
           return _request('POST', "" + this.repoPath + "/git/blobs", content).then(function(res) {
             return res.sha;
@@ -307,17 +310,10 @@
           return _request('POST', "" + this.repoPath + "/pulls", options);
         };
 
-        Repository.prototype.read = function(branch, path) {
+        Repository.prototype.read = function(branch, path, isBase64) {
           var _this = this;
           return this.getSha(branch, path).then(function(sha) {
-            return _this.getBlob(sha, false);
-          }).promise();
-        };
-
-        Repository.prototype.readBinary = function(branch, path) {
-          var _this = this;
-          return this.getSha(branch, path).then(function(sha) {
-            return _this.getBlob(sha, true);
+            return _this.getBlob(sha, isBase64);
           }).promise();
         };
 
@@ -368,10 +364,10 @@
           }).promise();
         };
 
-        Repository.prototype.write = function(branch, path, content, message) {
+        Repository.prototype.write = function(branch, path, content, message, isBase64) {
           var _this = this;
           return this._updateTree(branch).then(function(latestCommit) {
-            return _this.postBlob(content).then(function(blob) {
+            return _this.postBlob(content, isBase64).then(function(blob) {
               return _this.updateTree(latestCommit, path, blob).then(function(tree) {
                 return _this.commit(latestCommit, tree, message).then(function(commit) {
                   return _this.updateHead(branch, commit).then(function(res) {
