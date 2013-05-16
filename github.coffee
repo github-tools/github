@@ -48,6 +48,10 @@ makeGithub = (_, jQuery, base64encode) =>
           contentType: 'application/json'
           headers: {
             'Accept': 'application/vnd.github.raw'
+            # Set the `User-Agent` because it is required and NodeJS
+            # does not send one by default.
+            # See http://developer.github.com/v3/#user-agent-required
+            'User-Agent': 'github-client'
           }
 
           processData: false # Don't convert to QueryString

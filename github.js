@@ -31,7 +31,8 @@
             type: method,
             contentType: 'application/json',
             headers: {
-              'Accept': 'application/vnd.github.raw'
+              'Accept': 'application/vnd.github.raw',
+              'User-Agent': 'github-client'
             },
             processData: false,
             data: !raw && data && JSON.stringify(data) || data,
