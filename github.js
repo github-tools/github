@@ -6,7 +6,7 @@
   makeGithub = function(_, jQuery, base64encode) {
     var Github;
     Github = (function() {
-      var Gist, Repository, User, listeners, _request;
+      var Authenticated, Gist, Repository, User, listeners, _request;
 
       _request = null;
 
@@ -100,54 +100,70 @@
         return listeners.push(listener);
       };
 
-      Github.prototype.zen = function() {
-        return _request('GET', '/zen', null);
+      Github.prototype.getZen = function() {
+        return _request('GET', '/zen', null, true);
       };
 
-      Github.prototype.notifications = function() {
-        return _request('GET', '/notifications', null);
+      Github.prototype.getOrgRepos = function(orgName) {
+        return _request('GET', "/orgs/" + orgName + "/repos?type=all&per_page=1000&sort=updated&direction=desc", null);
       };
 
-      User = (function() {
+      Authenticated = (function() {
 
-        function User() {}
+        function Authenticated() {}
 
-        User.prototype.repos = function() {
+        Authenticated.prototype.getInfo = function() {
+          return _request('GET', "/user", null);
+        };
+
+        Authenticated.prototype.getRepos = function() {
           return _request('GET', '/user/repos?type=all&per_page=1000&sort=updated', null);
         };
 
-        User.prototype.orgs = function() {
+        Authenticated.prototype.getOrgs = function() {
           return _request('GET', '/user/orgs', null);
         };
 
-        User.prototype.gists = function() {
+        Authenticated.prototype.getGists = function() {
           return _request('GET', '/gists', null);
         };
 
-        User.prototype.show = function(username) {
-          var command;
-          command = (username ? "/users/" + username : '/user');
-          return _request('GET', command, null);
+        Authenticated.prototype.getNotifications = function() {
+          return _request('GET', '/notifications', null);
         };
 
-        User.prototype.userRepos = function(username) {
-          return _request('GET', "/users/" + username + "/repos?type=all&per_page=1000&sort=updated", null);
+        return Authenticated;
+
+      })();
+
+      User = (function() {
+
+        function User(username) {
+          this.username = username;
+        }
+
+        User.prototype.getInfo = function() {
+          return _request('GET', "/users/" + this.username, null);
         };
 
-        User.prototype.userGists = function(username) {
-          return _request('GET', "/users/" + username + "/gists", null);
+        User.prototype.getRepos = function() {
+          return _request('GET', "/users/" + this.username + "/repos?type=all&per_page=1000&sort=updated", null);
         };
 
-        User.prototype.orgRepos = function(orgname) {
-          return _request('GET', "/orgs/" + orgname + "/repos?type=all&per_page=1000&sort=updated&direction=desc", null);
+        User.prototype.getOrgs = function() {
+          return _request('GET', "/users/" + this.username + "/orgs", null);
         };
 
-        User.prototype.follow = function(username) {
-          return _request('PUT', "/user/following/" + username, null);
+        User.prototype.getGists = function() {
+          return _request('GET', "/users/" + this.username + "/gists", null);
         };
 
-        User.prototype.unfollow = function(username) {
-          return _request('DELETE', "/user/following/" + username, null);
+        User.prototype.follow = function() {
+          return _request('PUT', "/user/following/" + this.username, null);
+        };
+
+        User.prototype.unfollow = function() {
+          return _request('DELETE', "/user/following/" + this.username, null);
         };
 
         return User;
@@ -301,6 +317,10 @@
           });
         };
 
+        Repository.prototype.getInfo = function() {
+          return _request('GET', this.repoPath, null);
+        };
+
         Repository.prototype.show = function() {
           return _request('GET', this.repoPath, null);
         };
@@ -432,8 +452,12 @@
         });
       };
 
-      Github.prototype.getUser = function() {
-        return new User();
+      Github.prototype.getAuthenticated = function() {
+        return new Authenticated();
+      };
+
+      Github.prototype.getUser = function(username) {
+        return new User(username);
       };
 
       Github.prototype.getGist = function(id) {
@@ -458,9 +482,9 @@
       buffer = new Buffer(str, 'binary');
       return buffer.toString('base64');
     };
-    Github = makeGithub(_, jQuery, encode);
+    Github = makeGithub(_, jQuery, encode, true);
     exports["new"] = function(options) {
-      return new Github;
+      return new Github(options);
     };
   } else if (typeof define !== "undefined" && define !== null) {
     if (this.btoa) {

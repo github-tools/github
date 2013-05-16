@@ -112,58 +112,82 @@ makeGithub = (_, jQuery, base64encode) =>
 
     # Request a random zen quote (test the API)
     # -------
-    zen: -> _request 'GET', '/zen', null
+    getZen: ->
+      # Send `data` to `null` and the `raw` flag to `true`
+      _request 'GET', '/zen', null, true
 
-    # List unread notifications for authenticated user
+    # List organization repositories
     # -------
-    notifications: -> _request 'GET', '/notifications', null
+    getOrgRepos: (orgName) ->
+      _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
 
-    # User API
+
+    # Authenticated User API
     # =======
-    class User
-      repos: ->
+    class Authenticated
+
+      # Retrieve information for the currently authenticated user
+      # -------
+      getInfo: ->
+        _request 'GET', "/user", null
+
+      # List repositories owned by this user
+      # -------
+      getRepos: ->
         _request 'GET', '/user/repos?type=all&per_page=1000&sort=updated', null
 
       # List user organizations
       # -------
-      orgs: ->
+      getOrgs: ->
         _request 'GET', '/user/orgs', null
 
       # List authenticated user's gists
       # -------
-      gists: ->
+      getGists: ->
         _request 'GET', '/gists', null
 
-      # Show user information
+      # List unread notifications for authenticated user
       # -------
-      show: (username) ->
-        command = (if username then "/users/#{username}" else '/user')
-        _request 'GET', command, null
+      getNotifications: ->
+        _request 'GET', '/notifications', null
+
+
+    # Github Users API
+    # =======
+    class User
+
+      # Store the username
+      constructor: (@username) ->
+
+      # Retrieve user information
+      # -------
+      getInfo: ->
+        _request 'GET', "/users/#{@username}", null
 
       # List user repositories
       # -------
-      userRepos: (username) ->
-        _request 'GET', "/users/#{username}/repos?type=all&per_page=1000&sort=updated", null
+      getRepos: ->
+        _request 'GET', "/users/#{@username}/repos?type=all&per_page=1000&sort=updated", null
+
+      # List user organizations
+      # -------
+      getOrgs: ->
+        _request 'GET', "/users/#{@username}/orgs", null
 
       # List a user's gists
       # -------
-      userGists: (username) ->
-        _request 'GET', "/users/#{username}/gists", null
-
-      # List organization repositories
-      # -------
-      orgRepos: (orgname) ->
-        _request 'GET', "/orgs/#{orgname}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
+      getGists: ->
+        _request 'GET', "/users/#{@username}/gists", null
 
       # Follow user
       # -------
-      follow: (username) ->
-        _request 'PUT', "/user/following/#{username}", null
+      follow: ->
+        _request 'PUT', "/user/following/#{@username}", null
 
       # Unfollow user
       # -------
-      unfollow: (username) ->
-        _request 'DELETE', "/user/following/#{username}", null
+      unfollow: ->
+        _request 'DELETE', "/user/following/#{@username}", null
 
 
     # Repository API
@@ -343,7 +367,12 @@ makeGithub = (_, jQuery, base64encode) =>
         _request 'PATCH', "#{@repoPath}/git/refs/heads/#{head}", {sha: commit}
 
 
-      # Show repository information
+      # Get repository information
+      # -------
+      getInfo: () ->
+        _request 'GET', @repoPath, null
+
+      # Get repository information (DEPRECATED)
       # -------
       show: () ->
         _request 'GET', @repoPath, null
@@ -504,8 +533,13 @@ makeGithub = (_, jQuery, base64encode) =>
         name: repo
       )
 
-    getUser: ->
-      new User()
+    # Methods for the currently-authenticated user
+    getAuthenticated: ->
+      new Authenticated()
+
+    # API for viewing info for arbitrary users
+    getUser: (username) ->
+      new User(username)
 
     getGist: (id) ->
       new Gist(id: id)
@@ -527,8 +561,8 @@ if exports?
   encode = (str) ->
     buffer = new Buffer str, 'binary'
     buffer.toString 'base64'
-  Github = makeGithub _, jQuery, encode
-  exports.new = (options) -> new Github
+  Github = makeGithub _, jQuery, encode, true # isNodeJS
+  exports.new = (options) -> new Github(options)
 
 # If requirejs is detected then load this module asynchronously
 else if define?

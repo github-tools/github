@@ -65,7 +65,7 @@ var repo = github.getRepo(username, reponame);
 Show repository information
 
 ```js
-repo.show()
+repo.getInfo()
 .done(function(repo) {})
 .fail(function(err)  {});
 ```
@@ -206,37 +206,14 @@ repo.deleteRef('heads/gh-pages')
 
 
 ```js
-var user = github.getUser();
-```
-
-List all repositories of the authenticated user.
-
-```js
-user.repos(username)
-.done(function(repos) {})
-.fail(function(err) {});
-```
-
-List organizations the autenticated user belongs to.
-
-```js
-user.orgs()
-.done(function(orgs) {})
-.fail(function(err) {});
-```
-
-List authenticated user's gists.
-
-```js
-user.gists(username)
-.done(function(gists) {})
-.fail(function(err) {});
+var username = "ANY_GITHUB_USERNAME";
+var user = github.getUser(username);
 ```
 
 Show user information for a particular username. Also works for organizations.
 
 ```js
-user.show(username)
+user.getInfo()
 .done(function(user) {})
 .fail(function(err) {});
 ```
@@ -244,26 +221,37 @@ user.show(username)
 List public repositories for a particular user.
 
 ```js
-user.userRepos(username)
+user.getRepos()
 .done(function(repos) {})
 .fail(function(err) {});
 ```
 
-List repositories for a particular organization. Includes private repositories if you are authorized.
+List all gists of a particular user.
 
 ```js
-user.orgRepos(orgname)
-.done(function(repos) {})
-.fail(function(err) {});
-```
-
-List all gists of a particular user. If username is ommitted gists of the current authenticated user are returned.
-
-```js
-user.userGists(username)
+user.getGists()
 .done(function(gists) {})
 .fail(function(err) {});
 ```
+
+## Authenticated User API
+
+List private and public repositories of the current authenticated user.
+
+```js
+user.getRepos()
+.done(function(repos) {})
+.fail(function(err) {});
+```
+
+List organizations the autenticated user belongs to.
+
+```js
+user.getOrgs()
+.done(function(orgs) {})
+.fail(function(err) {});
+```
+
 
 ## Gist API
 
@@ -301,6 +289,24 @@ var delta = {
 
 gist.update(delta)
 .done(function(gist) {})
+.fail(function(err) {});
+```
+
+## Miscellaneous methods
+
+Retreive a zen message (to test the API works).
+
+```js
+github.getZen()
+.done(function(msg) {})
+.fail(function(err) {});
+```
+
+List repositories for a particular organization. Includes private repositories if you are authorized.
+
+```js
+github.getOrgRepos(orgname)
+.done(function(repos) {})
 .fail(function(err) {});
 ```
 
