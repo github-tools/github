@@ -110,6 +110,10 @@ makeGithub = (_, jQuery, base64encode) =>
     # -------
     zen: -> _request 'GET', '/zen', null
 
+    # List unread notifications for authenticated user
+    # -------
+    notifications: -> _request 'GET', '/notifications', null
+
     # User API
     # =======
     class User

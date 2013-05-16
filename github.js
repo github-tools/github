@@ -103,6 +103,10 @@
         return _request('GET', '/zen', null);
       };
 
+      Github.prototype.notifications = function() {
+        return _request('GET', '/notifications', null);
+      };
+
       User = (function() {
 
         function User() {}
