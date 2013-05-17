@@ -5,7 +5,7 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  makeGithub = function(_, jQuery, base64encode) {
+  makeGithub = function(_, jQuery, base64encode, userAgent) {
     var Github;
     Github = (function() {
       var AuthenticatedUser, Gist, Repository, User, listeners, _request;
@@ -21,38 +21,40 @@
         options.rootURL = options.rootURL || 'https://api.github.com';
         listeners = [];
         _request = function(method, path, data, raw, isBase64) {
-          var getURL, xhr,
+          var auth, getURL, headers, mimeType, xhr,
             _this = this;
           getURL = function() {
             var url;
             url = options.rootURL + path;
             return url + (/\?/.test(url) ? '&' : '?') + (new Date()).getTime();
           };
+          mimeType = void 0;
+          if (isBase64) {
+            mimeType = 'text/plain; charset=x-user-defined';
+          }
+          headers = {
+            'Accept': 'application/vnd.github.raw'
+          };
+          if (userAgent) {
+            headers['User-Agent'] = userAgent;
+          }
+          if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
+            if (options.auth === 'oauth') {
+              auth = "token " + options.token;
+            } else {
+              auth = 'Basic ' + base64encode("" + options.username + ":" + options.password);
+            }
+            headers['Authorization'] = auth;
+          }
           xhr = jQuery.ajax({
             url: getURL(),
             type: method,
             contentType: 'application/json',
-            headers: {
-              'Accept': 'application/vnd.github.raw',
-              'User-Agent': 'github-client'
-            },
+            mimeType: mimeType,
+            headers: headers,
             processData: false,
             data: !raw && data && JSON.stringify(data) || data,
             dataType: !raw ? 'json' : void 0,
-            beforeSend: function(xhr) {
-              var auth;
-              if (isBase64) {
-                xhr.overrideMimeType('text/plain; charset=x-user-defined');
-              }
-              if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
-                if (options.auth === 'oauth') {
-                  auth = "token " + options.token;
-                } else {
-                  auth = 'Basic ' + base64encode("" + options.username + ":" + options.password);
-                }
-                return xhr.setRequestHeader('Authorization', auth);
-              }
-            },
             complete: function(xhr, xmlhttpr) {
               var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
               rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
@@ -263,8 +265,8 @@
           return _request('GET', "" + this.repoPath + "/commits" + queryString, null).promise();
         };
 
-        Repository.prototype.getBlob = function(sha, isBinary) {
-          return _request('GET', "" + this.repoPath + "/git/blobs/" + sha, null, 'raw', isBinary);
+        Repository.prototype.getBlob = function(sha, isBase64) {
+          return _request('GET', "" + this.repoPath + "/git/blobs/" + sha, null, 'raw', isBase64);
         };
 
         Repository.prototype.getSha = function(branch, path) {
@@ -528,7 +530,7 @@
       buffer = new Buffer(str, 'binary');
       return buffer.toString('base64');
     };
-    Github = makeGithub(_, jQuery, encode, true);
+    Github = makeGithub(_, jQuery, encode, 'github-client');
     exports["new"] = function(options) {
       return new Github(options);
     };

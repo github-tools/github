@@ -18,7 +18,7 @@
 #
 # Depending on how this is loaded (nodejs, requirejs, globals)
 # the actual underscore, jQuery.ajax/Deferred, and base64 encode functions may differ.
-makeGithub = (_, jQuery, base64encode) =>
+makeGithub = (_, jQuery, base64encode, userAgent) =>
   class Github
 
     # HTTP Request Abstraction
@@ -41,33 +41,38 @@ makeGithub = (_, jQuery, base64encode) =>
           url = options.rootURL + path
           url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
 
+        # Support binary data by overriding the response mimeType
+        mimeType = undefined
+        mimeType = 'text/plain; charset=x-user-defined' if isBase64
+
+        headers = {
+          'Accept': 'application/vnd.github.raw'
+        }
+
+        # Set the `User-Agent` because it is required and NodeJS
+        # does not send one by default.
+        # See http://developer.github.com/v3/#user-agent-required
+        headers['User-Agent'] = userAgent if userAgent
+
+        if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
+          if options.auth is 'oauth'
+            auth = "token #{options.token}"
+          else
+            auth = 'Basic ' + base64encode("#{options.username}:#{options.password}")
+          headers['Authorization'] = auth
+
+
         xhr = jQuery.ajax {
           url: getURL()
           type: method
           #accepts: 'application/vnd.github.raw'
           contentType: 'application/json'
-          headers: {
-            'Accept': 'application/vnd.github.raw'
-            # Set the `User-Agent` because it is required and NodeJS
-            # does not send one by default.
-            # See http://developer.github.com/v3/#user-agent-required
-            'User-Agent': 'github-client'
-          }
+          mimeType: mimeType
+          headers: headers
 
           processData: false # Don't convert to QueryString
           data: !raw and data and JSON.stringify(data) or data
           dataType: 'json' unless raw
-
-          beforeSend: (xhr) =>
-            # Support binary data by overriding the response mimeType
-            xhr.overrideMimeType 'text/plain; charset=x-user-defined' if isBase64
-
-            if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
-              if options.auth is 'oauth'
-                auth = "token #{options.token}"
-              else
-                auth = 'Basic ' + base64encode("#{options.username}:#{options.password}")
-              xhr.setRequestHeader 'Authorization', auth
 
           # Update the `rateLimit*`
           complete: (xhr, xmlhttpr) =>
@@ -295,8 +300,8 @@ makeGithub = (_, jQuery, base64encode) =>
 
       # Retrieve the contents of a blob
       # -------
-      getBlob: (sha, isBinary) ->
-        _request 'GET', "#{@repoPath}/git/blobs/#{sha}", null, 'raw', isBinary
+      getBlob: (sha, isBase64) ->
+        _request 'GET', "#{@repoPath}/git/blobs/#{sha}", null, 'raw', isBase64
 
 
       # For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -596,7 +601,7 @@ if exports?
   encode = (str) ->
     buffer = new Buffer str, 'binary'
     buffer.toString 'base64'
-  Github = makeGithub _, jQuery, encode, true # isNodeJS
+  Github = makeGithub _, jQuery, encode, 'github-client' # `User-Agent` (for nodejs)
   exports.new = (options) -> new Github(options)
 
 # If requirejs is detected then load this module asynchronously
