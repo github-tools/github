@@ -534,18 +534,18 @@
     exports["new"] = function(options) {
       return new Github(options);
     };
-  } else if (typeof define !== "undefined" && define !== null) {
+  } else if (this.define != null) {
     if (this.btoa) {
-      define('github', ['underscore', 'jquery'], function(_, jQuery) {
+      this.define('github', ['underscore', 'jquery'], function(_, jQuery) {
         return makeGithub(_, jQuery, this.btoa);
       });
     } else {
-      define('github', ['underscore', 'jquery', 'base64'], function(_, jQuery, Base64) {
+      this.define('github', ['underscore', 'jquery', 'base64'], function(_, jQuery, Base64) {
         return makeGithub(_, jQuery, Base64.encode);
       });
     }
   } else if (this._ && this.jQuery && (this.btoa || this.Base64)) {
-    encode = this.btoa || Base64.encode;
+    encode = this.btoa || this.Base64.encode;
     this.Github = makeGithub(this._, this.jQuery, encode);
   } else {
     err = function(msg) {
