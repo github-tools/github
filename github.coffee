@@ -260,6 +260,39 @@ makeGithub = (_, jQuery, base64encode) =>
         .promise()
 
 
+      # List commits on a repository.
+      # -------
+      # Takes an object of optional paramaters:
+      #
+      # - sha: SHA or branch to start listing commits from
+      # - path: Only commits containing this file path will be returned
+      # - author: GitHub login, name, or email by which to filter by commit author
+      # - since: ISO 8601 date - only commits after this date will be returned
+      # - until: ISO 8601 date - only commits before this date will be returned
+      getCommits: (options={}) ->
+        options = _.extend {}, options
+
+        # Convert a Date object to a string
+        getDate = (time) ->
+          return time.toISOString() if Date == time.constructor
+          return time
+
+        options.since = getDate(options.since) if options.since
+        options.until = getDate(options.until) if options.until
+
+        queryString = ''
+        if not _.isEmpty(options)
+          params = []
+          _.each _.pairs(options), ([key, value]) ->
+            params.push "#{key}=#{encodeURIComponent(value)}"
+          queryString = "?#{params.join('&')}"
+
+        _request('GET', "#{@repoPath}/commits#{queryString}", null)
+
+        # Return the promise
+        .promise()
+
+
       # Retrieve the contents of a blob
       # -------
       getBlob: (sha, isBinary) ->

@@ -232,6 +232,37 @@
           }).promise();
         };
 
+        Repository.prototype.getCommits = function(options) {
+          var getDate, params, queryString;
+          if (options == null) {
+            options = {};
+          }
+          options = _.extend({}, options);
+          getDate = function(time) {
+            if (Date === time.constructor) {
+              return time.toISOString();
+            }
+            return time;
+          };
+          if (options.since) {
+            options.since = getDate(options.since);
+          }
+          if (options.until) {
+            options.until = getDate(options.until);
+          }
+          queryString = '';
+          if (!_.isEmpty(options)) {
+            params = [];
+            _.each(_.pairs(options), function(_arg) {
+              var key, value;
+              key = _arg[0], value = _arg[1];
+              return params.push("" + key + "=" + (encodeURIComponent(value)));
+            });
+            queryString = "?" + (params.join('&'));
+          }
+          return _request('GET', "" + this.repoPath + "/commits" + queryString, null).promise();
+        };
+
         Repository.prototype.getBlob = function(sha, isBinary) {
           return _request('GET', "" + this.repoPath + "/git/blobs/" + sha, null, 'raw', isBinary);
         };
