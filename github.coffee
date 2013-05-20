@@ -199,14 +199,20 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
     # Repository API
     # =======
-    class Repository
-      constructor: (@options) ->
-        repo = @options.name
-        user = @options.user
-        @repoPath = "/repos/#{user}/#{repo}"
-        @currentTree =
-          branch: null
-          sha: null
+
+    # Low-level class for manipulating a Git Repository
+    # -------
+    class GitRepo
+
+      # Private variables
+      _repoPath = null
+      _currentTree =
+        branch: null
+        sha: null
+
+
+      constructor: (@repoUser, @repoName) ->
+        _repoPath = "/repos/#{@repoUser}/#{@repoName}"
 
 
       # Uses the cache if branch has not been changed
@@ -223,10 +229,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # Return the promise
         .promise()
 
+
       # Get a particular reference
       # -------
       getRef: (ref) ->
-        _request('GET', "#{@repoPath}/git/refs/#{ref}", null)
+        _request('GET', "#{_repoPath}/git/refs/#{ref}", null)
         .then (res) =>
           return res.object.sha
         # Return the promise
@@ -241,7 +248,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       #   "sha": "827efc6d56897b048c772eb4087f854f46256132"
       # }
       createRef: (options) ->
-        _request 'POST', "#{@repoPath}/git/refs", options
+        _request 'POST', "#{_repoPath}/git/refs", options
 
 
       # Delete a reference
@@ -250,19 +257,128 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # repo.deleteRef('heads/gh-pages')
       # repo.deleteRef('tags/v1.0')
       deleteRef: (ref) ->
-        _request 'DELETE', "#{@repoPath}/git/refs/#{ref}", @options
+        _request 'DELETE', "#{_repoPath}/git/refs/#{ref}", @options
 
 
       # List all branches of a repository
       # -------
-      listBranches: ->
-        _request('GET', "#{@repoPath}/git/refs/heads", null)
+      getBranches: ->
+        _request('GET', "#{_repoPath}/git/refs/heads", null)
         .then (heads) =>
           return _.map(heads, (head) ->
             _.last head.ref.split("/")
           )
         # Return the promise
         .promise()
+
+
+      # Retrieve the contents of a blob
+      # -------
+      getBlob: (sha, isBase64) ->
+        _request 'GET', "#{_repoPath}/git/blobs/#{sha}", null, 'raw', isBase64
+
+
+      # For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      # -------
+      getSha: (branch, path) ->
+        # Just use head if path is empty
+        return @getRef "heads/#{branch}" if path is ''
+
+        @getTree("#{branch}?recursive=true")
+        .then (tree) =>
+          file = _.select(tree, (file) ->
+            file.path is path
+          )[0]
+          return file?.sha if file?.sha
+
+          # Return a promise that has failed if no sha was found
+          (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+
+        # Return the promise
+        .promise()
+
+
+      # Retrieve the tree a commit points to
+      # -------
+      getTree: (tree) ->
+        _request('GET', "#{_repoPath}/git/trees/#{tree}", null)
+        .then (res) =>
+          return res.tree
+        # Return the promise
+        .promise()
+
+
+      # Post a new blob object, getting a blob SHA back
+      # -------
+      postBlob: (content, isBase64) ->
+        if typeof (content) is 'string'
+          content =
+            content: content
+            encoding: 'utf-8'
+
+        content.encoding = 'base64' if isBase64
+
+        _request('POST', "#{_repoPath}/git/blobs", content)
+        .then (res) =>
+          return res.sha
+        # Return the promise
+        .promise()
+
+
+      # Update an existing tree adding a new blob object getting a tree SHA back
+      # -------
+      updateTree: (baseTree, path, blob) ->
+        data =
+          base_tree: baseTree
+          tree: [
+            path: path
+            mode: '100644'
+            type: 'blob'
+            sha: blob
+          ]
+
+        _request('POST', "#{_repoPath}/git/trees", data)
+        .then (res) =>
+          return res.sha
+        # Return the promise
+        .promise()
+
+
+      # Post a new tree object having a file path pointer replaced
+      # with a new blob SHA getting a tree SHA back
+      # -------
+      postTree: (tree) ->
+        _request('POST', "#{_repoPath}/git/trees", {tree: tree})
+        .then (res) =>
+          return res.sha
+        # Return the promise
+        .promise()
+
+
+      # Create a new commit object with the current commit SHA as the parent
+      # and the new tree SHA, getting a commit SHA back
+      # -------
+      commit: (parent, tree, message) ->
+        data =
+          message: message
+          author:
+            name: @options.username
+
+          parents: [parent]
+          tree: tree
+
+        _request('POST', "#{_repoPath}/git/commits", data)
+        .then (res) =>
+          @currentTree.sha = res.sha # update latest commit
+          return res.sha
+        # Return the promise
+        .promise()
+
+
+      # Update the reference of your head to point to the new commit SHA
+      # -------
+      updateHead: (head, commit) ->
+        _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
 
 
       # List commits on a repository.
@@ -292,131 +408,175 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             params.push "#{key}=#{encodeURIComponent(value)}"
           queryString = "?#{params.join('&')}"
 
-        _request('GET', "#{@repoPath}/commits#{queryString}", null)
+        _request('GET', "#{_repoPath}/commits#{queryString}", null)
+        # Return the promise
+        .promise()
+
+
+    # Branch Class
+    # -------
+    # Provides common methods that may require several git operations.
+    class Branch
+      # Local variables
+      _git = null
+      _getRef = -> throw 'BUG: No way to fetch branch ref!'
+
+      constructor: (git, getRef) ->
+        _git = git
+        _getRef = getRef
+
+      # List commits on a branch.
+      # -------
+      # Takes an object of optional paramaters:
+      #
+      # - path: Only commits containing this file path will be returned
+      # - author: GitHub login, name, or email by which to filter by commit author
+      # - since: ISO 8601 date - only commits after this date will be returned
+      # - until: ISO 8601 date - only commits before this date will be returned
+      getCommits: (options={}) ->
+        options = _.extend {}, options
+        # Limit to the current branch
+        _getRef()
+        .then (branch) ->
+          options.sha = branch
+          _git.getCommits(options)
 
         # Return the promise
         .promise()
 
 
-      # Retrieve the contents of a blob
+      # Read file at given path
       # -------
-      getBlob: (sha, isBase64) ->
-        _request 'GET', "#{@repoPath}/git/blobs/#{sha}", null, 'raw', isBase64
+      # Set `isBase64=true` to get back a base64 encoded binary file
+      read: (path, isBase64) ->
+        _getRef()
+        .then (branch) =>
+          _git.getSha(branch, path)
+          .then (sha) =>
+            _git.getBlob(sha, isBase64)
+        # Return the promise
+        .promise()
 
 
-      # For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      # Remove a file from the tree
       # -------
-      getSha: (branch, path) ->
-        # Just use head if path is empty
-        return @getRef "heads/#{branch}" if path is ''
+      remove: (path, message="Deleted #{path}") ->
+        _getRef()
+        .then (branch) =>
+          _git._updateTree(branch)
+          .then (latestCommit) =>
+            _git.getTree("#{latestCommit}?recursive=true")
+            .then (tree) =>
 
-        @getTree("#{branch}?recursive=true")
-        .then (tree) =>
-          file = _.select(tree, (file) ->
-            file.path is path
-          )[0]
-          return file?.sha if file?.sha
+              # Update Tree
+              newTree = _.reject(tree, (ref) ->
+                ref.path is path
+              )
+              _.each newTree, (ref) ->
+                delete ref.sha  if ref.type is 'tree'
 
-          # Return a promise that has failed if no sha was found
-          (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+              _git.postTree(newTree)
+              .then (rootTree) =>
+                _git.commit(latestCommit, rootTree, message)
+                .then (commit) =>
+                  _git.updateHead(branch, commit)
+                  .then (res) =>
+                    # Finally, return the result
+                    return res
 
         # Return the promise
         .promise()
 
 
-      # Retrieve the tree a commit points to
+      # Move a file to a new location
       # -------
-      getTree: (tree) ->
-        _request('GET', "#{@repoPath}/git/trees/#{tree}", null)
-        .then (res) =>
-          return res.tree
+      move: (path, newPath) ->
+        _getRef()
+        .then (branch) =>
+          _git._updateTree(branch)
+          .then (latestCommit) =>
+            _git.getTree("#{latestCommit}?recursive=true")
+            .then (tree) =>
+
+              # Update Tree
+              _.each tree, (ref) ->
+                ref.path = newPath  if ref.path is path
+                delete ref.sha  if ref.type is 'tree'
+
+              _git.postTree(tree)
+              .then (rootTree) =>
+                _git.commit(latestCommit, rootTree, "Deleted #{path}")
+                .then (commit) =>
+                  _git.updateHead(branch, commit)
+                  .then (res) =>
+                    # Finally, return the result
+                    return res
         # Return the promise
         .promise()
 
 
-      # Post a new blob object, getting a blob SHA back
+      # Write file contents to a given branch and path
       # -------
-      postBlob: (content, isBase64) ->
-        if typeof (content) is 'string'
-          content =
-            content: content
-            encoding: 'utf-8'
-
-        content.encoding = 'base64' if isBase64
-
-        _request('POST', "#{@repoPath}/git/blobs", content)
-        .then (res) =>
-          return res.sha
+      # To write base64 encoded data set `isBase64==true`
+      write: (path, content, message, isBase64) ->
+        _getRef()
+        .then (branch) =>
+          _git._updateTree(branch)
+          .then (latestCommit) =>
+            _git.postBlob(content, isBase64)
+            .then (blob) =>
+              _git.updateTree(latestCommit, path, blob)
+              .then (tree) =>
+                _git.commit(latestCommit, tree, message)
+                .then (commit) =>
+                  _git.updateHead(branch, commit)
+                  .then (res) =>
+                    # Finally, return the result
+                    return res
         # Return the promise
         .promise()
 
 
-      # Update an existing tree adding a new blob object getting a tree SHA back
+    # Repository Class
+    # -------
+    # Provides methods for operating on the entire repository
+    # and ways to operate on a `Branch`.
+    class Repository
+      constructor: (@options) ->
+        user = @options.user
+        repo = @options.name
+        @git = new GitRepo(user, repo)
+        @repoPath = "/repos/#{user}/#{repo}"
+        @currentTree =
+          branch: null
+          sha: null
+
+      # List all branches of a repository
       # -------
-      updateTree: (baseTree, path, blob) ->
-        data =
-          base_tree: baseTree
-          tree: [
-            path: path
-            mode: '100644'
-            type: 'blob'
-            sha: blob
-          ]
-
-        _request('POST', "#{@repoPath}/git/trees", data)
-        .then (res) =>
-          return res.sha
-        # Return the promise
-        .promise()
+      getBranches: -> @git.getBranches()
 
 
-      # Post a new tree object having a file path pointer replaced
-      # with a new blob SHA getting a tree SHA back
-      # -------
-      postTree: (tree) ->
-        _request('POST', "#{@repoPath}/git/trees", {tree: tree})
-        .then (res) =>
-          return res.sha
-        # Return the promise
-        .promise()
+      getBranch: (branchName) ->
+        getRef = =>
+          deferred = new jQuery.Deferred()
+          deferred.resolve(branchName)
+          deferred
+        new Branch(@git, getRef)
 
 
-      # Create a new commit object with the current commit SHA as the parent
-      # and the new tree SHA, getting a commit SHA back
-      # -------
-      commit: (parent, tree, message) ->
-        data =
-          message: message
-          author:
-            name: @options.username
-
-          parents: [parent]
-          tree: tree
-
-        _request('POST', "#{@repoPath}/git/commits", data)
-        .then (res) =>
-          @currentTree.sha = res.sha # update latest commit
-          return res.sha
-        # Return the promise
-        .promise()
-
-
-      # Update the reference of your head to point to the new commit SHA
-      # -------
-      updateHead: (head, commit) ->
-        _request 'PATCH', "#{@repoPath}/git/refs/heads/#{head}", {sha: commit}
+      getDefaultBranch: () ->
+        # Calls getInfo() to get the default branch name
+        getRef = =>
+          @getInfo()
+          .then (info) =>
+            return info.master_branch
+        new Branch(@git, getRef)
 
 
       # Get repository information
       # -------
       getInfo: () ->
         _request 'GET', @repoPath, null
-
-      # Get repository information (DEPRECATED)
-      # -------
-      show: () ->
-        _request 'GET', @repoPath, null
-
 
       # Get contents
       # --------
@@ -436,88 +596,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         _request 'POST', "#{@repoPath}/pulls", options
 
 
-      # Read file at given path
-      # -------
-      # Set `isBase64=true` to get back a base64 encoded binary file
-      read: (branch, path, isBase64) ->
-        @getSha(branch, path)
-        .then (sha) =>
-          @getBlob(sha, isBase64)
-        # Return the promise
-        .promise()
-
-
-      # Remove a file from the tree
-      # -------
-      remove: (branch, path) ->
-        @_updateTree(branch)
-        .then (latestCommit) =>
-          @getTree("#{latestCommit}?recursive=true")
-          .then (tree) =>
-
-            # Update Tree
-            newTree = _.reject(tree, (ref) ->
-              ref.path is path
-            )
-            _.each newTree, (ref) ->
-              delete ref.sha  if ref.type is 'tree'
-
-            @postTree(newTree)
-            .then (rootTree) =>
-              @commit(latestCommit, rootTree, "Deleted #{path}")
-              .then (commit) =>
-                @updateHead(branch, commit)
-                .then (res) =>
-                  # Finally, return the result
-                  return res
-
-        # Return the promise
-        .promise()
-
-
-      # Move a file to a new location
-      # -------
-      move: (branch, path, newPath) ->
-        @_updateTree(branch)
-        .then (latestCommit) =>
-          @getTree("#{latestCommit}?recursive=true")
-          .then (tree) =>
-
-            # Update Tree
-            _.each tree, (ref) ->
-              ref.path = newPath  if ref.path is path
-              delete ref.sha  if ref.type is 'tree'
-
-            @postTree(tree)
-            .then (rootTree) =>
-              @commit(latestCommit, rootTree, "Deleted #{path}")
-              .then (commit) =>
-                @updateHead(branch, commit)
-                .then (res) =>
-                  # Finally, return the result
-                  return res
-        # Return the promise
-        .promise()
-
-
-      # Write file contents to a given branch and path
-      # -------
-      # To write base64 encoded data set `isBase64==true`
-      write: (branch, path, content, message, isBase64) ->
-        @_updateTree(branch)
-        .then (latestCommit) =>
-          @postBlob(content, isBase64)
-          .then (blob) =>
-            @updateTree(latestCommit, path, blob)
-            .then (tree) =>
-              @commit(latestCommit, tree, message)
-              .then (commit) =>
-                @updateHead(branch, commit)
-                .then (res) =>
-                  # Finally, return the result
-                  return res
-        # Return the promise
-        .promise()
+      # Get recent commits to the repository
+      # --------
+      # Takes an object of optional paramaters:
+      #
+      # - path: Only commits containing this file path will be returned
+      # - author: GitHub login, name, or email by which to filter by commit author
+      # - since: ISO 8601 date - only commits after this date will be returned
+      # - until: ISO 8601 date - only commits before this date will be returned
+      getCommits: (options) ->
+        @git.getCommits(options)
 
 
     class Gist
