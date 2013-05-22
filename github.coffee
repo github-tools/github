@@ -462,7 +462,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
       # Remove a file from the tree
       # -------
-      remove: (path, message="Deleted #{path}") ->
+      remove: (path, message="Removed #{path}") ->
         _getRef()
         .then (branch) =>
           _git._updateTree(branch)
@@ -492,7 +492,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
       # Move a file to a new location
       # -------
-      move: (path, newPath) ->
+      move: (path, newPath, message="Moved #{path}") ->
         _getRef()
         .then (branch) =>
           _git._updateTree(branch)
@@ -507,7 +507,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
               _git.postTree(tree)
               .then (rootTree) =>
-                _git.commit(latestCommit, rootTree, "Deleted #{path}")
+                _git.commit(latestCommit, rootTree, message)
                 .then (commit) =>
                   _git.updateHead(branch, commit)
                   .then (res) =>
@@ -520,7 +520,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Write file contents to a given branch and path
       # -------
       # To write base64 encoded data set `isBase64==true`
-      write: (path, content, message, isBase64) ->
+      write: (path, content, message="Changed #{path}", isBase64) ->
         _getRef()
         .then (branch) =>
           _git._updateTree(branch)

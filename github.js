@@ -403,7 +403,7 @@
         Branch.prototype.remove = function(path, message) {
           var _this = this;
           if (message == null) {
-            message = "Deleted " + path;
+            message = "Removed " + path;
           }
           return _getRef().then(function(branch) {
             return _git._updateTree(branch).then(function(latestCommit) {
@@ -429,8 +429,11 @@
           }).promise();
         };
 
-        Branch.prototype.move = function(path, newPath) {
+        Branch.prototype.move = function(path, newPath, message) {
           var _this = this;
+          if (message == null) {
+            message = "Moved " + path;
+          }
           return _getRef().then(function(branch) {
             return _git._updateTree(branch).then(function(latestCommit) {
               return _git.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
@@ -443,7 +446,7 @@
                   }
                 });
                 return _git.postTree(tree).then(function(rootTree) {
-                  return _git.commit(latestCommit, rootTree, "Deleted " + path).then(function(commit) {
+                  return _git.commit(latestCommit, rootTree, message).then(function(commit) {
                     return _git.updateHead(branch, commit).then(function(res) {
                       return res;
                     });
@@ -456,6 +459,9 @@
 
         Branch.prototype.write = function(path, content, message, isBase64) {
           var _this = this;
+          if (message == null) {
+            message = "Changed " + path;
+          }
           return _getRef().then(function(branch) {
             return _git._updateTree(branch).then(function(latestCommit) {
               return _git.postBlob(content, isBase64).then(function(blob) {
