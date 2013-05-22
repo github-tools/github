@@ -202,12 +202,12 @@
 
         GitRepo.prototype._updateTree = function(branch) {
           var _this = this;
-          if (branch === this.currentTree.branch && this.currentTree.sha) {
-            return (new jQuery.Deferred()).resolve(this.currentTree.sha);
+          if (branch === _currentTree.branch && _currentTree.sha) {
+            return (new jQuery.Deferred()).resolve(_currentTree.sha);
           }
           return this.getRef("heads/" + branch).then(function(sha) {
-            _this.currentTree.branch = branch;
-            _this.currentTree.sha = sha;
+            _currentTree.branch = branch;
+            _currentTree.sha = sha;
             return sha;
           }).promise();
         };
@@ -322,7 +322,7 @@
             tree: tree
           };
           return _request('POST', "" + _repoPath + "/git/commits", data).then(function(res) {
-            _this.currentTree.sha = res.sha;
+            _currentTree.sha = res.sha;
             return res.sha;
           }).promise();
         };

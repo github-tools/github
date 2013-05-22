@@ -219,12 +219,12 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       _updateTree: (branch) ->
         # Since this method always returns a promise, wrap the result in a deferred
-        return (new jQuery.Deferred()).resolve(@currentTree.sha) if branch is @currentTree.branch and @currentTree.sha
+        return (new jQuery.Deferred()).resolve(_currentTree.sha) if branch is _currentTree.branch and _currentTree.sha
 
         @getRef("heads/#{branch}")
         .then (sha) =>
-          @currentTree.branch = branch
-          @currentTree.sha = sha
+          _currentTree.branch = branch
+          _currentTree.sha = sha
           return sha
         # Return the promise
         .promise()
@@ -369,7 +369,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
         _request('POST', "#{_repoPath}/git/commits", data)
         .then (res) =>
-          @currentTree.sha = res.sha # update latest commit
+          _currentTree.sha = res.sha # update latest commit
           return res.sha
         # Return the promise
         .promise()
