@@ -1,7 +1,8 @@
 # Github Promise API
 # ======
 #
-# This class provides a Promise API for accessing github (see `jQuery.Deferred()`).
+# This class provides a Promise API for accessing GitHub
+# (see [jQuery.Deferred](http://api.jquery.com/jQuery.deferred)).
 # Most methods return a Promise object whose value is resolved when `.then(doneFn, failFn)`
 # is called.
 #
@@ -62,7 +63,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         xhr = jQuery.ajax {
           url: getURL()
           type: method
-          #accepts: 'application/vnd.github.raw'
           contentType: 'application/json'
           mimeType: mimeType
           headers: headers
@@ -74,15 +74,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         }
 
 
-        # Parse the error if one occurs
         xhr
         .done =>
+          # Fire listeners when the request completes or fails
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
 
           for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64)
 
+        # Return the result and Base64 encode it if `isBase64` flag is set.
         .then (data, textStatus, jqXHR) ->
           ret = new jQuery.Deferred()
           # Convert the response to a Base64 encoded string
@@ -97,6 +98,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             ret.resolve(converted, textStatus, jqXHR)
           else
             ret.resolve(data, textStatus, jqXHR)
+
+        # Parse the error if one occurs
         .then null, (xhr, msg, desc) ->
           if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
             return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
@@ -112,13 +115,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     onRateLimitChanged: (listener) ->
       _listeners.push listener
 
-    # Request a random zen quote (test the API)
+    # Random zen quote (test the API)
     # -------
     getZen: ->
       # Send `data` to `null` and the `raw` flag to `true`
       _request 'GET', '/zen', null, true
 
-    # List organization repositories
+    # List public repositories for an Organization
     # -------
     getOrgRepos: (orgName) ->
       _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
@@ -128,7 +131,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     # =======
     class User
 
-      # Private var that stores the root path
+      # Private var that stores the root path.
+      # Use a different URL if this user is the authenticated user
       _rootPath = null
 
       # Store the username
@@ -216,7 +220,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       _updateTree: (branch) ->
         # Since this method always returns a promise, wrap the result in a deferred
-        return (new jQuery.Deferred()).resolve(_currentTree.sha) if branch is _currentTree.branch and _currentTree.sha
+        if branch is _currentTree.branch and _currentTree.sha
+          return (new jQuery.Deferred()).resolve(_currentTree.sha)
 
         @getRef("heads/#{branch}")
         .then (sha) =>
@@ -240,10 +245,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Create a new reference
       # --------
       #
-      # {
-      #   "ref": "refs/heads/my-new-branch-name",
-      #   "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      # }
+      #     {
+      #       "ref": "refs/heads/my-new-branch-name",
+      #       "sha": "827efc6d56897b048c772eb4087f854f46256132"
+      #     }
       createRef: (options) ->
         _request 'POST', "#{_repoPath}/git/refs", options
 
@@ -251,8 +256,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Delete a reference
       # --------
       #
-      # repo.deleteRef('heads/gh-pages')
-      # repo.deleteRef('tags/v1.0')
+      #     repo.deleteRef('heads/gh-pages')
+      #     repo.deleteRef('tags/v1.0')
       deleteRef: (ref) ->
         _request 'DELETE', "#{_repoPath}/git/refs/#{ref}", @options
 
@@ -279,7 +284,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       getSha: (branch, path) ->
         # Just use head if path is empty
-        return @getRef "heads/#{branch}" if path is ''
+        return @getRef("heads/#{branch}") if path is ''
 
         @getTree("#{branch}?recursive=true")
         .then (tree) =>
@@ -382,15 +387,15 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       # Takes an object of optional paramaters:
       #
-      # - sha: SHA or branch to start listing commits from
-      # - path: Only commits containing this file path will be returned
-      # - author: GitHub login, name, or email by which to filter by commit author
-      # - since: ISO 8601 date - only commits after this date will be returned
-      # - until: ISO 8601 date - only commits before this date will be returned
+      # - `sha`: SHA or branch to start listing commits from
+      # - `path`: Only commits containing this file path will be returned
+      # - `author`: GitHub login, name, or email by which to filter by commit author
+      # - `since`: ISO 8601 date - only commits after this date will be returned
+      # - `until`: ISO 8601 date - only commits before this date will be returned
       getCommits: (options={}) ->
         options = _.extend {}, options
 
-        # Convert a Date object to a string
+        # Converts a Date object to a string
         getDate = (time) ->
           return time.toISOString() if Date == time.constructor
           return time
@@ -426,10 +431,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       # Takes an object of optional paramaters:
       #
-      # - path: Only commits containing this file path will be returned
-      # - author: GitHub login, name, or email by which to filter by commit author
-      # - since: ISO 8601 date - only commits after this date will be returned
-      # - until: ISO 8601 date - only commits before this date will be returned
+      # - `path`: Only commits containing this file path will be returned
+      # - `author`: GitHub login, name, or email by which to filter by commit author
+      # - `since`: ISO 8601 date - only commits after this date will be returned
+      # - `until`: ISO 8601 date - only commits before this date will be returned
       getCommits: (options={}) ->
         options = _.extend {}, options
         # Limit to the current branch
