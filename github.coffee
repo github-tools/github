@@ -27,7 +27,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     _request = null
 
     # These are updated whenever a request is made
-    listeners = []
+    _listeners = []
 
     constructor: (options={}) ->
       # Provide an option to override the default URL
@@ -80,7 +80,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
 
-          for listener in listeners
+          for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64)
 
         .then (data, textStatus, jqXHR) ->
@@ -110,7 +110,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     # Add a listener that fires when the `rateLimitRemaining` changes as a result of
     # communicating with github.
     onRateLimitChanged: (listener) ->
-      listeners.push listener
+      _listeners.push listener
 
     # Request a random zen quote (test the API)
     # -------

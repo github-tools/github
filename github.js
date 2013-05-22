@@ -8,11 +8,11 @@
   makeGithub = function(_, jQuery, base64encode, userAgent) {
     var Github;
     Github = (function() {
-      var AuthenticatedUser, Branch, Gist, GitRepo, Repository, User, listeners, _request;
+      var AuthenticatedUser, Branch, Gist, GitRepo, Repository, User, _listeners, _request;
 
       _request = null;
 
-      listeners = [];
+      _listeners = [];
 
       function Github(options) {
         if (options == null) {
@@ -60,8 +60,8 @@
             rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
             rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
             _results = [];
-            for (_i = 0, _len = listeners.length; _i < _len; _i++) {
-              listener = listeners[_i];
+            for (_i = 0, _len = _listeners.length; _i < _len; _i++) {
+              listener = _listeners[_i];
               _results.push(listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64));
             }
             return _results;
@@ -99,7 +99,7 @@
       }
 
       Github.prototype.onRateLimitChanged = function(listener) {
-        return listeners.push(listener);
+        return _listeners.push(listener);
       };
 
       Github.prototype.getZen = function() {
