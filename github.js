@@ -19,7 +19,6 @@
           options = {};
         }
         options.rootURL = options.rootURL || 'https://api.github.com';
-        listeners = [];
         _request = function(method, path, data, raw, isBase64) {
           var auth, getURL, headers, mimeType, xhr,
             _this = this;
@@ -54,20 +53,19 @@
             headers: headers,
             processData: false,
             data: !raw && data && JSON.stringify(data) || data,
-            dataType: !raw ? 'json' : void 0,
-            complete: function(xhr, xmlhttpr) {
-              var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
-              rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
-              rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
-              _results = [];
-              for (_i = 0, _len = listeners.length; _i < _len; _i++) {
-                listener = listeners[_i];
-                _results.push(listener(rateLimitRemaining, rateLimit));
-              }
-              return _results;
-            }
+            dataType: !raw ? 'json' : void 0
           });
-          return xhr.then(function(data, textStatus, jqXHR) {
+          return xhr.done(function() {
+            var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
+            rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
+            rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
+            _results = [];
+            for (_i = 0, _len = listeners.length; _i < _len; _i++) {
+              listener = listeners[_i];
+              _results.push(listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64));
+            }
+            return _results;
+          }).then(function(data, textStatus, jqXHR) {
             var converted, i, ret, _i, _ref;
             ret = new jQuery.Deferred();
             if ('GET' === method && isBase64) {

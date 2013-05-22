@@ -33,9 +33,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Provide an option to override the default URL
       options.rootURL = options.rootURL or 'https://api.github.com'
 
-      # **HACK:** Reset rateLimit listeners when credentials change
-      listeners = []
-
       _request = (method, path, data, raw, isBase64) ->
         getURL = ->
           url = options.rootURL + path
@@ -74,18 +71,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           data: !raw and data and JSON.stringify(data) or data
           dataType: 'json' unless raw
 
-          # Update the `rateLimit*`
-          complete: (xhr, xmlhttpr) =>
-            rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
-            rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
-
-            for listener in listeners
-              listener(rateLimitRemaining, rateLimit)
         }
 
 
         # Parse the error if one occurs
         xhr
+        .done =>
+          rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
+          rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
+
+          for listener in listeners
+            listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64)
+
         .then (data, textStatus, jqXHR) ->
           ret = new jQuery.Deferred()
           # Convert the response to a Base64 encoded string
