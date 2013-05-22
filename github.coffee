@@ -75,7 +75,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
 
         xhr
-        .done =>
+        .always =>
           # Fire listeners when the request completes or fails
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')

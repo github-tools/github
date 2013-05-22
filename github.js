@@ -55,7 +55,7 @@
             data: !raw && data && JSON.stringify(data) || data,
             dataType: !raw ? 'json' : void 0
           });
-          return xhr.done(function() {
+          return xhr.always(function() {
             var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
             rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
             rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
