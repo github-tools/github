@@ -547,6 +547,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       constructor: (@options) ->
         user = @options.user
         repo = @options.name
+        # Set the `git` instance variable
         @git = new GitRepo(user, repo)
         @repoPath = "/repos/#{user}/#{repo}"
         @currentTree =
@@ -558,6 +559,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       getBranches: -> @git.getBranches()
 
 
+      # Get a branch of a repository
+      # -------
       getBranch: (branchName) ->
         getRef = =>
           deferred = new jQuery.Deferred()
@@ -566,6 +569,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         new Branch(@git, getRef)
 
 
+      # Get the default branch of a repository
+      # -------
       getDefaultBranch: () ->
         # Calls getInfo() to get the default branch name
         getRef = =>
@@ -602,14 +607,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # --------
       # Takes an object of optional paramaters:
       #
-      # - path: Only commits containing this file path will be returned
-      # - author: GitHub login, name, or email by which to filter by commit author
-      # - since: ISO 8601 date - only commits after this date will be returned
-      # - until: ISO 8601 date - only commits before this date will be returned
+      # - `path`: Only commits containing this file path will be returned
+      # - `author`: GitHub login, name, or email by which to filter by commit author
+      # - `since`: ISO 8601 date - only commits after this date will be returned
+      # - `until`: ISO 8601 date - only commits before this date will be returned
       getCommits: (options) ->
         @git.getCommits(options)
 
 
+    # Gist API
+    # -------
     class Gist
       constructor: (@options) ->
         id = @options.id
@@ -624,15 +631,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
       # Create the gist
       # --------
-      # {
-      #  "description": "the description for this gist",
-      #    "public": true,
-      #    "files": {
-      #      "file1.txt": {
-      #        "content": "String file contents"
-      #      }
-      #    }
-      # }
+      #
+      #     {
+      #        "description": "the description for this gist",
+      #        "public": true,
+      #        "files": {
+      #          "file1.txt": {
+      #            "content": "String file contents"
+      #          }
+      #        }
+      #     }
       create: (options) ->
         _request 'POST', "/gists", options
 
