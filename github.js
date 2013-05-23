@@ -562,7 +562,21 @@
           return _request('GET', this.gistPath, null);
         };
 
-        Gist.prototype.create = function(options) {
+        Gist.prototype.create = function(files, isPublic, description) {
+          var options;
+          if (isPublic == null) {
+            isPublic = false;
+          }
+          if (description == null) {
+            description = null;
+          }
+          options = {
+            isPublic: isPublic,
+            files: files
+          };
+          if (description != null) {
+            options.description = description;
+          }
           return _request('POST', "/gists", options);
         };
 
@@ -571,11 +585,33 @@
         };
 
         Gist.prototype.fork = function() {
-          return _request('POST', "" + this.gistPath + "/fork", null);
+          return _request('POST', "" + this.gistPath + "/forks", null);
         };
 
-        Gist.prototype.update = function(options) {
+        Gist.prototype.update = function(files, description) {
+          var options;
+          if (description == null) {
+            description = null;
+          }
+          options = {
+            files: files
+          };
+          if (description != null) {
+            options.description = description;
+          }
           return _request('PATCH', this.gistPath, options);
+        };
+
+        Gist.prototype.star = function() {
+          return _request('PUT', "" + this.gistPath + "/star");
+        };
+
+        Gist.prototype.unstar = function() {
+          return _request('DELETE', "" + this.gistPath + "/star");
+        };
+
+        Gist.prototype.isStarred = function() {
+          return _request('GET', "" + this.gistPath);
         };
 
         return Gist;

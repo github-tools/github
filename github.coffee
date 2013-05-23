@@ -632,16 +632,20 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Create the gist
       # --------
       #
-      #     {
-      #        "description": "the description for this gist",
-      #        "public": true,
-      #        "files": {
-      #          "file1.txt": {
-      #            "content": "String file contents"
-      #          }
-      #        }
+      # Files contains a hash with the filename as the key and
+      # `{content: 'File Contents Here'}` as the value.
+      #
+      # Example:
+      #
+      #     { "file1.txt": {
+      #         "content": "String file contents"
+      #       }
       #     }
-      create: (options) ->
+      create: (files, isPublic=false, description=null) ->
+        options =
+          isPublic: isPublic
+          files: files
+        options.description = description if description?
         _request 'POST', "/gists", options
 
 
@@ -654,13 +658,40 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Fork a gist
       # --------
       fork: ->
-        _request 'POST', "#{@gistPath}/fork", null
+        _request 'POST', "#{@gistPath}/forks", null
 
 
       # Update a gist with the new stuff
       # --------
-      update: (options) ->
+      # `files` are files that make up this gist.
+      # The key of which should be an optional string filename
+      # and the value another optional hash with parameters:
+      #
+      # - `content`: Optional string - Updated file contents
+      # - `filename`: Optional string - New name for this file.
+      #
+      # **NOTE:** All files from the previous version of the gist are carried
+      # over by default if not included in the hash. Deletes can be performed
+      # by including the filename with a null hash.
+      update: (files, description=null) ->
+        options = {files: files}
+        options.description = description if description?
         _request 'PATCH', @gistPath, options
+
+      # Star a gist
+      # -------
+      star: ->
+        _request 'PUT', "#{@gistPath}/star"
+
+      # Unstar a gist
+      # -------
+      unstar: ->
+        _request 'DELETE', "#{@gistPath}/star"
+
+      # Check if a gist is starred
+      # -------
+      isStarred: ->
+        _request 'GET', "#{@gistPath}"
 
 
     # Top Level API
