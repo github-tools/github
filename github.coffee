@@ -126,6 +126,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     getOrgRepos: (orgName) ->
       _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
 
+    # Get public Gists
+    # -------
+    getPublicGists: (since=null) ->
+      options = null
+      # Converts a Date object to a string
+      getDate = (time) ->
+        return time.toISOString() if Date == time.constructor
+        return time
+
+      options = {since: getDate(since)} if since
+      _request 'GET', "/gists/public", options
+
 
     # Github Users API
     # =======

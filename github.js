@@ -110,6 +110,26 @@
         return _request('GET', "/orgs/" + orgName + "/repos?type=all&per_page=1000&sort=updated&direction=desc", null);
       };
 
+      Github.prototype.getPublicGists = function(since) {
+        var getDate, options;
+        if (since == null) {
+          since = null;
+        }
+        options = null;
+        getDate = function(time) {
+          if (Date === time.constructor) {
+            return time.toISOString();
+          }
+          return time;
+        };
+        if (since) {
+          options = {
+            since: getDate(since)
+          };
+        }
+        return _request('GET', "/gists/public", options);
+      };
+
       User = (function() {
         var _rootPath;
 
