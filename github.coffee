@@ -126,7 +126,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     getOrgRepos: (orgName) ->
       _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
 
-    # Get public Gists
+    # Get public Gists on all of GitHub
     # -------
     getPublicGists: (since=null) ->
       options = null
@@ -136,8 +136,29 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         return time
 
       options = {since: getDate(since)} if since
-      _request 'GET', "/gists/public", options
+      _request 'GET', '/gists/public', options
 
+    # List Public Events on all of GitHub
+    # -------
+    getPublicEvents: ->
+      _request 'GET', '/events', null
+
+
+    # List unread notifications for authenticated user
+    # -------
+    # Optional arguments:
+    #
+    # - `all`: `true` to show notifications marked as read.
+    # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
+    # - `since`: Optional time.
+    getNotifications: (options={}) ->
+      # Converts a Date object to a string
+      getDate = (time) ->
+        return time.toISOString() if Date == time.constructor
+        return time
+
+      options.since = getDate(options.since) if options.since
+      _request 'GET', '/notifications', options
 
     # Github Users API
     # =======
@@ -146,9 +167,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Private var that stores the root path.
       # Use a different URL if this user is the authenticated user
       _rootPath = null
+      _username = null
 
       # Store the username
       constructor: (username=null) ->
+        _username = username
         if username
           _rootPath = "/users/#{username}"
         else
@@ -185,6 +208,23 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         _request 'GET', "#{_rootPath}/following", null
 
 
+      # Get Received events for this user
+      # -------
+      getReceivedEvents: (onlyPublic) ->
+        throw 'BUG: This does not work for authenticated users yet!' if not _username
+        isPublic = ''
+        isPublic = '/public' if onlyPublic
+        _request 'GET', "/users/#{_username}/received_events#{isPublic}", null
+
+      # Get all events for this user
+      # -------
+      getEvents: (onlyPublic) ->
+        throw 'BUG: This does not work for authenticated users yet!' if not _username
+        isPublic = ''
+        isPublic = '/public' if onlyPublic
+        _request 'GET', "/users/#{_username}/events#{isPublic}", null
+
+
     # Authenticated User API
     # =======
     class AuthenticatedUser extends User
@@ -193,11 +233,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       getGists: ->
         _request 'GET', '/gists', null
-
-      # List unread notifications for authenticated user
-      # -------
-      getNotifications: ->
-        _request 'GET', '/notifications', null
 
       # Follow a user
       # -------
@@ -556,12 +591,17 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     # Provides methods for operating on the entire repository
     # and ways to operate on a `Branch`.
     class Repository
+
+      # Private fields
+      _user = null
+      _repo = null
+
       constructor: (@options) ->
-        user = @options.user
-        repo = @options.name
+        _user = @options.user
+        _repo = @options.name
         # Set the `git` instance variable
-        @git = new GitRepo(user, repo)
-        @repoPath = "/repos/#{user}/#{repo}"
+        @git = new GitRepo(_user, _repo)
+        @repoPath = "/repos/#{_user}/#{_repo}"
         @currentTree =
           branch: null
           sha: null
@@ -625,6 +665,39 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # - `until`: ISO 8601 date - only commits before this date will be returned
       getCommits: (options) ->
         @git.getCommits(options)
+
+
+      # List repository events
+      # -------
+      getEvents: ->
+        _request 'GET', "#{@repoPath}/events", null
+
+      # List Issue events for a Repository
+      # -------
+      getIssueEvents: ->
+        _request 'GET', "#{@repoPath}/issues/events", null
+
+      # List events for a network of Repositories
+      # -------
+      getNetworkEvents: ->
+        _request 'GET', "/networks/#{_owner}/#{_repo}/events", null
+
+
+      # List unread notifications for authenticated user
+      # -------
+      # Optional arguments:
+      #
+      # - `all`: `true` to show notifications marked as read.
+      # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
+      # - `since`: Optional time.
+      getNotifications: (options={}) ->
+        # Converts a Date object to a string
+        getDate = (time) ->
+          return time.toISOString() if Date == time.constructor
+          return time
+
+        options.since = getDate(options.since) if options.since
+        _request 'GET', "#{@repoPath}/notifications", options
 
 
     # Gist API

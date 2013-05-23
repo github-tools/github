@@ -127,18 +127,42 @@
             since: getDate(since)
           };
         }
-        return _request('GET', "/gists/public", options);
+        return _request('GET', '/gists/public', options);
+      };
+
+      Github.prototype.getPublicEvents = function() {
+        return _request('GET', '/events', null);
+      };
+
+      Github.prototype.getNotifications = function(options) {
+        var getDate;
+        if (options == null) {
+          options = {};
+        }
+        getDate = function(time) {
+          if (Date === time.constructor) {
+            return time.toISOString();
+          }
+          return time;
+        };
+        if (options.since) {
+          options.since = getDate(options.since);
+        }
+        return _request('GET', '/notifications', options);
       };
 
       User = (function() {
-        var _rootPath;
+        var _rootPath, _username;
 
         _rootPath = null;
+
+        _username = null;
 
         function User(username) {
           if (username == null) {
             username = null;
           }
+          _username = username;
           if (username) {
             _rootPath = "/users/" + username;
           } else {
@@ -170,6 +194,30 @@
           return _request('GET', "" + _rootPath + "/following", null);
         };
 
+        User.prototype.getReceivedEvents = function(onlyPublic) {
+          var isPublic;
+          if (!_username) {
+            throw 'BUG: This does not work for authenticated users yet!';
+          }
+          isPublic = '';
+          if (onlyPublic) {
+            isPublic = '/public';
+          }
+          return _request('GET', "/users/" + _username + "/received_events" + isPublic, null);
+        };
+
+        User.prototype.getEvents = function(onlyPublic) {
+          var isPublic;
+          if (!_username) {
+            throw 'BUG: This does not work for authenticated users yet!';
+          }
+          isPublic = '';
+          if (onlyPublic) {
+            isPublic = '/public';
+          }
+          return _request('GET', "/users/" + _username + "/events" + isPublic, null);
+        };
+
         return User;
 
       })();
@@ -184,10 +232,6 @@
 
         AuthenticatedUser.prototype.getGists = function() {
           return _request('GET', '/gists', null);
-        };
-
-        AuthenticatedUser.prototype.getNotifications = function() {
-          return _request('GET', '/notifications', null);
         };
 
         AuthenticatedUser.prototype.follow = function(username) {
@@ -502,14 +546,18 @@
       })();
 
       Repository = (function() {
+        var _repo, _user;
+
+        _user = null;
+
+        _repo = null;
 
         function Repository(options) {
-          var repo, user;
           this.options = options;
-          user = this.options.user;
-          repo = this.options.name;
-          this.git = new GitRepo(user, repo);
-          this.repoPath = "/repos/" + user + "/" + repo;
+          _user = this.options.user;
+          _repo = this.options.name;
+          this.git = new GitRepo(_user, _repo);
+          this.repoPath = "/repos/" + _user + "/" + _repo;
           this.currentTree = {
             branch: null,
             sha: null
@@ -563,6 +611,35 @@
 
         Repository.prototype.getCommits = function(options) {
           return this.git.getCommits(options);
+        };
+
+        Repository.prototype.getEvents = function() {
+          return _request('GET', "" + this.repoPath + "/events", null);
+        };
+
+        Repository.prototype.getIssueEvents = function() {
+          return _request('GET', "" + this.repoPath + "/issues/events", null);
+        };
+
+        Repository.prototype.getNetworkEvents = function() {
+          return _request('GET', "/networks/" + _owner + "/" + _repo + "/events", null);
+        };
+
+        Repository.prototype.getNotifications = function(options) {
+          var getDate;
+          if (options == null) {
+            options = {};
+          }
+          getDate = function(time) {
+            if (Date === time.constructor) {
+              return time.toISOString();
+            }
+            return time;
+          };
+          if (options.since) {
+            options.since = getDate(options.since);
+          }
+          return _request('GET', "" + this.repoPath + "/notifications", options);
         };
 
         return Repository;
