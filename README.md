@@ -411,17 +411,28 @@ gist.isStarred()
 Retreive a zen message (to test the API works).
 
 ```js
-github.getZen()
+gh.getZen()
 .done(function(msg) {})
 .fail(function(err) {});
+```
+
+Add a listener for `rateLimit` changes
+
+```js
+function listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64) {
+  // ...
+};
+gh.onRateLimitChanged(listener);
 ```
 
 List repositories for a particular organization. Includes private repositories if you are authorized.
 
 ```js
-github.getOrgRepos(orgname)
+gh.getOrgRepos(orgname)
 .done(function(repos) {});
 ```
+
+
 
 
 ##Setup
@@ -429,9 +440,9 @@ github.getOrgRepos(orgname)
 `github-client` has the following dependencies:
 
 - Underscore
-- Base64 (for basic auth). You can leave this if you are not using basic auth or binary files.
+- Base64 (for basic auth or binary files). You can leave this if you are not using basic auth or binary files.
 
-Include these before `github-client` :
+If you are not using NodeJS or requireJS include these before `github-client`:
 
 ```
 <script src="lib/underscore-min.js">
