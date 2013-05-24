@@ -1,8 +1,10 @@
-# Github.js
+# github-client
 
-Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of [github-book](http://github.com/philschatz/github-book), an EPUB3 editor for GitHub.
+github-client provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain),
+exposing an API for manipulating GitHub repositories on the file level.
+It is being developed in the context of [github-book](http://github.com/philschatz/github-book), an EPUB3 editor for GitHub.
 
-This package can also be used in nodejs or as a requirejs module.
+This package can also be used in `nodejs` or as a `requirejs` module.
 
 ## Usage
 
@@ -11,7 +13,7 @@ This package can also be used in nodejs or as a requirejs module.
 Create a Github instance.
 
 ```js
-var github = new Github({
+var gh = new Github({
   username: "YOU_USER",
   password: "YOUR_PASSWORD",
   auth: "basic"
@@ -21,7 +23,7 @@ var github = new Github({
 Or if you prefer OAuth, it looks like this:
 
 ```js
-var github = new Github({
+var gh = new Github({
   token: "OAUTH_TOKEN"
   auth: "oauth"
 });
@@ -30,8 +32,8 @@ var github = new Github({
 ### In a browser using requirejs
 
 ```js
-define(['github-js'], function(Github) {
-  github = new Github({
+define(['github'], function(Github) {
+  var gh = new Github({
     username: "YOU_USER",
     password: "YOUR_PASSWORD",
     auth: "basic"
@@ -43,11 +45,11 @@ define(['github-js'], function(Github) {
 
 Install instructions:
 
-    npm install github-js
+    npm install github-client
 
 ```js
-var Github = require('github-js');
-var github = Github.new({
+var Github = require('github-client');
+var gh = Github.new({
   username: "YOU_USER",
   password: "YOUR_PASSWORD",
   auth: "basic"
@@ -59,146 +61,151 @@ var github = Github.new({
 
 
 ```js
-var repo = github.getRepo(username, reponame);
+var repo = gh.getRepo(username, reponame);
 ```
 
 Show repository information
 
 ```js
 repo.getInfo()
-.done(function(repo) {})
-.fail(function(err)  {});
+.done(function(repo) {});
 ```
 
-Get contents at a particular path.
+List all branches in a Repository
 
 ```js
-repo.contents("path/to/dir")
-.done(function(contents) {});
+repo.getBranches()
+.done(function(branches) {});
 ```
 
-Fork repository. This operation runs asynchronously. You may want to poll for `repo.contents` until the forked repo is ready.
+Fork a repository
 
 ```js
 repo.fork()
-.done(function() {})
-.fail(function(err) {});
+.done(function() {});
 ```
 
-Create Pull Request.
+Create a Pull Request
 
 ```js
-var pull = {
-  title: message,
-  body: "This pull request has been automatically generated.",
-  base: "gh-pages",
-  head: "michael" + ":" + "prose-patch",
-};
-repo.createPullRequest(pull)
-.done(function(pullRequest) {})
-.fail(function(err) {});
+repo.createPullRequest()
+.done(function() {});
+```
+
+Get recent commits to the repository
+
+```js
+var options = {};
+repo.getCommits(options)
+.done(function(commits) {});
+```
+
+List Repository events
+
+```js
+repo.getEvents()
+.done(function(events) {});
+```
+
+List Issue events for the repository
+
+```js
+repo.getIssueEvents()
+.done(function(events) {});
+```
+
+List events for a network of Repositories
+
+```js
+repo.getNetworkEvents()
+.done(function(events) {});
+```
+
+List unread notifications for authenticated user pertaining to this repository
+
+```js
+var options = {};
+repo.getNotifications(options)
+.done(function(events) {});
+```
+
+### Branch API
+
+Additional methods are available for a specific branch in a repository
+
+Get the Default branch of a repository
+
+```js
+var branch = repo.getDefaultBranch();
+```
+
+Get a specific branch of a repository
+
+```js
+var branch = repo.getBranch("BRANCH_NAME");
+```
+
+Read a file from the branch
+
+```js
+var isBinary = false;
+branch.read('PATH/TO/FILE.txt', isBinary)
+.done(function(contents) {});
+```
+
+Remove a file from the branch
+
+```js
+var message = "OPTIONAL COMMIT MESSAGE";
+branch.remove('PATH/TO/FILE.txt', message)
+.done(function() {});
+```
+
+Move a file
+
+```js
+var message = "OPTIONAL COMMIT MESSAGE";
+branch.move('PATH/TO/FILE.txt', 'NEW/PATH/TO/FILE.txt', message)
+.done(function() {});
+```
+
+Write a file (update or add)
+
+```js
+var content = "Contents of the file";
+var message = "OPTIONAL COMMIT MESSAGE";
+var isBinary = false;
+branch.write('PATH/TO/FILE.txt', content, message, isBinary)
+.done(function() {});
+```
+
+Get recent commits to a branch
+
+```js
+var options = {};
+branch.getCommits(options)
+.done(function(commits) {});
 ```
 
 
-Retrieve all available branches (aka heads) of a repository.
+### Low-level Repo API
+
+The methods on a branch or repo use the following low-level methods.
 
 ```js
-repo.listBranches()
-.done(function(branches) {})
-.fail(function(err) {});
-```
-
-Store contents at a certain path, where files that don't yet exist are created on the fly.
-
-```js
-repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE')
-.done(function() {})
-.fail(function(err) {});
-```
-
-Not only can you can write files, you can of course read them.
-
-```js
-repo.read('master', 'path/to/file')
-.done(function(data) {})
-.fail(function(err) {});
-```
-
-You can also read binary files.
-
-```js
-repo.readBinary('master', 'path/to/binaryfile')
-.done(function(data) {})
-.fail(function(err) {});
-```
-
-
-Move a file from A to B.
-
-```js
-repo.move('master', 'path/to/file', 'path/to/new_file')
-.done(function() {})
-.fail(function(err) {});
-```
-
-Remove a file.
-
-```js
-repo.remove('master', 'path/to/file')
-.done(function() {})
-.fail(function(err) {});
-```
-
-Exploring files of a repository is easy too by accessing the top level tree object.
-
-```js
-repo.getTree('master')
-.done(function(tree) {})
-.fail(function(err) {});
-```
-
-If you want to access all blobs and trees recursively, you can add `?recursive=true`.
-
-```js
-repo.getTree('master?recursive=true')
-.done(function(tree) {})
-.fail(function(err) {});
-```
-
-Given a filepath, retrieve the reference blob or tree sha.
-
-```js
-repo.getSha('master', '/path/to/file')
-.done(function(sha) {})
-.fail(function(err) {});
-```
-
-For a given reference, get the corresponding commit sha.
-
-```js
-repo.getRef('heads/master')
-.done(function(sha) {})
-.fail(function(err) {});
-```
-
-Create a new reference.
-
-```js
-var refSpec = {
-  "ref": "refs/heads/my-new-branch-name",
-  "sha": "827efc6d56897b048c772eb4087f854f46256132"
-};
-repo.createRef(refSpec)
-.done(function() {})
-.fail(function(err) {});
-```
-
-Delete a reference.
-
-```js
-repo.deleteRef('heads/gh-pages')
-.done(function() {})
-.fail(function(err) {});
+repo.git.getRef(...)      .done(function(result) {});
+repo.git.createRef(...)   .done(function(result) {});
+repo.git.deleteRef(...)   .done(function(result) {});
+repo.git.getBranches()    .done(function(result) {});
+repo.git.getBlob(...)     .done(function(result) {});
+repo.git.getSha(...)      .done(function(result) {});
+repo.git.getTree(...)     .done(function(result) {});
+repo.git.postBlob(...)    .done(function(result) {});
+repo.git.updateTree(...)  .done(function(result) {});
+repo.git.postTree(...)    .done(function(result) {});
+repo.git.commit(...)      .done(function(result) {});
+repo.git.updateHead(...)  .done(function(result) {});
+repo.git.getCommits(...)  .done(function(result) {});
 ```
 
 
@@ -206,32 +213,35 @@ repo.deleteRef('heads/gh-pages')
 
 
 ```js
-var username = "ANY_GITHUB_USERNAME";
-var user = github.getUser(username);
+var user = gh.getUser("ANY_GITHUB_USERNAME");
 ```
 
-Show user information for a particular username. Also works for organizations.
+Show user information for a particular user. Also works for organizations.
 
 ```js
 user.getInfo()
-.done(function(user) {})
-.fail(function(err) {});
+.done(function(user) {});
 ```
 
 List public repositories for a particular user.
 
 ```js
 user.getRepos()
-.done(function(repos) {})
-.fail(function(err) {});
+.done(function(repos) {});
+```
+
+List organizations the user is in.
+
+```js
+user.getOrgs()
+.done(function(orgs) {});
 ```
 
 List all gists of a particular user.
 
 ```js
 user.getGists()
-.done(function(gists) {})
-.fail(function(err) {});
+.done(function(gists) {});
 ```
 
 List users following this user.
@@ -250,10 +260,24 @@ user.getFollowing()
 .fail(function(err) {});
 ```
 
+Get Received events for this user.
+
+```js
+user.getReceivedEvents()
+.done(function(events) {});
+```
+
+Get all events for this user.
+
+```js
+user.getEvents()
+.done(function(events) {});
+```
+
 
 ## Authenticated User API
 
-The Authenticated User contains the following methods in addition to all the methods in the User API .
+The Authenticated User contains the following methods in addition to all the methods in the **User API**.
 
 Get the authenticated user.
 
@@ -261,20 +285,18 @@ Get the authenticated user.
 var user = gh.getUser();
 ```
 
+List unread notifications for the user.
+
+```js
+gh.getNotifications()
+.done(function(notifications) {});
+```
+
 List private and public repositories of the current authenticated user.
 
 ```js
 user.getRepos()
-.done(function(repos) {})
-.fail(function(err) {});
-```
-
-List unread notifications for the user.
-
-```js
-user.getNotifications()
-.done(function(notifications) {})
-.fail(function(err) {});
+.done(function(repos) {});
 ```
 
 Follow another user.
@@ -282,8 +304,7 @@ Follow another user.
 ```js
 var username "SOME_OTHER_USERNAME";
 user.follow(username)
-.done(function(orgs) {})
-.fail(function(err) {});
+.done(function(orgs) {});
 ```
 
 Stop following another user.
@@ -291,23 +312,21 @@ Stop following another user.
 ```js
 var username "SOME_OTHER_USERNAME";
 user.unfollow(username)
-.done(function(orgs) {})
-.fail(function(err) {});
+.done(function(orgs) {});
 ```
 
 
 ## Gist API
 
 ```js
-var gist = github.getGist(3165654);
+var gist = gh.getGist(3165654);
 ```
 
 Read the contents of a Gist.
 
 ```js
 gist.read()
-.done(function(gist) {})
-.fail(function(err) {});
+.done(function(gist) {});
 ```
 
 Updating the contents of a Git. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/).
@@ -331,9 +350,34 @@ var delta = {
 };
 
 gist.update(delta)
-.done(function(gist) {})
-.fail(function(err) {});
+.done(function(gist) {});
 ```
+
+Create a Gist
+
+```js
+var files = {
+  'file1.txt': {content: 'String file contents'}
+};
+
+gh.getGist().create(files)
+.done(function(gist) {});
+```
+
+Delete a Gist
+
+```js
+gist.delete()
+.done(function(gist) {});
+```
+
+Fork a Gist
+
+```js
+gist.fork()
+.done(function(gist) {});
+```
+
 
 ## Miscellaneous methods
 
@@ -349,24 +393,22 @@ List repositories for a particular organization. Includes private repositories i
 
 ```js
 github.getOrgRepos(orgname)
-.done(function(repos) {})
-.fail(function(err) {});
+.done(function(repos) {});
 ```
 
 
 ##Setup
 
-Github.js has the following dependencies:
+`github-client` has the following dependencies:
 
 - Underscore
-- Base64 (for basic auth). You can leave this if you are not using basic auth.
+- Base64 (for basic auth). You can leave this if you are not using basic auth or binary files.
 
-Include these before github.js :
+Include these before `github-client` :
 
 ```
 <script src="lib/underscore-min.js">
 <script src="lib/base64.js">
-<script src="github.js">
 ```
 
 ## Change Log
