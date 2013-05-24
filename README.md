@@ -8,6 +8,10 @@ This package can also be used in `nodejs` or as a `requirejs` module.
 
 ## Usage
 
+All asynchronous methods return a [Common-JS Promise](http://wiki.commonjs.org/wiki/Promises/A).
+See [jQuery.Deferred](http://api.jquery.com/category/deferred-object/) or
+[Node's Q](https://github.com/kriskowal/q) for more information.
+
 ### In a browser without requirejs
 
 Create a Github instance.
@@ -68,7 +72,8 @@ Show repository information
 
 ```js
 repo.getInfo()
-.done(function(repo) {});
+.done(function(repo) {})
+.fail(function(err) {});
 ```
 
 List all branches in a Repository
@@ -150,7 +155,8 @@ Read a file from the branch
 ```js
 var isBinary = false;
 branch.read('PATH/TO/FILE.txt', isBinary)
-.done(function(contents) {});
+.done(function(contents) {})
+.fail(function(err) {});
 ```
 
 Remove a file from the branch
@@ -220,7 +226,8 @@ Show user information for a particular user. Also works for organizations.
 
 ```js
 user.getInfo()
-.done(function(user) {});
+.done(function(user) {})
+.fail(function(err) {});
 ```
 
 List public repositories for a particular user.
@@ -248,16 +255,14 @@ List users following this user.
 
 ```js
 user.getFollowers()
-.done(function(users) {})
-.fail(function(err) {});
+.done(function(users) {});
 ```
 
 List users this user is following.
 
 ```js
 user.getFollowing()
-.done(function(users) {})
-.fail(function(err) {});
+.done(function(users) {});
 ```
 
 Get Received events for this user.
@@ -289,7 +294,8 @@ List unread notifications for the user.
 
 ```js
 gh.getNotifications()
-.done(function(notifications) {});
+.done(function(notifications) {})
+.fail(function(err) {});
 ```
 
 List private and public repositories of the current authenticated user.
@@ -329,7 +335,7 @@ gist.read()
 .done(function(gist) {});
 ```
 
-Updating the contents of a Git. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/).
+Update the contents of a Gist. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/).
 
 ```js
 var delta = {
@@ -364,18 +370,39 @@ gh.getGist().create(files)
 .done(function(gist) {});
 ```
 
-Delete a Gist
+Delete the Gist
 
 ```js
 gist.delete()
 .done(function(gist) {});
 ```
 
-Fork a Gist
+Fork the Gist
 
 ```js
 gist.fork()
 .done(function(gist) {});
+```
+
+Star the Gist
+
+```js
+gist.star()
+.done(function() {});
+```
+
+Unstar the Gist
+
+```js
+gist.unstar()
+.done(function() {});
+```
+
+Check if the Gist is starred
+
+```js
+gist.isStarred()
+.done(function() {});
 ```
 
 
