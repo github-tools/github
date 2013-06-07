@@ -36,11 +36,15 @@
   "testling": {
     "files": "test/*_test.js",
     "browsers": {
-      "ie": [ 8, 9 ],
-      "firefox": [ 13 ],
-      "chrome": [ 20 ],
+      "ie": [ 8, 9, 10 ],
+      "firefox": [ 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
+      "chrome": [ 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ],
       "safari": [ 5.1 ],
-      "opera": [ 12 ]
+      "opera": [ 12 ],
+      "android-browser": [ 4.2 ],
+      "ipad": [ 6 ],
+      "iphone": [ 6 ]
+
     },
     "harness": "mocha"
   }
