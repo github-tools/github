@@ -9,9 +9,12 @@
   // Initial Setup
   // -------------
 
+  var XMLHttpRequest;
   if (typeof this.exports !== 'undefined') {
-    var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+    XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
     var _ = require('underscore');
+  }else{
+       XMLHttpRequest =  window.XMLHttpRequest;
   }
   
   var API_URL = 'https://api.github.com';
