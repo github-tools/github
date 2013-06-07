@@ -15,9 +15,12 @@
       _ = require('underscore');
       Base64 = require('./lib/base64.js');
   }else{
-      XMLHttpRequest =  window.XMLHttpRequest;
       _ = window._;
       Base64 = window.Base64;
+  }
+  //prefer native XMLHttpRequest always
+  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
+      XMLHttpRequest = window.XMLHttpRequest;
   }
 
   

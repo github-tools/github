@@ -29,5 +29,20 @@
   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
   "bugs": {
     "url": "https://github.com/darvin/github/issues"
+  },
+  "browser": {
+    "xmlhttprequest": false
+  },
+  "testling": {
+    "files": "test/*_test.js",
+    "browsers": {
+      "ie": [ 8, 9 ],
+      "firefox": [ 13 ],
+      "chrome": [ 20 ],
+      "safari": [ 5.1 ],
+      "opera": [ 12 ]
+    },
+    "harness": "mocha"
   }
+
 }
