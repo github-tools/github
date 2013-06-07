@@ -9,13 +9,17 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest;
-  if (typeof this.exports !== 'undefined') {
-    XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-    var _ = require('underscore');
+  var XMLHttpRequest, Base64, _;
+  if (typeof exports !== 'undefined') {
+      XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+      _ = require('underscore');
+      Base64 = require('./lib/base64.js');
   }else{
-       XMLHttpRequest =  window.XMLHttpRequest;
+      XMLHttpRequest =  window.XMLHttpRequest;
+      _ = window._;
+      Base64 = window.Base64;
   }
+
   
   var API_URL = 'https://api.github.com';
 

@@ -1,0 +1,33 @@
+{
+  "name": "github",
+  "version": "0.7.0",
+  "description": "A higher-level wrapper around the Github API.",
+  "main": "github.js",
+  "dependencies": {
+    "xmlhttprequest": "*",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
+  },
+  "scripts": {
+    "test": "mocha"
+
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/darvin/github.git"
+  },
+  "keywords": [
+    "github",
+    "api"
+  ],
+  "author": "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
+  "bugs": {
+    "url": "https://github.com/darvin/github/issues"
+  }
+}
