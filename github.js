@@ -184,8 +184,7 @@
       // Delete a repo
       // --------
 
-      this.delete = function(cb) {
-        console.error (repoPath);
+      this.deleteRepo = function(cb) {
         _request("DELETE", repoPath, options, cb);
       };
 
@@ -373,6 +372,7 @@
       // -------
 
       this.fork = function(cb) {
+        console.error(repoPath);
         _request("POST", repoPath + "/forks", null, cb);
       };
 
@@ -395,26 +395,18 @@
         });
       };
 
-      // Remove a file from the tree
+
+      // Remove a file
       // -------
 
       this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
+        that.getSha(branch, path, function(err, sha) {
+          if (err) return cb(err);
+          _request("DELETE", repoPath + "/contents/" + path, {
+            message: path + " is removed",
+            sha: sha,
+            branch: branch
+          }, cb);
         });
       };
 
@@ -445,20 +437,17 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
+        that.getSha(branch, path, function(err, sha) {
           if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
+          _request("PUT", repoPath + "/contents/" + path, {
+            message: message,
+            content: Base64.encode(content),
+            branch: branch,
+            sha: sha
+          }, cb);
         });
       };
+
     };
 
     // Gists API
