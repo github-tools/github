@@ -151,6 +151,17 @@
           cb(err, res);
         });
       };
+
+      // Create a repo
+      // -------
+      this.createRepo = function(options, cb) {
+        _request("POST", "/user/repos", options, cb);
+      };
+
+
+
+
+
     };
 
 
@@ -167,6 +178,15 @@
       var currentTree = {
         "branch": null,
         "sha": null
+      };
+
+
+      // Delete a repo
+      // --------
+
+      this.delete = function(cb) {
+        console.error (repoPath);
+        _request("DELETE", repoPath, options, cb);
       };
 
       // Uses the cache if branch has not been changed
