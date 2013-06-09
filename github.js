@@ -52,7 +52,7 @@
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
+      xhr.setRequestHeader('Accept','application/json');
       xhr.setRequestHeader('Content-Type','application/json');
       if (
          (options.auth == 'oauth' && options.token) ||
@@ -253,13 +253,10 @@
       // -------
 
       this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
+        if (!path || path === "") return that.getRef("heads/"+branch, cb);
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {
+          if (err) return cb(err);
+          cb(null, pathContent.sha);
         });
       };
 
@@ -372,7 +369,6 @@
       // -------
 
       this.fork = function(cb) {
-        console.error(repoPath);
         _request("POST", repoPath + "/forks", null, cb);
       };
 
@@ -387,11 +383,14 @@
       // -------
 
       this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, obj) {
+          if (err && err.error === 404) return cb("not found", null, null);
+
+          if (err) return cb(err);
+          var sha = obj.sha
+            , content = Base64.decode(obj.content);
+
+          cb(null, content, sha);
         });
       };
 
@@ -438,7 +437,7 @@
 
       this.write = function(branch, path, content, message, cb) {
         that.getSha(branch, path, function(err, sha) {
-          if (err) return cb(err);
+          if (err && err.error!=404) return cb(err);
           _request("PUT", repoPath + "/contents/" + path, {
             message: message,
             content: Base64.encode(content),
