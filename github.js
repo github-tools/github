@@ -245,13 +245,13 @@
         });
       };
 
-      // Gets the commit to a branch name
+      // Gets an array of branch objects
       // -------
 
-      this.getBranch = function (branch, cb) {
-        _request("GET", repoPath + "/branches/" + branch, null, function (err, data) {
+      this.getBranches = function (cb) {
+        _request("GET", repoPath + "/branches", null, function(err, branches) {
           if (err) return cb(err);
-          that.getCommit(data.commit.sha, cb);
+          cb(null, branches);
         });
       };
 
