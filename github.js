@@ -339,15 +339,16 @@
       // and the new tree SHA, getting a commit SHA back
       // -------
 
-      this.commit = function(parent, tree, message, cb) {
+      this.commit = function(parents, tree, message, cb) {
+        if (typeof parents === 'string') {
+          parents = [parents];
+        }
         var data = {
           "message": message,
           "author": {
             "name": options.username
           },
-          "parents": [
-            parent
-          ],
+          "parents": parents,
           "tree": tree
         };
 
