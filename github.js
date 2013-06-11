@@ -463,10 +463,10 @@
         _request("POST","/gists", options, cb);
       };
 
-      // Delete the gist
+      // Remove the gist
       // --------
 
-      this.delete = function(cb) {
+      this.remove = function(cb) {
         _request("DELETE", gistPath, null, function(err,res) {
           cb(err,res);
         });
