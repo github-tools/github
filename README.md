@@ -9,6 +9,14 @@ Github.js provides a minimal higher-level wrapper around git's [plumbing command
 
 This repo is now officially maintained by [DevelopmentSeed](https://github.com/developmentseed), the people behind [Prose.io](http://prose.io).
 
+## Installation
+
+Either grab `github.js` from this repo or install via NPM:
+
+```
+npm install github-api
+```
+
 ## Usage
 
 Create a Github instance.
