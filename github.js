@@ -14,22 +14,30 @@
 
       _listeners = [];
 
-      function Github(options) {
-        var AuthenticatedUser, Branch, Gist, GitRepo, Organization, Repository, Team, User;
-        if (options == null) {
-          options = {};
+      function Github(clientOptions) {
+        var AuthenticatedUser, Branch, Gist, GitRepo, Organization, Repository, Team, User, _client;
+        if (clientOptions == null) {
+          clientOptions = {};
         }
-        options.rootURL = options.rootURL || 'https://api.github.com';
-        _request = function(method, path, data, raw, isBase64) {
-          var auth, getURL, headers, mimeType, xhr,
+        clientOptions.rootURL = clientOptions.rootURL || 'https://api.github.com';
+        _client = this;
+        _request = function(method, path, data, options) {
+          var ajaxConfig, auth, booleanPromise, getURL, headers, mimeType, promise, xhr,
             _this = this;
+          if (options == null) {
+            options = {
+              raw: false,
+              isBase64: false,
+              isBoolean: false
+            };
+          }
           getURL = function() {
             var url;
-            url = options.rootURL + path;
+            url = clientOptions.rootURL + path;
             return url + (/\?/.test(url) ? '&' : '?') + (new Date()).getTime();
           };
           mimeType = void 0;
-          if (isBase64) {
+          if (options.isBase64) {
             mimeType = 'text/plain; charset=x-user-defined';
           }
           headers = {
@@ -38,38 +46,55 @@
           if (userAgent) {
             headers['User-Agent'] = userAgent;
           }
-          if ((options.auth === 'oauth' && options.token) || (options.auth === 'basic' && options.username && options.password)) {
-            if (options.auth === 'oauth') {
-              auth = "token " + options.token;
+          if ((clientOptions.auth === 'oauth' && clientOptions.token) || (clientOptions.auth === 'basic' && clientOptions.username && clientOptions.password)) {
+            if (clientOptions.auth === 'oauth') {
+              auth = "token " + clientOptions.token;
             } else {
-              auth = 'Basic ' + base64encode("" + options.username + ":" + options.password);
+              auth = 'Basic ' + base64encode("" + clientOptions.username + ":" + clientOptions.password);
             }
             headers['Authorization'] = auth;
           }
-          xhr = jQuery.ajax({
+          ajaxConfig = {
             url: getURL(),
             type: method,
             contentType: 'application/json',
             mimeType: mimeType,
             headers: headers,
             processData: false,
-            data: !raw && data && JSON.stringify(data) || data,
-            dataType: !raw ? 'json' : void 0
-          });
-          return xhr.always(function() {
+            data: !options.raw && data && JSON.stringify(data) || data,
+            dataType: !options.raw ? 'json' : void 0
+          };
+          if (options.isBoolean) {
+            booleanPromise = new jQuery.Deferred();
+            ajaxConfig.statusCode = {
+              204: function() {
+                return booleanPromise.resolve(true);
+              },
+              404: function() {
+                return booleanPromise.resolve(false);
+              }
+            };
+          }
+          xhr = jQuery.ajax(ajaxConfig);
+          xhr.always(function() {
             var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
             rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
             rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
             _results = [];
             for (_i = 0, _len = _listeners.length; _i < _len; _i++) {
               listener = _listeners[_i];
-              _results.push(listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64));
+              _results.push(listener(rateLimitRemaining, rateLimit, method, path, data, options));
             }
             return _results;
-          }).then(function(data, textStatus, jqXHR) {
+          });
+          promise = options.isBoolean ? (xhr.fail(function(err) {
+            if (err.status !== 404) {
+              return booleanPromise.reject(err);
+            }
+          }), booleanPromise) : xhr.then(function(data, textStatus, jqXHR) {
             var converted, i, ret, _i, _ref;
             ret = new jQuery.Deferred();
-            if ('GET' === method && isBase64) {
+            if ('GET' === method && options.isBase64) {
               converted = '';
               for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
                 converted += String.fromCharCode(data.charCodeAt(i) & 0xff);
@@ -95,15 +120,19 @@
               status: xhr.status,
               _xhr: xhr
             };
-          }).promise();
+          });
+          return promise.promise();
         };
         this.onRateLimitChanged = function(listener) {
           return _listeners.push(listener);
         };
         this.getZen = function() {
-          return _request('GET', '/zen', null, true);
+          return _request('GET', '/zen', null, {
+            raw: true
+          });
         };
         this.getAllUsers = function(since) {
+          var options;
           if (since == null) {
             since = null;
           }
@@ -117,7 +146,7 @@
           return _request('GET', "/orgs/" + orgName + "/repos?type=all&per_page=1000&sort=updated&direction=desc", null);
         };
         this.getPublicGists = function(since) {
-          var getDate;
+          var getDate, options;
           if (since == null) {
             since = null;
           }
@@ -190,7 +219,9 @@
               return _request('GET', "" + _rootPath + "/following", null);
             };
             this.isFollowing = function(user) {
-              return _request('GET', "" + _rootPath + "/following/" + user, null);
+              return _request('GET', "" + _rootPath + "/following/" + user, null, {
+                isBoolean: true
+              });
             };
             this.getPublicKeys = function() {
               return _request('GET', "" + _rootPath + "/keys", null);
@@ -289,7 +320,9 @@
               return _request('GET', "/teams/" + this.id + "/members");
             };
             this.isMember = function(user) {
-              return _request('GET', "/teams/" + this.id + "/members/" + user);
+              return _request('GET', "/teams/" + this.id + "/members/" + user, null, {
+                isBoolean: true
+              });
             };
             this.addMember = function(user) {
               return _request('PUT', "/teams/" + this.id + "/members/" + user);
@@ -325,6 +358,7 @@
               return _request('GET', "/orgs/" + this.name + "/teams", null);
             };
             this.createTeam = function(name, repoNames, permission) {
+              var options;
               if (repoNames == null) {
                 repoNames = null;
               }
@@ -344,7 +378,9 @@
               return _request('GET', "/orgs/" + this.name + "/members", null);
             };
             this.isMember = function(user) {
-              return _request('GET', "/orgs/" + this.name + "/members/" + user, null);
+              return _request('GET', "/orgs/" + this.name + "/members/" + user, null, {
+                isBoolean: true
+              });
             };
             this.removeMember = function(user) {
               return _request('DELETE', "/orgs/" + this.name + "/members/" + user, null);
@@ -400,7 +436,10 @@
               }).promise();
             };
             this.getBlob = function(sha, isBase64) {
-              return _request('GET', "" + _repoPath + "/git/blobs/" + sha, null, 'raw', isBase64);
+              return _request('GET', "" + _repoPath + "/git/blobs/" + sha, null, {
+                raw: true,
+                isBase64: isBase64
+              });
             };
             this.getSha = function(branch, path) {
               var _this = this;
@@ -633,7 +672,7 @@
 
         })();
         Repository = (function() {
-          var _client, _repo, _user;
+          var _repo, _user;
 
           _user = null;
 
@@ -719,10 +758,24 @@
               return _request('GET', "" + this.repoPath + "/notifications", options);
             };
             this.getCollaborators = function() {
-              return _request('GET', "" + this.repoPath + "/collaborators");
+              return _request('GET', "" + this.repoPath + "/collaborators", null);
             };
             this.isCollaborator = function(username) {
-              return _request('GET', "" + this.repoPath + "/collaborators/" + username);
+              if (username == null) {
+                username = null;
+              }
+              if (!username) {
+                throw 'BUG: username is required';
+              }
+              return _request('GET', "" + this.repoPath + "/collaborators/" + username, null, {
+                isBoolean: true
+              });
+            };
+            this.canCollaborate = function() {
+              var _this = this;
+              return _client.getLogin().then(function(login) {
+                return _this.isCollaborator(login);
+              });
             };
           }
 
@@ -780,7 +833,9 @@
               return _request('DELETE', "" + this.gistPath + "/star");
             };
             this.isStarred = function() {
-              return _request('GET', "" + this.gistPath);
+              return _request('GET', "" + this.gistPath, null, {
+                isBoolean: true
+              });
             };
           }
 
@@ -808,6 +863,23 @@
           return new Gist({
             id: id
           });
+        };
+        this.getLogin = function() {
+          var ret;
+          switch (clientOptions.auth) {
+            case 'basic':
+              ret = new jQuery.Deferred();
+              ret.resolve(clientOptions.username);
+              return ret;
+            case 'oauth':
+              return new User().getInfo().then(function(info) {
+                return info.login;
+              });
+            default:
+              ret = new jQuery.Deferred();
+              ret.resolve(null);
+              return ret;
+          }
         };
       }
 

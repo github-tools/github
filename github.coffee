@@ -34,6 +34,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Provide an option to override the default URL
       clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
 
+      _client = @ # Useful for other classes (like Repo) to get the current Client object
 
       _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
         getURL = ->
@@ -875,6 +876,15 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             throw 'BUG: username is required' if not username
             _request 'GET', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
 
+          # Can Collaborate
+          # -------
+          # True if the authenticated user has permission
+          # to commit to this repository.
+          @canCollaborate = () ->
+            _client.getLogin()
+            .then (login) =>
+              @isCollaborator(login)
+
 
       # Gist API
       # -------
@@ -976,6 +986,29 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
       @getGist = (id) ->
         new Gist(id: id)
+
+      # Returns the login of the current user.
+      # When using OAuth this is unknown but is necessary to
+      # determine if the current user has commit access to a
+      # repository
+      @getLogin = () ->
+        # 3 cases:
+        # 1. No authentication provided
+        # 2. Username (and password) provided
+        # 3. OAuth token provided
+        switch clientOptions.auth
+          when 'basic'
+            ret = new jQuery.Deferred()
+            ret.resolve(clientOptions.username)
+            return ret
+          when 'oauth'
+            return new User().getInfo()
+            .then (info) ->
+              return info.login
+          else
+            ret = new jQuery.Deferred()
+            ret.resolve(null)
+            return ret
 
 
 
