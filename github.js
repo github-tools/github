@@ -8,19 +8,15 @@
   makeGithub = function(_, jQuery, base64encode, userAgent) {
     var Github;
     Github = (function() {
-      var _listeners, _request;
-
-      _request = null;
-
-      _listeners = [];
 
       function Github(clientOptions) {
-        var AuthenticatedUser, Branch, Gist, GitRepo, Organization, Repository, Team, User, _client;
+        var AuthenticatedUser, Branch, Gist, GitRepo, Organization, Repository, Team, User, _client, _listeners, _request;
         if (clientOptions == null) {
           clientOptions = {};
         }
         clientOptions.rootURL = clientOptions.rootURL || 'https://api.github.com';
         _client = this;
+        _listeners = [];
         _request = function(method, path, data, options) {
           var ajaxConfig, auth, booleanPromise, getURL, headers, mimeType, promise, xhr,
             _this = this;
@@ -184,19 +180,14 @@
           return _request('GET', '/notifications', options);
         };
         User = (function() {
-          var _rootPath, _username;
 
-          _rootPath = null;
-
-          _username = null;
-
-          function User(username) {
-            if (username == null) {
-              username = null;
+          function User(_username) {
+            var _rootPath;
+            if (_username == null) {
+              _username = null;
             }
-            _username = username;
-            if (username) {
-              _rootPath = "/users/" + username;
+            if (_username) {
+              _rootPath = "/users/" + _username;
             } else {
               _rootPath = "/user";
             }
@@ -391,18 +382,15 @@
 
         })();
         GitRepo = (function() {
-          var _currentTree, _repoPath;
-
-          _repoPath = null;
-
-          _currentTree = {
-            branch: null,
-            sha: null
-          };
 
           function GitRepo(repoUser, repoName) {
+            var _currentTree, _repoPath;
             this.repoUser = repoUser;
             this.repoName = repoName;
+            _currentTree = {
+              branch: null,
+              sha: null
+            };
             _repoPath = "/repos/" + this.repoUser + "/" + this.repoName;
             this._updateTree = function(branch) {
               var _this = this;
@@ -563,17 +551,13 @@
 
         })();
         Branch = (function() {
-          var _getRef, _git;
-
-          _git = null;
-
-          _getRef = function() {
-            throw 'BUG: No way to fetch branch ref!';
-          };
 
           function Branch(git, getRef) {
+            var _getRef, _git;
             _git = git;
-            _getRef = getRef;
+            _getRef = getRef || function() {
+              throw 'BUG: No way to fetch branch ref!';
+            };
             this.getCommits = function(options) {
               if (options == null) {
                 options = {};
@@ -672,19 +656,12 @@
 
         })();
         Repository = (function() {
-          var _repo, _user;
-
-          _user = null;
-
-          _repo = null;
-
-          _client = null;
 
           function Repository(options) {
+            var _repo, _user;
             this.options = options;
             _user = this.options.user;
             _repo = this.options.name;
-            _client = this.options.client;
             this.git = new GitRepo(_user, _repo);
             this.repoPath = "/repos/" + _user + "/" + _repo;
             this.currentTree = {
@@ -785,12 +762,12 @@
         Gist = (function() {
 
           function Gist(options) {
-            var id;
+            var id, _gistPath;
             this.options = options;
             id = this.options.id;
-            this.gistPath = "/gists/" + id;
+            _gistPath = "/gists/" + id;
             this.read = function() {
-              return _request('GET', this.gistPath, null);
+              return _request('GET', _gistPath, null);
             };
             this.create = function(files, isPublic, description) {
               if (isPublic == null) {
@@ -809,10 +786,10 @@
               return _request('POST', "/gists", options);
             };
             this["delete"] = function() {
-              return _request('DELETE', this.gistPath, null);
+              return _request('DELETE', _gistPath, null);
             };
             this.fork = function() {
-              return _request('POST', "" + this.gistPath + "/forks", null);
+              return _request('POST', "" + _gistPath + "/forks", null);
             };
             this.update = function(files, description) {
               if (description == null) {
@@ -824,16 +801,16 @@
               if (description != null) {
                 options.description = description;
               }
-              return _request('PATCH', this.gistPath, options);
+              return _request('PATCH', _gistPath, options);
             };
             this.star = function() {
-              return _request('PUT', "" + this.gistPath + "/star");
+              return _request('PUT', "" + _gistPath + "/star");
             };
             this.unstar = function() {
-              return _request('DELETE', "" + this.gistPath + "/star");
+              return _request('DELETE', "" + _gistPath + "/star");
             };
             this.isStarred = function() {
-              return _request('GET', "" + this.gistPath, null, {
+              return _request('GET', "" + _gistPath, null, {
                 isBoolean: true
               });
             };
@@ -845,16 +822,15 @@
         this.getRepo = function(user, repo) {
           return new Repository({
             user: user,
-            name: repo,
-            client: this
+            name: repo
           });
         };
-        this.getUser = function(username) {
-          if (username == null) {
-            username = null;
+        this.getUser = function(login) {
+          if (login == null) {
+            login = null;
           }
-          if (username) {
-            return new User(username);
+          if (login) {
+            return new User(login);
           } else {
             return new AuthenticatedUser();
           }

@@ -22,20 +22,18 @@
 makeGithub = (_, jQuery, base64encode, userAgent) =>
   class Github
 
-    # HTTP Request Abstraction
-    # =======
-    #
-    _request = null
-
-    # These are updated whenever a request is made
-    _listeners = []
-
     constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
       clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
 
       _client = @ # Useful for other classes (like Repo) to get the current Client object
 
+      # These are updated whenever a request is made
+      _listeners = []
+
+      # HTTP Request Abstraction
+      # =======
+      #
       _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
         getURL = ->
           url = clientOptions.rootURL + path
@@ -196,16 +194,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # =======
       class User
 
-        # Private var that stores the root path.
-        # Use a different URL if this user is the authenticated user
-        _rootPath = null
-        _username = null
-
         # Store the username
-        constructor: (username=null) ->
-          _username = username
-          if username
-            _rootPath = "/users/#{username}"
+        constructor: (_username=null) ->
+
+          # Private var that stores the root path.
+          # Use a different URL if this user is the authenticated user
+          if _username
+            _rootPath = "/users/#{_username}"
           else
             _rootPath = "/user"
 
@@ -374,6 +369,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           @removeRepo = (orgName, repoName) ->
             _request 'DELETE', "/teams/#{@id}/repos/#{orgName}/#{repoName}"
 
+
       class Organization
         constructor: (@name) ->
 
@@ -414,14 +410,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       class GitRepo
 
-        # Private variables
-        _repoPath = null
-        _currentTree =
-          branch: null
-          sha: null
-
-
         constructor: (@repoUser, @repoName) ->
+          # Private variables
+          _currentTree =
+            branch: null
+            sha: null
           _repoPath = "/repos/#{@repoUser}/#{@repoName}"
 
 
@@ -628,13 +621,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       # Provides common methods that may require several git operations.
       class Branch
-        # Local variables
-        _git = null
-        _getRef = -> throw 'BUG: No way to fetch branch ref!'
 
         constructor: (git, getRef) ->
+          # Private variables
           _git = git
-          _getRef = getRef
+          _getRef = getRef or -> throw 'BUG: No way to fetch branch ref!'
 
           # List commits on a branch.
           # -------
@@ -754,15 +745,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # and ways to operate on a `Branch`.
       class Repository
 
-        # Private fields
-        _user = null
-        _repo = null
-        _client = null
-
         constructor: (@options) ->
+          # Private fields
           _user = @options.user
           _repo = @options.name
-          _client = @options.client
 
           # Set the `git` instance variable
           @git = new GitRepo(_user, _repo)
@@ -891,13 +877,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       class Gist
         constructor: (@options) ->
           id = @options.id
-          @gistPath = "/gists/#{id}"
+          _gistPath = "/gists/#{id}"
 
 
           # Read the gist
           # --------
           @read = () ->
-            _request 'GET', @gistPath, null
+            _request 'GET', _gistPath, null
 
 
           # Create the gist
@@ -923,13 +909,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Delete the gist
           # --------
           @delete = () ->
-            _request 'DELETE', @gistPath, null
+            _request 'DELETE', _gistPath, null
 
 
           # Fork a gist
           # --------
           @fork = () ->
-            _request 'POST', "#{@gistPath}/forks", null
+            _request 'POST', "#{_gistPath}/forks", null
 
 
           # Update a gist with the new stuff
@@ -947,22 +933,22 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           @update = (files, description=null) ->
             options = {files: files}
             options.description = description if description?
-            _request 'PATCH', @gistPath, options
+            _request 'PATCH', _gistPath, options
 
           # Star a gist
           # -------
           @star = () ->
-            _request 'PUT', "#{@gistPath}/star"
+            _request 'PUT', "#{_gistPath}/star"
 
           # Unstar a gist
           # -------
           @unstar = () ->
-            _request 'DELETE', "#{@gistPath}/star"
+            _request 'DELETE', "#{_gistPath}/star"
 
           # Check if a gist is starred
           # -------
           @isStarred = () ->
-            _request 'GET', "#{@gistPath}", null, {isBoolean:true}
+            _request 'GET', "#{_gistPath}", null, {isBoolean:true}
 
 
       # Top Level API
@@ -971,16 +957,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         new Repository(
           user: user
           name: repo
-          # Store this so we can get the active user.
-          # Used for finding if the current user can collaborate
-          client: @
         )
 
       # API for viewing info for arbitrary users or the current user
       # if no arguments are provided.
-      @getUser = (username=null) ->
-        if username
-          new User(username)
+      @getUser = (login=null) ->
+        if login
+          new User(login)
         else
           new AuthenticatedUser()
 
