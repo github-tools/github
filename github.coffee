@@ -30,18 +30,19 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
     # These are updated whenever a request is made
     _listeners = []
 
-    constructor: (options={}) ->
+    constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
-      options.rootURL = options.rootURL or 'https://api.github.com'
+      clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
 
-      _request = (method, path, data, raw, isBase64) ->
+
+      _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
         getURL = ->
-          url = options.rootURL + path
+          url = clientOptions.rootURL + path
           url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
 
         # Support binary data by overriding the response mimeType
         mimeType = undefined
-        mimeType = 'text/plain; charset=x-user-defined' if isBase64
+        mimeType = 'text/plain; charset=x-user-defined' if options.isBase64
 
         headers = {
           'Accept': 'application/vnd.github.raw'
@@ -52,15 +53,14 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # See http://developer.github.com/v3/#user-agent-required
         headers['User-Agent'] = userAgent if userAgent
 
-        if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
-          if options.auth is 'oauth'
-            auth = "token #{options.token}"
+        if (clientOptions.auth is 'oauth' and clientOptions.token) or (clientOptions.auth is 'basic' and clientOptions.username and clientOptions.password)
+          if clientOptions.auth is 'oauth'
+            auth = "token #{clientOptions.token}"
           else
-            auth = 'Basic ' + base64encode("#{options.username}:#{options.password}")
+            auth = 'Basic ' + base64encode("#{clientOptions.username}:#{clientOptions.password}")
           headers['Authorization'] = auth
 
-
-        xhr = jQuery.ajax {
+        ajaxConfig =
           url: getURL()
           type: method
           contentType: 'application/json'
@@ -68,47 +68,69 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           headers: headers
 
           processData: false # Don't convert to QueryString
-          data: !raw and data and JSON.stringify(data) or data
-          dataType: 'json' unless raw
+          data: !options.raw and data and JSON.stringify(data) or data
+          dataType: 'json' unless options.raw
 
-        }
+        # If the request is a boolean yes/no question GitHub will indicate
+        # via the HTTP Status of 204 (No Content) or 404 instead of a 200.
+        # Also, jQuery will never call `xhr.resolve` so we need to use a
+        # different promise later on.
+        if options.isBoolean
+          booleanPromise = new jQuery.Deferred()
+          ajaxConfig.statusCode =
+            # a Boolean 'yes'
+            204: () => booleanPromise.resolve(true)
+            # a Boolean 'no'
+            404: () => booleanPromise.resolve(false)
 
+        xhr = jQuery.ajax(ajaxConfig)
 
-        xhr
-        .always =>
+        xhr.always =>
           # Fire listeners when the request completes or fails
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
 
           for listener in _listeners
-            listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64)
+            listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
-        # Return the result and Base64 encode it if `isBase64` flag is set.
-        .then (data, textStatus, jqXHR) ->
-          ret = new jQuery.Deferred()
-          # Convert the response to a Base64 encoded string
-          if 'GET' == method and isBase64
-            # Convert raw data to binary chopping off the higher-order bytes in each char.
-            # Useful for Base64 encoding.
-            converted = ''
-            for i in [0..data.length]
-              converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
-            converted
+        promise = if options.isBoolean
+          # If the request fails for something other than 404
+          # then reject the promise.
+          # 404 means 'false'
+          xhr.fail (err) -> booleanPromise.reject(err) if err.status != 404
 
-            ret.resolve(converted, textStatus, jqXHR)
-          else
-            ret.resolve(data, textStatus, jqXHR)
+          # Set the promise returned to be the boolean promise
+          # instead of `xhr` (see above on the `isBoolean` option)
+          booleanPromise
 
-        # Parse the error if one occurs
-        .then null, (xhr, msg, desc) ->
-          if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
-            return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
+        else
 
-          json = JSON.parse xhr.responseText
-          return {error: json, status: xhr.status, _xhr: xhr}
+          # Return the result and Base64 encode it if `options.isBase64` flag is set.
+          xhr.then (data, textStatus, jqXHR) ->
+            ret = new jQuery.Deferred()
+            # Convert the response to a Base64 encoded string
+            if 'GET' == method and options.isBase64
+              # Convert raw data to binary chopping off the higher-order bytes in each char.
+              # Useful for Base64 encoding.
+              converted = ''
+              for i in [0..data.length]
+                converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
+              converted
+
+              ret.resolve(converted, textStatus, jqXHR)
+            else
+              ret.resolve(data, textStatus, jqXHR)
+
+          # Parse the error if one occurs
+          .then null, (xhr, msg, desc) ->
+            if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
+              return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
+
+            json = JSON.parse xhr.responseText
+            return {error: json, status: xhr.status, _xhr: xhr}
 
         # Return the promise
-        .promise()
+        return promise.promise()
 
       # Add a listener that fires when the `rateLimitRemaining` changes as a result of
       # communicating with github.
@@ -119,7 +141,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # -------
       @getZen = () ->
         # Send `data` to `null` and the `raw` flag to `true`
-        _request 'GET', '/zen', null, true
+        _request 'GET', '/zen', null, {raw:true}
 
       # Get all users
       # -------
@@ -219,7 +241,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Check if this user is following another user
           # -------
           @isFollowing = (user) ->
-            _request 'GET', "#{_rootPath}/following/#{user}", null
+            _request 'GET', "#{_rootPath}/following/#{user}", null, {isBoolean:true}
 
           # List public keys for a user
           # -------
@@ -334,7 +356,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             _request 'GET', "/teams/#{@id}/members"
 
           @isMember = (user) ->
-            _request 'GET', "/teams/#{@id}/members/#{user}"
+            _request 'GET', "/teams/#{@id}/members/#{user}", null, {isBoolean:true}
 
           @addMember = (user) ->
             _request 'PUT', "/teams/#{@id}/members/#{user}"
@@ -378,7 +400,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             _request 'GET', "/orgs/#{@name}/members", null
 
           @isMember = (user) ->
-            _request 'GET', "/orgs/#{@name}/members/#{user}", null
+            _request 'GET', "/orgs/#{@name}/members/#{user}", null, {isBoolean:true}
 
           @removeMember = (user) ->
             _request 'DELETE', "/orgs/#{@name}/members/#{user}", null
@@ -463,7 +485,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Retrieve the contents of a blob
           # -------
           @getBlob = (sha, isBase64) ->
-            _request 'GET', "#{_repoPath}/git/blobs/#{sha}", null, 'raw', isBase64
+            _request 'GET', "#{_repoPath}/git/blobs/#{sha}", null, {raw:true, isBase64:isBase64}
 
 
           # For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -847,10 +869,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # all organization owners are included in the list of collaborators.
           # Otherwise, only users with access to the repository are returned in the collaborators list.
           @getCollaborators = () ->
-            _request 'GET', "#{@repoPath}/collaborators"
+            _request 'GET', "#{@repoPath}/collaborators", null
 
-          @isCollaborator = (username) ->
-            _request 'GET', "#{@repoPath}/collaborators/#{username}"
+          @isCollaborator = (username=null) ->
+            throw 'BUG: username is required' if not username
+            _request 'GET', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
 
 
       # Gist API
@@ -929,7 +952,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Check if a gist is starred
           # -------
           @isStarred = () ->
-            _request 'GET', "#{@gistPath}"
+            _request 'GET', "#{@gistPath}", null, {isBoolean:true}
 
 
       # Top Level API
