@@ -42,8 +42,8 @@
           if (userAgent) {
             headers['User-Agent'] = userAgent;
           }
-          if ((clientOptions.auth === 'oauth' && clientOptions.token) || (clientOptions.auth === 'basic' && clientOptions.username && clientOptions.password)) {
-            if (clientOptions.auth === 'oauth') {
+          if (clientOptions.token || (clientOptions.username && clientOptions.password)) {
+            if (clientOptions.token) {
               auth = "token " + clientOptions.token;
             } else {
               auth = 'Basic ' + base64encode("" + clientOptions.username + ":" + clientOptions.password);
@@ -499,9 +499,6 @@
                 _this = this;
               data = {
                 message: message,
-                author: {
-                  name: this.options.username
-                },
                 parents: [parent],
                 tree: tree
               };
@@ -750,8 +747,17 @@
             };
             this.canCollaborate = function() {
               var _this = this;
+              if (!(clientOptions.password || clientOptions.token)) {
+                return (new $.Deferred()).resolve(false);
+              }
               return _client.getLogin().then(function(login) {
-                return _this.isCollaborator(login);
+                if (!login) {
+                  return false;
+                } else {
+                  return _this.isCollaborator(login);
+                }
+              }).then(null, function(err) {
+                return false;
               });
             };
           }
@@ -831,8 +837,10 @@
           }
           if (login) {
             return new User(login);
-          } else {
+          } else if (clientOptions.password || clientOptions.token) {
             return new AuthenticatedUser();
+          } else {
+            return null;
           }
         };
         this.getGist = function(id) {
@@ -842,19 +850,14 @@
         };
         this.getLogin = function() {
           var ret;
-          switch (clientOptions.auth) {
-            case 'basic':
-              ret = new jQuery.Deferred();
-              ret.resolve(clientOptions.username);
-              return ret;
-            case 'oauth':
-              return new User().getInfo().then(function(info) {
-                return info.login;
-              });
-            default:
-              ret = new jQuery.Deferred();
-              ret.resolve(null);
-              return ret;
+          if (clientOptions.password || clientOptions.token) {
+            return new User().getInfo().then(function(info) {
+              return info.login;
+            });
+          } else {
+            ret = new jQuery.Deferred();
+            ret.resolve(null);
+            return ret;
           }
         };
       }

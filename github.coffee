@@ -52,8 +52,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # See http://developer.github.com/v3/#user-agent-required
         headers['User-Agent'] = userAgent if userAgent
 
-        if (clientOptions.auth is 'oauth' and clientOptions.token) or (clientOptions.auth is 'basic' and clientOptions.username and clientOptions.password)
-          if clientOptions.auth is 'oauth'
+        if (clientOptions.token) or (clientOptions.username and clientOptions.password)
+          if clientOptions.token
             auth = "token #{clientOptions.token}"
           else
             auth = 'Basic ' + base64encode("#{clientOptions.username}:#{clientOptions.password}")
@@ -565,9 +565,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           @commit = (parent, tree, message) ->
             data =
               message: message
-              author:
-                name: @options.username
-
               parents: [parent]
               tree: tree
 
@@ -867,9 +864,19 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # True if the authenticated user has permission
           # to commit to this repository.
           @canCollaborate = () ->
+            # Short-circuit if no credentials provided
+            if not (clientOptions.password or clientOptions.token)
+              return (new $.Deferred()).resolve(false)
+
             _client.getLogin()
             .then (login) =>
-              @isCollaborator(login)
+              if not login
+                return false
+              else
+               return @isCollaborator(login)
+            .then null, (err) =>
+              # Problem logging in (maybe bad username/password)
+              return false
 
 
       # Gist API
@@ -963,9 +970,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # if no arguments are provided.
       @getUser = (login=null) ->
         if login
-          new User(login)
+          return new User(login)
+        else if clientOptions.password or clientOptions.token
+          return new AuthenticatedUser()
         else
-          new AuthenticatedUser()
+          return null
 
       @getGist = (id) ->
         new Gist(id: id)
@@ -979,19 +988,14 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # 1. No authentication provided
         # 2. Username (and password) provided
         # 3. OAuth token provided
-        switch clientOptions.auth
-          when 'basic'
-            ret = new jQuery.Deferred()
-            ret.resolve(clientOptions.username)
-            return ret
-          when 'oauth'
-            return new User().getInfo()
-            .then (info) ->
-              return info.login
-          else
-            ret = new jQuery.Deferred()
-            ret.resolve(null)
-            return ret
+        if clientOptions.password or clientOptions.token
+          return new User().getInfo()
+          .then (info) ->
+            return info.login
+        else
+          ret = new jQuery.Deferred()
+          ret.resolve(null)
+          return ret
 
 
 
