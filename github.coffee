@@ -22,26 +22,26 @@
 makeGithub = (_, jQuery, base64encode, userAgent) =>
   class Github
 
-    # HTTP Request Abstraction
-    # =======
-    #
-    _request = null
-
-    # These are updated whenever a request is made
-    _listeners = []
-
-    constructor: (options={}) ->
+    constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
-      options.rootURL = options.rootURL or 'https://api.github.com'
+      clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
 
-      _request = (method, path, data, raw, isBase64) ->
+      _client = @ # Useful for other classes (like Repo) to get the current Client object
+
+      # These are updated whenever a request is made
+      _listeners = []
+
+      # HTTP Request Abstraction
+      # =======
+      #
+      _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
         getURL = ->
-          url = options.rootURL + path
+          url = clientOptions.rootURL + path
           url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
 
         # Support binary data by overriding the response mimeType
         mimeType = undefined
-        mimeType = 'text/plain; charset=x-user-defined' if isBase64
+        mimeType = 'text/plain; charset=x-user-defined' if options.isBase64
 
         headers = {
           'Accept': 'application/vnd.github.raw'
@@ -52,15 +52,14 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # See http://developer.github.com/v3/#user-agent-required
         headers['User-Agent'] = userAgent if userAgent
 
-        if (options.auth is 'oauth' and options.token) or (options.auth is 'basic' and options.username and options.password)
-          if options.auth is 'oauth'
-            auth = "token #{options.token}"
+        if (clientOptions.token) or (clientOptions.username and clientOptions.password)
+          if clientOptions.token
+            auth = "token #{clientOptions.token}"
           else
-            auth = 'Basic ' + base64encode("#{options.username}:#{options.password}")
+            auth = 'Basic ' + base64encode("#{clientOptions.username}:#{clientOptions.password}")
           headers['Authorization'] = auth
 
-
-        xhr = jQuery.ajax {
+        ajaxConfig =
           url: getURL()
           type: method
           contentType: 'application/json'
@@ -68,619 +67,109 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           headers: headers
 
           processData: false # Don't convert to QueryString
-          data: !raw and data and JSON.stringify(data) or data
-          dataType: 'json' unless raw
+          data: !options.raw and data and JSON.stringify(data) or data
+          dataType: 'json' unless options.raw
 
-        }
+        # If the request is a boolean yes/no question GitHub will indicate
+        # via the HTTP Status of 204 (No Content) or 404 instead of a 200.
+        # Also, jQuery will never call `xhr.resolve` so we need to use a
+        # different promise later on.
+        if options.isBoolean
+          booleanPromise = new jQuery.Deferred()
+          ajaxConfig.statusCode =
+            # a Boolean 'yes'
+            204: () => booleanPromise.resolve(true)
+            # a Boolean 'no'
+            404: () => booleanPromise.resolve(false)
 
+        xhr = jQuery.ajax(ajaxConfig)
 
-        xhr
-        .always =>
+        xhr.always =>
           # Fire listeners when the request completes or fails
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
 
           for listener in _listeners
-            listener(rateLimitRemaining, rateLimit, method, path, data, raw, isBase64)
+            listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
-        # Return the result and Base64 encode it if `isBase64` flag is set.
-        .then (data, textStatus, jqXHR) ->
-          ret = new jQuery.Deferred()
-          # Convert the response to a Base64 encoded string
-          if 'GET' == method and isBase64
-            # Convert raw data to binary chopping off the higher-order bytes in each char.
-            # Useful for Base64 encoding.
-            converted = ''
-            for i in [0..data.length]
-              converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
-            converted
+        promise = if options.isBoolean
+          # If the request fails for something other than 404
+          # then reject the promise.
+          # 404 means 'false'
+          xhr.fail (err) -> booleanPromise.reject(err) if err.status != 404
 
-            ret.resolve(converted, textStatus, jqXHR)
-          else
-            ret.resolve(data, textStatus, jqXHR)
+          # Set the promise returned to be the boolean promise
+          # instead of `xhr` (see above on the `isBoolean` option)
+          booleanPromise
 
-        # Parse the error if one occurs
-        .then null, (xhr, msg, desc) ->
-          if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
-            return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
-
-          json = JSON.parse xhr.responseText
-          return {error: json, status: xhr.status, _xhr: xhr}
-
-        # Return the promise
-        .promise()
-
-    # Add a listener that fires when the `rateLimitRemaining` changes as a result of
-    # communicating with github.
-    onRateLimitChanged: (listener) ->
-      _listeners.push listener
-
-    # Random zen quote (test the API)
-    # -------
-    getZen: ->
-      # Send `data` to `null` and the `raw` flag to `true`
-      _request 'GET', '/zen', null, true
-
-    # List public repositories for an Organization
-    # -------
-    getOrgRepos: (orgName) ->
-      _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
-
-    # Get public Gists on all of GitHub
-    # -------
-    getPublicGists: (since=null) ->
-      options = null
-      # Converts a Date object to a string
-      getDate = (time) ->
-        return time.toISOString() if Date == time.constructor
-        return time
-
-      options = {since: getDate(since)} if since
-      _request 'GET', '/gists/public', options
-
-    # List Public Events on all of GitHub
-    # -------
-    getPublicEvents: ->
-      _request 'GET', '/events', null
-
-
-    # List unread notifications for authenticated user
-    # -------
-    # Optional arguments:
-    #
-    # - `all`: `true` to show notifications marked as read.
-    # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
-    # - `since`: Optional time.
-    getNotifications: (options={}) ->
-      # Converts a Date object to a string
-      getDate = (time) ->
-        return time.toISOString() if Date == time.constructor
-        return time
-
-      options.since = getDate(options.since) if options.since
-      _request 'GET', '/notifications', options
-
-    # Github Users API
-    # =======
-    class User
-
-      # Private var that stores the root path.
-      # Use a different URL if this user is the authenticated user
-      _rootPath = null
-      _username = null
-
-      # Store the username
-      constructor: (username=null) ->
-        _username = username
-        if username
-          _rootPath = "/users/#{username}"
         else
-          _rootPath = "/user"
 
-      # Retrieve user information
-      # -------
-      getInfo: ->
-        _request 'GET', "#{_rootPath}", null
+          # Return the result and Base64 encode it if `options.isBase64` flag is set.
+          xhr.then (data, textStatus, jqXHR) ->
+            ret = new jQuery.Deferred()
+            # Convert the response to a Base64 encoded string
+            if 'GET' == method and options.isBase64
+              # Convert raw data to binary chopping off the higher-order bytes in each char.
+              # Useful for Base64 encoding.
+              converted = ''
+              for i in [0..data.length]
+                converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
+              converted
 
-      # List user repositories
-      # -------
-      getRepos: ->
-        _request 'GET', "#{_rootPath}/repos?type=all&per_page=1000&sort=updated", null
+              ret.resolve(converted, textStatus, jqXHR)
+            else
+              ret.resolve(data, textStatus, jqXHR)
 
-      # List user organizations
-      # -------
-      getOrgs: ->
-        _request 'GET', "#{_rootPath}/orgs", null
+          # Parse the error if one occurs
+          .then null, (xhr, msg, desc) ->
+            if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
+              return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
 
-      # List a user's gists
-      # -------
-      getGists: ->
-        _request 'GET', "#{_rootPath}/gists", null
-
-      # List followers of a user
-      # -------
-      getFollowers: ->
-        _request 'GET', "#{_rootPath}/followers", null
-
-      # List who this user is following
-      # -------
-      getFollowing: ->
-        _request 'GET', "#{_rootPath}/following", null
-
-
-      # Get Received events for this user
-      # -------
-      getReceivedEvents: (onlyPublic) ->
-        throw 'BUG: This does not work for authenticated users yet!' if not _username
-        isPublic = ''
-        isPublic = '/public' if onlyPublic
-        _request 'GET', "/users/#{_username}/received_events#{isPublic}", null
-
-      # Get all events for this user
-      # -------
-      getEvents: (onlyPublic) ->
-        throw 'BUG: This does not work for authenticated users yet!' if not _username
-        isPublic = ''
-        isPublic = '/public' if onlyPublic
-        _request 'GET', "/users/#{_username}/events#{isPublic}", null
-
-
-    # Authenticated User API
-    # =======
-    class AuthenticatedUser extends User
-
-      # List authenticated user's gists
-      # -------
-      getGists: ->
-        _request 'GET', '/gists', null
-
-      # Follow a user
-      # -------
-      follow: (username) ->
-        _request 'PUT', "/user/following/#{username}", null
-
-      # Unfollow user
-      # -------
-      unfollow: (username) ->
-        _request 'DELETE', "/user/following/#{username}", null
-
-
-    # Repository API
-    # =======
-
-    # Low-level class for manipulating a Git Repository
-    # -------
-    class GitRepo
-
-      # Private variables
-      _repoPath = null
-      _currentTree =
-        branch: null
-        sha: null
-
-
-      constructor: (@repoUser, @repoName) ->
-        _repoPath = "/repos/#{@repoUser}/#{@repoName}"
-
-
-      # Uses the cache if branch has not been changed
-      # -------
-      _updateTree: (branch) ->
-        # Since this method always returns a promise, wrap the result in a deferred
-        if branch is _currentTree.branch and _currentTree.sha
-          return (new jQuery.Deferred()).resolve(_currentTree.sha)
-
-        @getRef("heads/#{branch}")
-        .then (sha) =>
-          _currentTree.branch = branch
-          _currentTree.sha = sha
-          return sha
-        # Return the promise
-        .promise()
-
-
-      # Get a particular reference
-      # -------
-      getRef: (ref) ->
-        _request('GET', "#{_repoPath}/git/refs/#{ref}", null)
-        .then (res) =>
-          return res.object.sha
-        # Return the promise
-        .promise()
-
-
-      # Create a new reference
-      # --------
-      #
-      #     {
-      #       "ref": "refs/heads/my-new-branch-name",
-      #       "sha": "827efc6d56897b048c772eb4087f854f46256132"
-      #     }
-      createRef: (options) ->
-        _request 'POST', "#{_repoPath}/git/refs", options
-
-
-      # Delete a reference
-      # --------
-      #
-      #     repo.deleteRef('heads/gh-pages')
-      #     repo.deleteRef('tags/v1.0')
-      deleteRef: (ref) ->
-        _request 'DELETE', "#{_repoPath}/git/refs/#{ref}", @options
-
-
-      # List all branches of a repository
-      # -------
-      getBranches: ->
-        _request('GET', "#{_repoPath}/git/refs/heads", null)
-        .then (heads) =>
-          return _.map(heads, (head) ->
-            _.last head.ref.split("/")
-          )
-        # Return the promise
-        .promise()
-
-
-      # Retrieve the contents of a blob
-      # -------
-      getBlob: (sha, isBase64) ->
-        _request 'GET', "#{_repoPath}/git/blobs/#{sha}", null, 'raw', isBase64
-
-
-      # For a given file path, get the corresponding sha (blob for files, tree for dirs)
-      # -------
-      getSha: (branch, path) ->
-        # Just use head if path is empty
-        return @getRef("heads/#{branch}") if path is ''
-
-        @getTree("#{branch}?recursive=true")
-        .then (tree) =>
-          file = _.select(tree, (file) ->
-            file.path is path
-          )[0]
-          return file?.sha if file?.sha
-
-          # Return a promise that has failed if no sha was found
-          (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+            json = JSON.parse xhr.responseText
+            return {error: json, status: xhr.status, _xhr: xhr}
 
         # Return the promise
-        .promise()
+        return promise.promise()
 
+      # Add a listener that fires when the `rateLimitRemaining` changes as a result of
+      # communicating with github.
+      @onRateLimitChanged = (listener) ->
+        _listeners.push listener
 
-      # Retrieve the tree a commit points to
+      # Random zen quote (test the API)
       # -------
-      getTree: (tree) ->
-        _request('GET', "#{_repoPath}/git/trees/#{tree}", null)
-        .then (res) =>
-          return res.tree
-        # Return the promise
-        .promise()
+      @getZen = () ->
+        # Send `data` to `null` and the `raw` flag to `true`
+        _request 'GET', '/zen', null, {raw:true}
 
-
-      # Post a new blob object, getting a blob SHA back
+      # Get all users
       # -------
-      postBlob: (content, isBase64) ->
-        if typeof (content) is 'string'
-          content =
-            content: content
-            encoding: 'utf-8'
+      @getAllUsers = (since=null) ->
+        options = {}
+        options.since = since if since
+        _request 'GET', '/users', options
 
-        content.encoding = 'base64' if isBase64
-
-        _request('POST', "#{_repoPath}/git/blobs", content)
-        .then (res) =>
-          return res.sha
-        # Return the promise
-        .promise()
-
-
-      # Update an existing tree adding a new blob object getting a tree SHA back
+      # List public repositories for an Organization
       # -------
-      updateTree: (baseTree, path, blob) ->
-        data =
-          base_tree: baseTree
-          tree: [
-            path: path
-            mode: '100644'
-            type: 'blob'
-            sha: blob
-          ]
+      @getOrgRepos = (orgName) ->
+        _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
 
-        _request('POST', "#{_repoPath}/git/trees", data)
-        .then (res) =>
-          return res.sha
-        # Return the promise
-        .promise()
-
-
-      # Post a new tree object having a file path pointer replaced
-      # with a new blob SHA getting a tree SHA back
+      # Get public Gists on all of GitHub
       # -------
-      postTree: (tree) ->
-        _request('POST', "#{_repoPath}/git/trees", {tree: tree})
-        .then (res) =>
-          return res.sha
-        # Return the promise
-        .promise()
-
-
-      # Create a new commit object with the current commit SHA as the parent
-      # and the new tree SHA, getting a commit SHA back
-      # -------
-      commit: (parent, tree, message) ->
-        data =
-          message: message
-          author:
-            name: @options.username
-
-          parents: [parent]
-          tree: tree
-
-        _request('POST', "#{_repoPath}/git/commits", data)
-        .then (res) =>
-          _currentTree.sha = res.sha # update latest commit
-          return res.sha
-        # Return the promise
-        .promise()
-
-
-      # Update the reference of your head to point to the new commit SHA
-      # -------
-      updateHead: (head, commit) ->
-        _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
-
-
-      # List commits on a repository.
-      # -------
-      # Takes an object of optional paramaters:
-      #
-      # - `sha`: SHA or branch to start listing commits from
-      # - `path`: Only commits containing this file path will be returned
-      # - `author`: GitHub login, name, or email by which to filter by commit author
-      # - `since`: ISO 8601 date - only commits after this date will be returned
-      # - `until`: ISO 8601 date - only commits before this date will be returned
-      getCommits: (options={}) ->
-        options = _.extend {}, options
-
+      @getPublicGists = (since=null) ->
+        options = null
         # Converts a Date object to a string
         getDate = (time) ->
           return time.toISOString() if Date == time.constructor
           return time
 
-        options.since = getDate(options.since) if options.since
-        options.until = getDate(options.until) if options.until
+        options = {since: getDate(since)} if since
+        _request 'GET', '/gists/public', options
 
-        queryString = ''
-        if not _.isEmpty(options)
-          params = []
-          _.each _.pairs(options), ([key, value]) ->
-            params.push "#{key}=#{encodeURIComponent(value)}"
-          queryString = "?#{params.join('&')}"
-
-        _request('GET', "#{_repoPath}/commits#{queryString}", null)
-        # Return the promise
-        .promise()
-
-
-    # Branch Class
-    # -------
-    # Provides common methods that may require several git operations.
-    class Branch
-      # Local variables
-      _git = null
-      _getRef = -> throw 'BUG: No way to fetch branch ref!'
-
-      constructor: (git, getRef) ->
-        _git = git
-        _getRef = getRef
-
-      # List commits on a branch.
+      # List Public Events on all of GitHub
       # -------
-      # Takes an object of optional paramaters:
-      #
-      # - `path`: Only commits containing this file path will be returned
-      # - `author`: GitHub login, name, or email by which to filter by commit author
-      # - `since`: ISO 8601 date - only commits after this date will be returned
-      # - `until`: ISO 8601 date - only commits before this date will be returned
-      getCommits: (options={}) ->
-        options = _.extend {}, options
-        # Limit to the current branch
-        _getRef()
-        .then (branch) ->
-          options.sha = branch
-          _git.getCommits(options)
-
-        # Return the promise
-        .promise()
-
-
-      # Read file at given path
-      # -------
-      # Set `isBase64=true` to get back a base64 encoded binary file
-      read: (path, isBase64) ->
-        _getRef()
-        .then (branch) =>
-          _git.getSha(branch, path)
-          .then (sha) =>
-            _git.getBlob(sha, isBase64)
-        # Return the promise
-        .promise()
-
-
-      # Remove a file from the tree
-      # -------
-      remove: (path, message="Removed #{path}") ->
-        _getRef()
-        .then (branch) =>
-          _git._updateTree(branch)
-          .then (latestCommit) =>
-            _git.getTree("#{latestCommit}?recursive=true")
-            .then (tree) =>
-
-              # Update Tree
-              newTree = _.reject(tree, (ref) ->
-                ref.path is path
-              )
-              _.each newTree, (ref) ->
-                delete ref.sha  if ref.type is 'tree'
-
-              _git.postTree(newTree)
-              .then (rootTree) =>
-                _git.commit(latestCommit, rootTree, message)
-                .then (commit) =>
-                  _git.updateHead(branch, commit)
-                  .then (res) =>
-                    # Finally, return the result
-                    return res
-
-        # Return the promise
-        .promise()
-
-
-      # Move a file to a new location
-      # -------
-      move: (path, newPath, message="Moved #{path}") ->
-        _getRef()
-        .then (branch) =>
-          _git._updateTree(branch)
-          .then (latestCommit) =>
-            _git.getTree("#{latestCommit}?recursive=true")
-            .then (tree) =>
-
-              # Update Tree
-              _.each tree, (ref) ->
-                ref.path = newPath  if ref.path is path
-                delete ref.sha  if ref.type is 'tree'
-
-              _git.postTree(tree)
-              .then (rootTree) =>
-                _git.commit(latestCommit, rootTree, message)
-                .then (commit) =>
-                  _git.updateHead(branch, commit)
-                  .then (res) =>
-                    # Finally, return the result
-                    return res
-        # Return the promise
-        .promise()
-
-
-      # Write file contents to a given branch and path
-      # -------
-      # To write base64 encoded data set `isBase64==true`
-      write: (path, content, message="Changed #{path}", isBase64) ->
-        _getRef()
-        .then (branch) =>
-          _git._updateTree(branch)
-          .then (latestCommit) =>
-            _git.postBlob(content, isBase64)
-            .then (blob) =>
-              _git.updateTree(latestCommit, path, blob)
-              .then (tree) =>
-                _git.commit(latestCommit, tree, message)
-                .then (commit) =>
-                  _git.updateHead(branch, commit)
-                  .then (res) =>
-                    # Finally, return the result
-                    return res
-        # Return the promise
-        .promise()
-
-
-    # Repository Class
-    # -------
-    # Provides methods for operating on the entire repository
-    # and ways to operate on a `Branch`.
-    class Repository
-
-      # Private fields
-      _user = null
-      _repo = null
-
-      constructor: (@options) ->
-        _user = @options.user
-        _repo = @options.name
-        # Set the `git` instance variable
-        @git = new GitRepo(_user, _repo)
-        @repoPath = "/repos/#{_user}/#{_repo}"
-        @currentTree =
-          branch: null
-          sha: null
-
-      # List all branches of a repository
-      # -------
-      getBranches: -> @git.getBranches()
-
-
-      # Get a branch of a repository
-      # -------
-      getBranch: (branchName) ->
-        getRef = =>
-          deferred = new jQuery.Deferred()
-          deferred.resolve(branchName)
-          deferred
-        new Branch(@git, getRef)
-
-
-      # Get the default branch of a repository
-      # -------
-      getDefaultBranch: () ->
-        # Calls getInfo() to get the default branch name
-        getRef = =>
-          @getInfo()
-          .then (info) =>
-            return info.master_branch
-        new Branch(@git, getRef)
-
-
-      # Get repository information
-      # -------
-      getInfo: () ->
-        _request 'GET', @repoPath, null
-
-      # Get contents
-      # --------
-      contents: (branch, path) ->
-        _request 'GET', "#{@repoPath}/contents?ref=#{branch}", {path: path}
-
-
-      # Fork repository
-      # -------
-      fork: ->
-        _request 'POST', "#{@repoPath}/forks", null
-
-
-      # Create pull request
-      # --------
-      createPullRequest: (options) ->
-        _request 'POST', "#{@repoPath}/pulls", options
-
-
-      # Get recent commits to the repository
-      # --------
-      # Takes an object of optional paramaters:
-      #
-      # - `path`: Only commits containing this file path will be returned
-      # - `author`: GitHub login, name, or email by which to filter by commit author
-      # - `since`: ISO 8601 date - only commits after this date will be returned
-      # - `until`: ISO 8601 date - only commits before this date will be returned
-      getCommits: (options) ->
-        @git.getCommits(options)
-
-
-      # List repository events
-      # -------
-      getEvents: ->
-        _request 'GET', "#{@repoPath}/events", null
-
-      # List Issue events for a Repository
-      # -------
-      getIssueEvents: ->
-        _request 'GET', "#{@repoPath}/issues/events", null
-
-      # List events for a network of Repositories
-      # -------
-      getNetworkEvents: ->
-        _request 'GET', "/networks/#{_owner}/#{_repo}/events", null
+      @getPublicEvents = () ->
+        _request 'GET', '/events', null
 
 
       # List unread notifications for authenticated user
@@ -690,113 +179,825 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # - `all`: `true` to show notifications marked as read.
       # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
       # - `since`: Optional time.
-      getNotifications: (options={}) ->
+      @getNotifications = (options={}) ->
         # Converts a Date object to a string
         getDate = (time) ->
           return time.toISOString() if Date == time.constructor
           return time
 
         options.since = getDate(options.since) if options.since
-        _request 'GET', "#{@repoPath}/notifications", options
+        _request 'GET', '/notifications', options
 
 
-    # Gist API
-    # -------
-    class Gist
-      constructor: (@options) ->
-        id = @options.id
-        @gistPath = "/gists/#{id}"
+
+      # Github Users API
+      # =======
+      class User
+
+        # Store the username
+        constructor: (_username=null) ->
+
+          # Private var that stores the root path.
+          # Use a different URL if this user is the authenticated user
+          if _username
+            _rootPath = "/users/#{_username}"
+          else
+            _rootPath = "/user"
+
+          # Retrieve user information
+          # -------
+          @getInfo = () ->
+            _request 'GET', "#{_rootPath}", null
+
+          # List user repositories
+          # -------
+          @getRepos = () ->
+            _request 'GET', "#{_rootPath}/repos?type=all&per_page=1000&sort=updated", null
+
+          # List user organizations
+          # -------
+          @getOrgs = () ->
+            _request 'GET', "#{_rootPath}/orgs", null
+
+          # List a user's gists
+          # -------
+          @getGists = () ->
+            _request 'GET', "#{_rootPath}/gists", null
+
+          # List followers of a user
+          # -------
+          @getFollowers = () ->
+            _request 'GET', "#{_rootPath}/followers", null
+
+          # List who this user is following
+          # -------
+          @getFollowing = () ->
+            _request 'GET', "#{_rootPath}/following", null
+
+          # Check if this user is following another user
+          # -------
+          @isFollowing = (user) ->
+            _request 'GET', "#{_rootPath}/following/#{user}", null, {isBoolean:true}
+
+          # List public keys for a user
+          # -------
+          @getPublicKeys = () ->
+            _request 'GET', "#{_rootPath}/keys", null
 
 
-      # Read the gist
-      # --------
-      read: ->
-        _request 'GET', @gistPath, null
+          # Get Received events for this user
+          # -------
+          @getReceivedEvents = (onlyPublic) ->
+            throw 'BUG: This does not work for authenticated users yet!' if not _username
+            isPublic = ''
+            isPublic = '/public' if onlyPublic
+            _request 'GET', "/users/#{_username}/received_events#{isPublic}", null
+
+          # Get all events for this user
+          # -------
+          @getEvents = (onlyPublic) ->
+            throw 'BUG: This does not work for authenticated users yet!' if not _username
+            isPublic = ''
+            isPublic = '/public' if onlyPublic
+            _request 'GET', "/users/#{_username}/events#{isPublic}", null
 
 
-      # Create the gist
-      # --------
-      #
-      # Files contains a hash with the filename as the key and
-      # `{content: 'File Contents Here'}` as the value.
-      #
-      # Example:
-      #
-      #     { "file1.txt": {
-      #         "content": "String file contents"
-      #       }
-      #     }
-      create: (files, isPublic=false, description=null) ->
-        options =
-          isPublic: isPublic
-          files: files
-        options.description = description if description?
-        _request 'POST', "/gists", options
+      # Authenticated User API
+      # =======
+      class AuthenticatedUser extends User
+
+        constructor: () ->
+          super()
+
+          # Update the authenticated user
+          # -------
+          #
+          # Valid options:
+          # - `name`: String
+          # - `email` : Publicly visible email address
+          # - `blog`: String
+          # - `company`: String
+          # - `location`: String
+          # - `hireable`: Boolean
+          # - `bio`: String
+          @updateInfo = (options) ->
+            _request 'PATCH', '/user', options
+
+          # List authenticated user's gists
+          # -------
+          @getGists = () ->
+            _request 'GET', '/gists', null
+
+          # Follow a user
+          # -------
+          @follow = (username) ->
+            _request 'PUT', "/user/following/#{username}", null
+
+          # Unfollow user
+          # -------
+          @unfollow = (username) ->
+            _request 'DELETE', "/user/following/#{username}", null
+
+          # Get Emails associated with this user
+          # -------
+          @getEmails = () ->
+            _request 'GET', '/user/emails', null
+
+          # Add Emails associated with this user
+          # -------
+          @addEmail = (emails) ->
+            emails = [emails] if !_.isArray(emails)
+            _request 'POST', '/user/emails', emails
+
+          # Remove Emails associated with this user
+          # -------
+          @addEmail = (emails) ->
+            emails = [emails] if !_.isArray(emails)
+            _request 'DELETE', '/user/emails', emails
+
+          # Get a single public key
+          # -------
+          @getPublicKey = (id) ->
+            _request 'GET', "/user/keys/#{id}", null
+
+          # Add a public key
+          # -------
+          @addPublicKey = (title, key) ->
+            _request 'POST', "/user/keys", {title: title, key: key}
+
+          # Update a public key
+          # -------
+          @updatePublicKey = (id, options) ->
+            _request 'PATCH', "/user/keys/#{id}", options
 
 
-      # Delete the gist
-      # --------
-      delete: ->
-        _request 'DELETE', @gistPath, null
+
+      # Organization API
+      # =======
+
+      class Team
+        constructor: (@id) ->
+          @getInfo = () ->
+            _request 'GET', "/teams/#{@id}", null
+
+          # - `name`
+          # - `permission`
+          @updateTeam = (options) ->
+            _request 'PATCH', "/teams/#{@id}", options
+
+          @remove = () ->
+            _request 'DELETE', "/teams/#{@id}"
+
+          @getMembers = () ->
+            _request 'GET', "/teams/#{@id}/members"
+
+          @isMember = (user) ->
+            _request 'GET', "/teams/#{@id}/members/#{user}", null, {isBoolean:true}
+
+          @addMember = (user) ->
+            _request 'PUT', "/teams/#{@id}/members/#{user}"
+
+          @removeMember = (user) ->
+            _request 'DELETE', "/teams/#{@id}/members/#{user}"
+
+          @getRepos = () ->
+            _request 'GET', "/teams/#{@id}/repos"
+
+          @addRepo = (orgName, repoName) ->
+            _request 'PUT', "/teams/#{@id}/repos/#{orgName}/#{repoName}"
+
+          @removeRepo = (orgName, repoName) ->
+            _request 'DELETE', "/teams/#{@id}/repos/#{orgName}/#{repoName}"
 
 
-      # Fork a gist
-      # --------
-      fork: ->
-        _request 'POST', "#{@gistPath}/forks", null
+      class Organization
+        constructor: (@name) ->
+
+          @getInfo = () ->
+            _request 'GET', "/orgs/#{@name}", null
+
+          # - `billing_email`: Billing email address. This address is not publicized.
+          # - `company`
+          # - `email`
+          # - `location`
+          # - `name`
+          @updateInfo = (options) ->
+            _request 'PATCH', "/orgs/#{@name}", options
+
+          @getTeams = () ->
+            _request 'GET', "/orgs/#{@name}/teams", null
+
+          # `permission` can be one of `pull`, `push`, or `admin`
+          @createTeam = (name, repoNames=null, permission='pull') ->
+            options = {name: name, permission: permission}
+            options.repo_names = repoNames if repoNames
+            _request 'POST', "/orgs/#{@name}/teams", options
+
+          @getMembers = () ->
+            _request 'GET', "/orgs/#{@name}/members", null
+
+          @isMember = (user) ->
+            _request 'GET', "/orgs/#{@name}/members/#{user}", null, {isBoolean:true}
+
+          @removeMember = (user) ->
+            _request 'DELETE', "/orgs/#{@name}/members/#{user}", null
 
 
-      # Update a gist with the new stuff
-      # --------
-      # `files` are files that make up this gist.
-      # The key of which should be an optional string filename
-      # and the value another optional hash with parameters:
-      #
-      # - `content`: Optional string - Updated file contents
-      # - `filename`: Optional string - New name for this file.
-      #
-      # **NOTE:** All files from the previous version of the gist are carried
-      # over by default if not included in the hash. Deletes can be performed
-      # by including the filename with a null hash.
-      update: (files, description=null) ->
-        options = {files: files}
-        options.description = description if description?
-        _request 'PATCH', @gistPath, options
+      # Repository API
+      # =======
 
-      # Star a gist
+      # Low-level class for manipulating a Git Repository
       # -------
-      star: ->
-        _request 'PUT', "#{@gistPath}/star"
+      class GitRepo
 
-      # Unstar a gist
+        constructor: (@repoUser, @repoName) ->
+          # Private variables
+          _currentTree =
+            branch: null
+            sha: null
+          _repoPath = "/repos/#{@repoUser}/#{@repoName}"
+
+
+          # Uses the cache if branch has not been changed
+          # -------
+          @_updateTree = (branch) ->
+            # Since this method always returns a promise, wrap the result in a deferred
+            if branch is _currentTree.branch and _currentTree.sha
+              return (new jQuery.Deferred()).resolve(_currentTree.sha)
+
+            @getRef("heads/#{branch}")
+            .then (sha) =>
+              _currentTree.branch = branch
+              _currentTree.sha = sha
+              return sha
+            # Return the promise
+            .promise()
+
+
+          # Get a particular reference
+          # -------
+          @getRef = (ref) ->
+            _request('GET', "#{_repoPath}/git/refs/#{ref}", null)
+            .then (res) =>
+              return res.object.sha
+            # Return the promise
+            .promise()
+
+
+          # Create a new reference
+          # --------
+          #
+          #     {
+          #       "ref": "refs/heads/my-new-branch-name",
+          #       "sha": "827efc6d56897b048c772eb4087f854f46256132"
+          #     }
+          @createRef = (options) ->
+            _request 'POST', "#{_repoPath}/git/refs", options
+
+
+          # Delete a reference
+          # --------
+          #
+          #     repo.deleteRef('heads/gh-pages')
+          #     repo.deleteRef('tags/v1.0')
+          @deleteRef = (ref) ->
+            _request 'DELETE', "#{_repoPath}/git/refs/#{ref}", @options
+
+
+          # List all branches of a repository
+          # -------
+          @getBranches = () ->
+            _request('GET', "#{_repoPath}/git/refs/heads", null)
+            .then (heads) =>
+              return _.map(heads, (head) ->
+                _.last head.ref.split("/")
+              )
+            # Return the promise
+            .promise()
+
+
+          # Retrieve the contents of a blob
+          # -------
+          @getBlob = (sha, isBase64) ->
+            _request 'GET', "#{_repoPath}/git/blobs/#{sha}", null, {raw:true, isBase64:isBase64}
+
+
+          # For a given file path, get the corresponding sha (blob for files, tree for dirs)
+          # -------
+          @getSha = (branch, path) ->
+            # Just use head if path is empty
+            return @getRef("heads/#{branch}") if path is ''
+
+            @getTree("#{branch}?recursive=true")
+            .then (tree) =>
+              file = _.select(tree, (file) ->
+                file.path is path
+              )[0]
+              return file?.sha if file?.sha
+
+              # Return a promise that has failed if no sha was found
+              (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+
+            # Return the promise
+            .promise()
+
+
+          # Retrieve the tree a commit points to
+          # -------
+          @getTree = (tree) ->
+            _request('GET', "#{_repoPath}/git/trees/#{tree}", null)
+            .then (res) =>
+              return res.tree
+            # Return the promise
+            .promise()
+
+
+          # Post a new blob object, getting a blob SHA back
+          # -------
+          @postBlob = (content, isBase64) ->
+            if typeof (content) is 'string'
+              content =
+                content: content
+                encoding: 'utf-8'
+
+            content.encoding = 'base64' if isBase64
+
+            _request('POST', "#{_repoPath}/git/blobs", content)
+            .then (res) =>
+              return res.sha
+            # Return the promise
+            .promise()
+
+
+          # Update an existing tree adding a new blob object getting a tree SHA back
+          # -------
+          @updateTree = (baseTree, path, blob) ->
+            data =
+              base_tree: baseTree
+              tree: [
+                path: path
+                mode: '100644'
+                type: 'blob'
+                sha: blob
+              ]
+
+            _request('POST', "#{_repoPath}/git/trees", data)
+            .then (res) =>
+              return res.sha
+            # Return the promise
+            .promise()
+
+
+          # Post a new tree object having a file path pointer replaced
+          # with a new blob SHA getting a tree SHA back
+          # -------
+          @postTree = (tree) ->
+            _request('POST', "#{_repoPath}/git/trees", {tree: tree})
+            .then (res) =>
+              return res.sha
+            # Return the promise
+            .promise()
+
+
+          # Create a new commit object with the current commit SHA as the parent
+          # and the new tree SHA, getting a commit SHA back
+          # -------
+          @commit = (parent, tree, message) ->
+            data =
+              message: message
+              parents: [parent]
+              tree: tree
+
+            _request('POST', "#{_repoPath}/git/commits", data)
+            .then (res) =>
+              _currentTree.sha = res.sha # update latest commit
+              return res.sha
+            # Return the promise
+            .promise()
+
+
+          # Update the reference of your head to point to the new commit SHA
+          # -------
+          @updateHead = (head, commit) ->
+            _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
+
+
+          # List commits on a repository.
+          # -------
+          # Takes an object of optional paramaters:
+          #
+          # - `sha`: SHA or branch to start listing commits from
+          # - `path`: Only commits containing this file path will be returned
+          # - `author`: GitHub login, name, or email by which to filter by commit author
+          # - `since`: ISO 8601 date - only commits after this date will be returned
+          # - `until`: ISO 8601 date - only commits before this date will be returned
+          @getCommits = (options={}) ->
+            options = _.extend {}, options
+
+            # Converts a Date object to a string
+            getDate = (time) ->
+              return time.toISOString() if Date == time.constructor
+              return time
+
+            options.since = getDate(options.since) if options.since
+            options.until = getDate(options.until) if options.until
+
+            queryString = ''
+            if not _.isEmpty(options)
+              params = []
+              _.each _.pairs(options), ([key, value]) ->
+                params.push "#{key}=#{encodeURIComponent(value)}"
+              queryString = "?#{params.join('&')}"
+
+            _request('GET', "#{_repoPath}/commits#{queryString}", null)
+            # Return the promise
+            .promise()
+
+
+      # Branch Class
       # -------
-      unstar: ->
-        _request 'DELETE', "#{@gistPath}/star"
+      # Provides common methods that may require several git operations.
+      class Branch
 
-      # Check if a gist is starred
+        constructor: (git, getRef) ->
+          # Private variables
+          _git = git
+          _getRef = getRef or -> throw 'BUG: No way to fetch branch ref!'
+
+          # List commits on a branch.
+          # -------
+          # Takes an object of optional paramaters:
+          #
+          # - `path`: Only commits containing this file path will be returned
+          # - `author`: GitHub login, name, or email by which to filter by commit author
+          # - `since`: ISO 8601 date - only commits after this date will be returned
+          # - `until`: ISO 8601 date - only commits before this date will be returned
+          @getCommits = (options={}) ->
+            options = _.extend {}, options
+            # Limit to the current branch
+            _getRef()
+            .then (branch) ->
+              options.sha = branch
+              _git.getCommits(options)
+
+            # Return the promise
+            .promise()
+
+
+          # Read file at given path
+          # -------
+          # Set `isBase64=true` to get back a base64 encoded binary file
+          @read = (path, isBase64) ->
+            _getRef()
+            .then (branch) =>
+              _git.getSha(branch, path)
+              .then (sha) =>
+                _git.getBlob(sha, isBase64)
+            # Return the promise
+            .promise()
+
+
+          # Remove a file from the tree
+          # -------
+          @remove = (path, message="Removed #{path}") ->
+            _getRef()
+            .then (branch) =>
+              _git._updateTree(branch)
+              .then (latestCommit) =>
+                _git.getTree("#{latestCommit}?recursive=true")
+                .then (tree) =>
+
+                  # Update Tree
+                  newTree = _.reject(tree, (ref) ->
+                    ref.path is path
+                  )
+                  _.each newTree, (ref) ->
+                    delete ref.sha  if ref.type is 'tree'
+
+                  _git.postTree(newTree)
+                  .then (rootTree) =>
+                    _git.commit(latestCommit, rootTree, message)
+                    .then (commit) =>
+                      _git.updateHead(branch, commit)
+                      .then (res) =>
+                        # Finally, return the result
+                        return res
+
+            # Return the promise
+            .promise()
+
+
+          # Move a file to a new location
+          # -------
+          @move = (path, newPath, message="Moved #{path}") ->
+            _getRef()
+            .then (branch) =>
+              _git._updateTree(branch)
+              .then (latestCommit) =>
+                _git.getTree("#{latestCommit}?recursive=true")
+                .then (tree) =>
+
+                  # Update Tree
+                  _.each tree, (ref) ->
+                    ref.path = newPath  if ref.path is path
+                    delete ref.sha  if ref.type is 'tree'
+
+                  _git.postTree(tree)
+                  .then (rootTree) =>
+                    _git.commit(latestCommit, rootTree, message)
+                    .then (commit) =>
+                      _git.updateHead(branch, commit)
+                      .then (res) =>
+                        # Finally, return the result
+                        return res
+            # Return the promise
+            .promise()
+
+
+          # Write file contents to a given branch and path
+          # -------
+          # To write base64 encoded data set `isBase64==true`
+          @write = (path, content, message="Changed #{path}", isBase64) ->
+            _getRef()
+            .then (branch) =>
+              _git._updateTree(branch)
+              .then (latestCommit) =>
+                _git.postBlob(content, isBase64)
+                .then (blob) =>
+                  _git.updateTree(latestCommit, path, blob)
+                  .then (tree) =>
+                    _git.commit(latestCommit, tree, message)
+                    .then (commit) =>
+                      _git.updateHead(branch, commit)
+                      .then (res) =>
+                        # Finally, return the result
+                        return res
+            # Return the promise
+            .promise()
+
+
+      # Repository Class
       # -------
-      isStarred: ->
-        _request 'GET', "#{@gistPath}"
+      # Provides methods for operating on the entire repository
+      # and ways to operate on a `Branch`.
+      class Repository
+
+        constructor: (@options) ->
+          # Private fields
+          _user = @options.user
+          _repo = @options.name
+
+          # Set the `git` instance variable
+          @git = new GitRepo(_user, _repo)
+          @repoPath = "/repos/#{_user}/#{_repo}"
+          @currentTree =
+            branch: null
+            sha: null
+
+          # List all branches of a repository
+          # -------
+          @getBranches = () -> @git.getBranches()
 
 
-    # Top Level API
-    # -------
-    getRepo: (user, repo) ->
-      new Repository(
-        user: user
-        name: repo
-      )
+          # Get a branch of a repository
+          # -------
+          @getBranch = (branchName) ->
+            getRef = =>
+              deferred = new jQuery.Deferred()
+              deferred.resolve(branchName)
+              deferred
+            new Branch(@git, getRef)
 
-    # API for viewing info for arbitrary users or the current user
-    # if no arguments are provided.
-    getUser: (username=null) ->
-      if username
-        new User(username)
-      else
-        new AuthenticatedUser()
 
-    getGist: (id) ->
-      new Gist(id: id)
+          # Get the default branch of a repository
+          # -------
+          @getDefaultBranch = () ->
+            # Calls getInfo() to get the default branch name
+            getRef = =>
+              @getInfo()
+              .then (info) =>
+                return info.master_branch
+            new Branch(@git, getRef)
+
+
+          # Get repository information
+          # -------
+          @getInfo = () ->
+            _request 'GET', @repoPath, null
+
+          # Get contents
+          # --------
+          @contents = (branch, path) ->
+            _request 'GET', "#{@repoPath}/contents?ref=#{branch}", {path: path}
+
+
+          # Fork repository
+          # -------
+          @fork = () ->
+            _request 'POST', "#{@repoPath}/forks", null
+
+
+          # Create pull request
+          # --------
+          @createPullRequest = (options) ->
+            _request 'POST', "#{@repoPath}/pulls", options
+
+
+          # Get recent commits to the repository
+          # --------
+          # Takes an object of optional paramaters:
+          #
+          # - `path`: Only commits containing this file path will be returned
+          # - `author`: GitHub login, name, or email by which to filter by commit author
+          # - `since`: ISO 8601 date - only commits after this date will be returned
+          # - `until`: ISO 8601 date - only commits before this date will be returned
+          @getCommits = (options) ->
+            @git.getCommits(options)
+
+
+          # List repository events
+          # -------
+          @getEvents = () ->
+            _request 'GET', "#{@repoPath}/events", null
+
+          # List Issue events for a Repository
+          # -------
+          @getIssueEvents = () ->
+            _request 'GET', "#{@repoPath}/issues/events", null
+
+          # List events for a network of Repositories
+          # -------
+          @getNetworkEvents = () ->
+            _request 'GET', "/networks/#{_owner}/#{_repo}/events", null
+
+
+          # List unread notifications for authenticated user
+          # -------
+          # Optional arguments:
+          #
+          # - `all`: `true` to show notifications marked as read.
+          # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
+          # - `since`: Optional time.
+          @getNotifications = (options={}) ->
+            # Converts a Date object to a string
+            getDate = (time) ->
+              return time.toISOString() if Date == time.constructor
+              return time
+
+            options.since = getDate(options.since) if options.since
+            _request 'GET', "#{@repoPath}/notifications", options
+
+          # List Collaborators
+          # -------
+          # When authenticating as an organization owner of an organization-owned repository,
+          # all organization owners are included in the list of collaborators.
+          # Otherwise, only users with access to the repository are returned in the collaborators list.
+          @getCollaborators = () ->
+            _request 'GET', "#{@repoPath}/collaborators", null
+
+          @isCollaborator = (username=null) ->
+            throw 'BUG: username is required' if not username
+            _request 'GET', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
+
+          # Can Collaborate
+          # -------
+          # True if the authenticated user has permission
+          # to commit to this repository.
+          @canCollaborate = () ->
+            # Short-circuit if no credentials provided
+            if not (clientOptions.password or clientOptions.token)
+              return (new $.Deferred()).resolve(false)
+
+            _client.getLogin()
+            .then (login) =>
+              if not login
+                return false
+              else
+               return @isCollaborator(login)
+            .then null, (err) =>
+              # Problem logging in (maybe bad username/password)
+              return false
+
+
+      # Gist API
+      # -------
+      class Gist
+        constructor: (@options) ->
+          id = @options.id
+          _gistPath = "/gists/#{id}"
+
+
+          # Read the gist
+          # --------
+          @read = () ->
+            _request 'GET', _gistPath, null
+
+
+          # Create the gist
+          # --------
+          #
+          # Files contains a hash with the filename as the key and
+          # `{content: 'File Contents Here'}` as the value.
+          #
+          # Example:
+          #
+          #     { "file1.txt": {
+          #         "content": "String file contents"
+          #       }
+          #     }
+          @create = (files, isPublic=false, description=null) ->
+            options =
+              isPublic: isPublic
+              files: files
+            options.description = description if description?
+            _request 'POST', "/gists", options
+
+
+          # Delete the gist
+          # --------
+          @delete = () ->
+            _request 'DELETE', _gistPath, null
+
+
+          # Fork a gist
+          # --------
+          @fork = () ->
+            _request 'POST', "#{_gistPath}/forks", null
+
+
+          # Update a gist with the new stuff
+          # --------
+          # `files` are files that make up this gist.
+          # The key of which should be an optional string filename
+          # and the value another optional hash with parameters:
+          #
+          # - `content`: Optional string - Updated file contents
+          # - `filename`: Optional string - New name for this file.
+          #
+          # **NOTE:** All files from the previous version of the gist are carried
+          # over by default if not included in the hash. Deletes can be performed
+          # by including the filename with a null hash.
+          @update = (files, description=null) ->
+            options = {files: files}
+            options.description = description if description?
+            _request 'PATCH', _gistPath, options
+
+          # Star a gist
+          # -------
+          @star = () ->
+            _request 'PUT', "#{_gistPath}/star"
+
+          # Unstar a gist
+          # -------
+          @unstar = () ->
+            _request 'DELETE', "#{_gistPath}/star"
+
+          # Check if a gist is starred
+          # -------
+          @isStarred = () ->
+            _request 'GET', "#{_gistPath}", null, {isBoolean:true}
+
+
+      # Top Level API
+      # -------
+      @getRepo = (user, repo) ->
+        new Repository(
+          user: user
+          name: repo
+        )
+
+      # API for viewing info for arbitrary users or the current user
+      # if no arguments are provided.
+      @getUser = (login=null) ->
+        if login
+          return new User(login)
+        else if clientOptions.password or clientOptions.token
+          return new AuthenticatedUser()
+        else
+          return null
+
+      @getGist = (id) ->
+        new Gist(id: id)
+
+      # Returns the login of the current user.
+      # When using OAuth this is unknown but is necessary to
+      # determine if the current user has commit access to a
+      # repository
+      @getLogin = () ->
+        # 3 cases:
+        # 1. No authentication provided
+        # 2. Username (and password) provided
+        # 3. OAuth token provided
+        if clientOptions.password or clientOptions.token
+          return new User().getInfo()
+          .then (info) ->
+            return info.login
+        else
+          ret = new jQuery.Deferred()
+          ret.resolve(null)
+          return ret
+
+
 
   # Return the class for assignment
   return Github

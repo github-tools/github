@@ -19,8 +19,7 @@ Create a Github instance.
 ```js
 var gh = new Github({
   username: "YOU_USER",
-  password: "YOUR_PASSWORD",
-  auth: "basic"
+  password: "YOUR_PASSWORD"
 });
 ```
 
@@ -29,7 +28,6 @@ Or if you prefer OAuth, it looks like this:
 ```js
 var gh = new Github({
   token: "OAUTH_TOKEN"
-  auth: "oauth"
 });
 ```
 
@@ -39,8 +37,7 @@ var gh = new Github({
 define(['github'], function(Github) {
   var gh = new Github({
     username: "YOU_USER",
-    password: "YOUR_PASSWORD",
-    auth: "basic"
+    password: "YOUR_PASSWORD"
   });
 });
 ```
@@ -55,8 +52,7 @@ Install instructions:
 var Github = require('github-client');
 var gh = Github.new({
   username: "YOU_USER",
-  password: "YOUR_PASSWORD",
-  auth: "basic"
+  password: "YOUR_PASSWORD"
 });
 ```
 
