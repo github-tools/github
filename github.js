@@ -10,15 +10,28 @@
     Github = (function() {
 
       function Github(clientOptions) {
-        var AuthenticatedUser, Branch, Gist, GitRepo, Organization, Repository, Team, User, _client, _listeners, _request;
+        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, _cachedETags, _client, _listeners, _request;
         if (clientOptions == null) {
           clientOptions = {};
         }
         clientOptions.rootURL = clientOptions.rootURL || 'https://api.github.com';
         _client = this;
         _listeners = [];
+        ETagResponse = (function() {
+
+          function ETagResponse(eTag, data, textStatus, jqXHR) {
+            this.eTag = eTag;
+            this.data = data;
+            this.textStatus = textStatus;
+            this.jqXHR = jqXHR;
+          }
+
+          return ETagResponse;
+
+        })();
+        _cachedETags = {};
         _request = function(method, path, data, options) {
-          var ajaxConfig, auth, booleanPromise, getURL, headers, mimeType, promise, xhr,
+          var ajaxConfig, auth, getURL, headers, mimeType, promise, xhr,
             _this = this;
           if (options == null) {
             options = {
@@ -42,6 +55,9 @@
           if (userAgent) {
             headers['User-Agent'] = userAgent;
           }
+          if (path in _cachedETags) {
+            headers['If-None-Match'] = _cachedETags[path].eTag;
+          }
           if (clientOptions.token || (clientOptions.username && clientOptions.password)) {
             if (clientOptions.token) {
               auth = "token " + clientOptions.token;
@@ -50,6 +66,7 @@
             }
             headers['Authorization'] = auth;
           }
+          promise = new jQuery.Deferred();
           ajaxConfig = {
             url: getURL(),
             type: method,
@@ -61,13 +78,12 @@
             dataType: !options.raw ? 'json' : void 0
           };
           if (options.isBoolean) {
-            booleanPromise = new jQuery.Deferred();
             ajaxConfig.statusCode = {
               204: function() {
-                return booleanPromise.resolve(true);
+                return promise.resolve(true);
               },
               404: function() {
-                return booleanPromise.resolve(false);
+                return promise.resolve(false);
               }
             };
           }
@@ -83,39 +99,45 @@
             }
             return _results;
           });
-          promise = options.isBoolean ? (xhr.fail(function(err) {
-            if (err.status !== 404) {
-              return booleanPromise.reject(err);
-            }
-          }), booleanPromise) : xhr.then(function(data, textStatus, jqXHR) {
-            var converted, i, ret, _i, _ref;
-            ret = new jQuery.Deferred();
-            if ('GET' === method && options.isBase64) {
-              converted = '';
-              for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-                converted += String.fromCharCode(data.charCodeAt(i) & 0xff);
-              }
-              converted;
-
-              return ret.resolve(converted, textStatus, jqXHR);
+          xhr.done(function(data, textStatus, jqXHR) {
+            var converted, eTag, eTagResponse, i, _i, _ref;
+            if (304 === jqXHR.status) {
+              eTagResponse = _cachedETags[path];
+              return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
             } else {
-              return ret.resolve(data, textStatus, jqXHR);
+              if ('GET' === method && options.isBase64) {
+                converted = '';
+                for (i = _i = 0, _ref = data.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+                  converted += String.fromCharCode(data.charCodeAt(i) & 0xff);
+                }
+                data = converted;
+              }
+              if ('GET' === method && jqXHR.getResponseHeader('ETag')) {
+                eTag = jqXHR.getResponseHeader('ETag');
+                _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR);
+              }
+              return promise.resolve(data, textStatus, jqXHR);
             }
-          }).then(null, function(xhr, msg, desc) {
+          }).fail(function(xhr, msg, desc) {
             var json;
-            if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
-              return {
-                error: xhr.responseText,
-                status: xhr.status,
-                _xhr: xhr
-              };
+            if (options.isBoolean && 404 === xhr.status) {
+              return promise.reolve(false);
+            } else {
+              if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
+                return promise.reject({
+                  error: xhr.responseText,
+                  status: xhr.status,
+                  _xhr: xhr
+                });
+              } else {
+                json = JSON.parse(xhr.responseText);
+                return promise.reject({
+                  error: json,
+                  status: xhr.status,
+                  _xhr: xhr
+                });
+              }
             }
-            json = JSON.parse(xhr.responseText);
-            return {
-              error: json,
-              status: xhr.status,
-              _xhr: xhr
-            };
           });
           return promise.promise();
         };

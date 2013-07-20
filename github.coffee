@@ -31,6 +31,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # These are updated whenever a request is made
       _listeners = []
 
+      # To support ETag caching cache the responses.
+      class ETagResponse
+        constructor: (@eTag, @data, @textStatus, @jqXHR) ->
+
+      # Cached responses are stored in this object keyed by `path`
+      _cachedETags = {}
+
       # HTTP Request Abstraction
       # =======
       #
@@ -52,12 +59,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # See http://developer.github.com/v3/#user-agent-required
         headers['User-Agent'] = userAgent if userAgent
 
+        # Send the ETag if re-requesting a URL
+        headers['If-None-Match'] = _cachedETags[path].eTag if path of _cachedETags
+
         if (clientOptions.token) or (clientOptions.username and clientOptions.password)
           if clientOptions.token
             auth = "token #{clientOptions.token}"
           else
             auth = 'Basic ' + base64encode("#{clientOptions.username}:#{clientOptions.password}")
           headers['Authorization'] = auth
+
+
+        promise = new jQuery.Deferred()
 
         ajaxConfig =
           url: getURL()
@@ -75,12 +88,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # Also, jQuery will never call `xhr.resolve` so we need to use a
         # different promise later on.
         if options.isBoolean
-          booleanPromise = new jQuery.Deferred()
           ajaxConfig.statusCode =
             # a Boolean 'yes'
-            204: () => booleanPromise.resolve(true)
+            204: () => promise.resolve(true)
             # a Boolean 'no'
-            404: () => booleanPromise.resolve(false)
+            404: () => promise.resolve(false)
 
         xhr = jQuery.ajax(ajaxConfig)
 
@@ -92,21 +104,15 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
-        promise = if options.isBoolean
-          # If the request fails for something other than 404
-          # then reject the promise.
-          # 404 means 'false'
-          xhr.fail (err) -> booleanPromise.reject(err) if err.status != 404
+        # Return the result and Base64 encode it if `options.isBase64` flag is set.
+        xhr.done (data, textStatus, jqXHR) ->
+          # If the response was a 304 then return the cached version
+          if 304 == jqXHR.status
+            eTagResponse = _cachedETags[path]
+            promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
 
-          # Set the promise returned to be the boolean promise
-          # instead of `xhr` (see above on the `isBoolean` option)
-          booleanPromise
+          else
 
-        else
-
-          # Return the result and Base64 encode it if `options.isBase64` flag is set.
-          xhr.then (data, textStatus, jqXHR) ->
-            ret = new jQuery.Deferred()
             # Convert the response to a Base64 encoded string
             if 'GET' == method and options.isBase64
               # Convert raw data to binary chopping off the higher-order bytes in each char.
@@ -114,19 +120,31 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               converted = ''
               for i in [0..data.length]
                 converted += String.fromCharCode(data.charCodeAt(i) & 0xff)
-              converted
 
-              ret.resolve(converted, textStatus, jqXHR)
-            else
-              ret.resolve(data, textStatus, jqXHR)
+              data = converted
 
-          # Parse the error if one occurs
-          .then null, (xhr, msg, desc) ->
+            # Cache the response to reuse later
+            if 'GET' == method and jqXHR.getResponseHeader('ETag')
+              eTag = jqXHR.getResponseHeader('ETag')
+              _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR)
+
+            promise.resolve(data, textStatus, jqXHR)
+
+        # Parse the error if one occurs
+        .fail (xhr, msg, desc) ->
+          # If the request was for a Boolean then a 404 should be treated as a "false"
+          if options.isBoolean and 404 == xhr.status
+            promise.reolve(false)
+
+          else
+
             if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
-              return {error: xhr.responseText, status: xhr.status, _xhr: xhr}
+              promise.reject {error: xhr.responseText, status: xhr.status, _xhr: xhr}
 
-            json = JSON.parse xhr.responseText
-            return {error: json, status: xhr.status, _xhr: xhr}
+            else
+              json = JSON.parse xhr.responseText
+              promise.reject {error: json, status: xhr.status, _xhr: xhr}
+
 
         # Return the promise
         return promise.promise()
