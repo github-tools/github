@@ -458,7 +458,9 @@
               if (path === '') {
                 return this.getRef("heads/" + branch);
               }
-              return this.getTree("" + branch + "?recursive=true").then(function(tree) {
+              return this.getTree(branch, {
+                recursive: true
+              }).then(function(tree) {
                 var file;
                 file = _.select(tree, function(file) {
                   return file.path === path;
@@ -471,9 +473,23 @@
                 });
               }).promise();
             };
-            this.getTree = function(tree) {
-              var _this = this;
-              return _request('GET', "" + _repoPath + "/git/trees/" + tree, null).then(function(res) {
+            this.getTree = function(tree, options) {
+              var params, queryString,
+                _this = this;
+              if (options == null) {
+                options = null;
+              }
+              queryString = '';
+              if (!_.isEmpty(options)) {
+                params = [];
+                _.each(_.pairs(options), function(_arg) {
+                  var key, value;
+                  key = _arg[0], value = _arg[1];
+                  return params.push("" + key + "=" + (encodeURIComponent(value)));
+                });
+                queryString = "?" + (params.join('&'));
+              }
+              return _request('GET', "" + _repoPath + "/git/trees/" + tree + queryString, null).then(function(res) {
                 return res.tree;
               }).promise();
             };
@@ -536,6 +552,9 @@
                 sha: commit
               });
             };
+            this.getCommit = function(sha) {
+              return _request('GET', "" + _repoPath + "/commits/" + sha, null);
+            };
             this.getCommits = function(options) {
               var getDate, params, queryString;
               if (options == null) {
@@ -579,6 +598,9 @@
             _getRef = getRef || function() {
               throw 'BUG: No way to fetch branch ref!';
             };
+            this.getCommit = function(sha) {
+              return _git.getCommit(sha);
+            };
             this.getCommits = function(options) {
               if (options == null) {
                 options = {};
@@ -604,7 +626,9 @@
               }
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
+                  return _git.getTree(latestCommit, {
+                    recursive: true
+                  }).then(function(tree) {
                     var newTree;
                     newTree = _.reject(tree, function(ref) {
                       return ref.path === path;
@@ -632,7 +656,9 @@
               }
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
+                  return _git.getTree(latestCommit, {
+                    recursive: true
+                  }).then(function(tree) {
                     _.each(tree, function(ref) {
                       if (ref.path === path) {
                         ref.path = newPath;

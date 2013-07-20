@@ -512,7 +512,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             # Just use head if path is empty
             return @getRef("heads/#{branch}") if path is ''
 
-            @getTree("#{branch}?recursive=true")
+            @getTree(branch, {recursive:true})
             .then (tree) =>
               file = _.select(tree, (file) ->
                 file.path is path
@@ -528,8 +528,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
           # Retrieve the tree a commit points to
           # -------
-          @getTree = (tree) ->
-            _request('GET', "#{_repoPath}/git/trees/#{tree}", null)
+          # Optionally set recursive to true
+          @getTree = (tree, options=null) ->
+            queryString = ''
+            if not _.isEmpty(options)
+              params = []
+              _.each _.pairs(options), ([key, value]) ->
+                params.push "#{key}=#{encodeURIComponent(value)}"
+              queryString = "?#{params.join('&')}"
+
+            _request('GET', "#{_repoPath}/git/trees/#{tree}#{queryString}", null)
             .then (res) =>
               return res.tree
             # Return the promise
@@ -606,6 +614,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
 
 
+          # Get a single commit
+          # --------------------
+          @getCommit = (sha) ->
+            _request('GET', "#{_repoPath}/commits/#{sha}", null)
+
           # List commits on a repository.
           # -------
           # Takes an object of optional paramaters:
@@ -648,6 +661,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           _git = git
           _getRef = getRef or -> throw 'BUG: No way to fetch branch ref!'
 
+          # Get a single commit
+          # --------------------
+          @getCommit = (sha) -> _git.getCommit(sha)
+
           # List commits on a branch.
           # -------
           # Takes an object of optional paramaters:
@@ -688,7 +705,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             .then (branch) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
-                _git.getTree("#{latestCommit}?recursive=true")
+                _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
 
                   # Update Tree
@@ -718,7 +735,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             .then (branch) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
-                _git.getTree("#{latestCommit}?recursive=true")
+                _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
 
                   # Update Tree
