@@ -121,7 +121,7 @@
           }).fail(function(xhr, msg, desc) {
             var json;
             if (options.isBoolean && 404 === xhr.status) {
-              return promise.reolve(false);
+              return promise.resolve(false);
             } else {
               if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
                 return promise.reject({

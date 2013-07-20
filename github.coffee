@@ -134,7 +134,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         .fail (xhr, msg, desc) ->
           # If the request was for a Boolean then a 404 should be treated as a "false"
           if options.isBoolean and 404 == xhr.status
-            promise.reolve(false)
+            promise.resolve(false)
 
           else
 
