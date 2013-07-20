@@ -104,12 +104,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
+
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
         xhr.done (data, textStatus, jqXHR) ->
           # If the response was a 304 then return the cached version
           if 304 == jqXHR.status
             eTagResponse = _cachedETags[path]
             promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
+
+          # If it was a boolean question and the server responded with 204
+          # return true.
+          else if 204 == jqXHR.status and options.isBoolean
+            promise.resolve(true, textStatus, jqXHR)
 
           else
 

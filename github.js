@@ -104,6 +104,8 @@
             if (304 === jqXHR.status) {
               eTagResponse = _cachedETags[path];
               return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
+            } else if (204 === jqXHR.status && options.isBoolean) {
+              return promise.resolve(true, textStatus, jqXHR);
             } else {
               if ('GET' === method && options.isBase64) {
                 converted = '';
