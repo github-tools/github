@@ -14,7 +14,10 @@
         if (clientOptions == null) {
           clientOptions = {};
         }
-        clientOptions.rootURL = clientOptions.rootURL || 'https://api.github.com';
+        _.defaults(clientOptions, {
+          rootURL: 'https://api.github.com',
+          useETags: true
+        });
         _client = this;
         _listeners = [];
         ETagResponse = (function() {
@@ -101,7 +104,7 @@
           });
           xhr.done(function(data, textStatus, jqXHR) {
             var converted, eTag, eTagResponse, i, _i, _ref;
-            if (304 === jqXHR.status) {
+            if (304 === jqXHR.status && clientOptions.useETags) {
               eTagResponse = _cachedETags[path];
               return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
             } else if (204 === jqXHR.status && options.isBoolean) {
@@ -114,7 +117,7 @@
                 }
                 data = converted;
               }
-              if ('GET' === method && jqXHR.getResponseHeader('ETag')) {
+              if ('GET' === method && jqXHR.getResponseHeader('ETag') && clientOptions.useETags) {
                 eTag = jqXHR.getResponseHeader('ETag');
                 _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR);
               }

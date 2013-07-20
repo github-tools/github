@@ -24,7 +24,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
     constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
-      clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
+      _.defaults clientOptions,
+        rootURL: 'https://api.github.com'
+        useETags: true
 
       _client = @ # Useful for other classes (like Repo) to get the current Client object
 
@@ -108,7 +110,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
         xhr.done (data, textStatus, jqXHR) ->
           # If the response was a 304 then return the cached version
-          if 304 == jqXHR.status
+          if 304 == jqXHR.status and clientOptions.useETags
             eTagResponse = _cachedETags[path]
             promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
 
@@ -130,7 +132,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               data = converted
 
             # Cache the response to reuse later
-            if 'GET' == method and jqXHR.getResponseHeader('ETag')
+            if 'GET' == method and jqXHR.getResponseHeader('ETag') and clientOptions.useETags
               eTag = jqXHR.getResponseHeader('ETag')
               _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR)
 
