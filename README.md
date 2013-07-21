@@ -1,10 +1,24 @@
 # github-client
 
 github-client provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain),
-exposing an API for manipulating GitHub repositories on the file level.
+exposing an API for manipulating GitHub repositories, users, groups, and gists.
 It is being developed in the context of [github-book](http://github.com/philschatz/github-book), an EPUB3 editor for GitHub.
 
-This package can also be used in `nodejs` or as a `requirejs` module.
+This package can also be used in `nodejs` or as an AMD module in the browser.
+
+## Key Features
+
+- Simple `read` and `write` methods for text and binary files
+- Creating gists, Pull Requests, forks, and new Repositories
+- `ETag` Caching
+- Promises instead of callbacks (for better error-handling and progress updating)
+- Starring and Following repositories, users, and organizations
+- Editing Team and Organization Membership
+- User/Org/Repo events and notifications
+- Listeners for rate limit changes
+- Public Keys
+- Hooks (commit, comment, etc)
+
 
 ## Usage
 

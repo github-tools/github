@@ -316,6 +316,13 @@
             this.updatePublicKey = function(id, options) {
               return _request('PATCH', "/user/keys/" + id, options);
             };
+            this.createRepo = function(name, options) {
+              if (options == null) {
+                options = {};
+              }
+              options.name = name;
+              return _request('POST', "/user/repos", options);
+            };
           }
 
           return AuthenticatedUser;
@@ -403,6 +410,13 @@
             this.removeMember = function(user) {
               return _request('DELETE', "/orgs/" + this.name + "/members/" + user, null);
             };
+            this.createRepo = function(name, options) {
+              if (options == null) {
+                options = {};
+              }
+              options.name = name;
+              return _request('POST', "/orgs/" + this.name + "/repos", options);
+            };
           }
 
           return Organization;
@@ -419,6 +433,9 @@
               sha: null
             };
             _repoPath = "/repos/" + this.repoUser + "/" + this.repoName;
+            this.deleteRepo = function() {
+              return _request('DELETE', "" + _repoPath);
+            };
             this._updateTree = function(branch) {
               var _this = this;
               if (branch === _currentTree.branch && _currentTree.sha) {
@@ -817,6 +834,69 @@
               }).then(null, function(err) {
                 return false;
               });
+            };
+            this.getHooks = function() {
+              return _request('GET', "" + this.repoPath + "/hooks", null);
+            };
+            this.getHook = function(id) {
+              return _request('GET', "" + this.repoPath + "/hooks/" + id, null);
+            };
+            this.createHook = function(name, config, events, active) {
+              var data;
+              if (events == null) {
+                events = ['push'];
+              }
+              if (active == null) {
+                active = true;
+              }
+              data = {
+                name: name,
+                config: config,
+                events: events,
+                active: active
+              };
+              return _request('POST', "" + this.repoPath + "/hooks", data);
+            };
+            this.editHook = function(id, config, events, addEvents, removeEvents, active) {
+              var data;
+              if (config == null) {
+                config = null;
+              }
+              if (events == null) {
+                events = null;
+              }
+              if (addEvents == null) {
+                addEvents = null;
+              }
+              if (removeEvents == null) {
+                removeEvents = null;
+              }
+              if (active == null) {
+                active = null;
+              }
+              data = {};
+              if (config !== null) {
+                data.config = config;
+              }
+              if (events !== null) {
+                data.events = events;
+              }
+              if (addEvents !== null) {
+                data.add_events = addEvents;
+              }
+              if (removeEvents !== null) {
+                data.remove_events = removeEvents;
+              }
+              if (active !== null) {
+                data.active = active;
+              }
+              return _request('PATCH', "" + this.repoPath + "/hooks/" + id, data);
+            };
+            this.testHook = function(id) {
+              return _request('POST', "" + this.repoPath + "/hooks/" + id + "/tests", null);
+            };
+            this.deleteHook = function(id) {
+              return _request('DELETE', "" + this.repoPath + "/hooks/" + id, null);
             };
           }
 
