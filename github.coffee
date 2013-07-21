@@ -696,6 +696,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               _git.getSha(branch, path)
               .then (sha) =>
                 _git.getBlob(sha, isBase64)
+                .then (bytes) =>
+                  # Return both the commit hash and the content
+                  return {sha:sha, content:bytes}
             # Return the promise
             .promise()
 

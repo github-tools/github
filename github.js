@@ -618,7 +618,12 @@
               var _this = this;
               return _getRef().then(function(branch) {
                 return _git.getSha(branch, path).then(function(sha) {
-                  return _git.getBlob(sha, isBase64);
+                  return _git.getBlob(sha, isBase64).then(function(bytes) {
+                    return {
+                      sha: sha,
+                      content: bytes
+                    };
+                  });
                 });
               }).promise();
             };
