@@ -14,7 +14,10 @@
         if (clientOptions == null) {
           clientOptions = {};
         }
-        clientOptions.rootURL = clientOptions.rootURL || 'https://api.github.com';
+        _.defaults(clientOptions, {
+          rootURL: 'https://api.github.com',
+          useETags: true
+        });
         _client = this;
         _listeners = [];
         ETagResponse = (function() {
@@ -101,9 +104,11 @@
           });
           xhr.done(function(data, textStatus, jqXHR) {
             var converted, eTag, eTagResponse, i, _i, _ref;
-            if (304 === jqXHR.status) {
+            if (304 === jqXHR.status && clientOptions.useETags) {
               eTagResponse = _cachedETags[path];
               return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
+            } else if (204 === jqXHR.status && options.isBoolean) {
+              return promise.resolve(true, textStatus, jqXHR);
             } else {
               if ('GET' === method && options.isBase64) {
                 converted = '';
@@ -112,7 +117,7 @@
                 }
                 data = converted;
               }
-              if ('GET' === method && jqXHR.getResponseHeader('ETag')) {
+              if ('GET' === method && jqXHR.getResponseHeader('ETag') && clientOptions.useETags) {
                 eTag = jqXHR.getResponseHeader('ETag');
                 _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR);
               }
@@ -121,7 +126,7 @@
           }).fail(function(xhr, msg, desc) {
             var json;
             if (options.isBoolean && 404 === xhr.status) {
-              return promise.reolve(false);
+              return promise.resolve(false);
             } else {
               if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
                 return promise.reject({
@@ -456,7 +461,9 @@
               if (path === '') {
                 return this.getRef("heads/" + branch);
               }
-              return this.getTree("" + branch + "?recursive=true").then(function(tree) {
+              return this.getTree(branch, {
+                recursive: true
+              }).then(function(tree) {
                 var file;
                 file = _.select(tree, function(file) {
                   return file.path === path;
@@ -469,9 +476,23 @@
                 });
               }).promise();
             };
-            this.getTree = function(tree) {
-              var _this = this;
-              return _request('GET', "" + _repoPath + "/git/trees/" + tree, null).then(function(res) {
+            this.getTree = function(tree, options) {
+              var params, queryString,
+                _this = this;
+              if (options == null) {
+                options = null;
+              }
+              queryString = '';
+              if (!_.isEmpty(options)) {
+                params = [];
+                _.each(_.pairs(options), function(_arg) {
+                  var key, value;
+                  key = _arg[0], value = _arg[1];
+                  return params.push("" + key + "=" + (encodeURIComponent(value)));
+                });
+                queryString = "?" + (params.join('&'));
+              }
+              return _request('GET', "" + _repoPath + "/git/trees/" + tree + queryString, null).then(function(res) {
                 return res.tree;
               }).promise();
             };
@@ -534,6 +555,9 @@
                 sha: commit
               });
             };
+            this.getCommit = function(sha) {
+              return _request('GET', "" + _repoPath + "/commits/" + sha, null);
+            };
             this.getCommits = function(options) {
               var getDate, params, queryString;
               if (options == null) {
@@ -577,6 +601,9 @@
             _getRef = getRef || function() {
               throw 'BUG: No way to fetch branch ref!';
             };
+            this.getCommit = function(sha) {
+              return _git.getCommit(sha);
+            };
             this.getCommits = function(options) {
               if (options == null) {
                 options = {};
@@ -591,7 +618,12 @@
               var _this = this;
               return _getRef().then(function(branch) {
                 return _git.getSha(branch, path).then(function(sha) {
-                  return _git.getBlob(sha, isBase64);
+                  return _git.getBlob(sha, isBase64).then(function(bytes) {
+                    return {
+                      sha: sha,
+                      content: bytes
+                    };
+                  });
                 });
               }).promise();
             };
@@ -602,7 +634,9 @@
               }
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
+                  return _git.getTree(latestCommit, {
+                    recursive: true
+                  }).then(function(tree) {
                     var newTree;
                     newTree = _.reject(tree, function(ref) {
                       return ref.path === path;
@@ -630,7 +664,9 @@
               }
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.getTree("" + latestCommit + "?recursive=true").then(function(tree) {
+                  return _git.getTree(latestCommit, {
+                    recursive: true
+                  }).then(function(tree) {
                     _.each(tree, function(ref) {
                       if (ref.path === path) {
                         ref.path = newPath;
@@ -659,9 +695,9 @@
                 return _git._updateTree(branch).then(function(latestCommit) {
                   return _git.postBlob(content, isBase64).then(function(blob) {
                     return _git.updateTree(latestCommit, path, blob).then(function(tree) {
-                      return _git.commit(latestCommit, tree, message).then(function(commit) {
-                        return _git.updateHead(branch, commit).then(function(res) {
-                          return res;
+                      return _git.commit(latestCommit, tree, message).then(function(commitSha) {
+                        return _git.updateHead(branch, commitSha).then(function(res) {
+                          return res.object;
                         });
                       });
                     });

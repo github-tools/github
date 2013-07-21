@@ -24,7 +24,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
     constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
-      clientOptions.rootURL = clientOptions.rootURL or 'https://api.github.com'
+      _.defaults clientOptions,
+        rootURL: 'https://api.github.com'
+        useETags: true
 
       _client = @ # Useful for other classes (like Repo) to get the current Client object
 
@@ -104,12 +106,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
+
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
         xhr.done (data, textStatus, jqXHR) ->
           # If the response was a 304 then return the cached version
-          if 304 == jqXHR.status
+          if 304 == jqXHR.status and clientOptions.useETags
             eTagResponse = _cachedETags[path]
             promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
+
+          # If it was a boolean question and the server responded with 204
+          # return true.
+          else if 204 == jqXHR.status and options.isBoolean
+            promise.resolve(true, textStatus, jqXHR)
 
           else
 
@@ -124,7 +132,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               data = converted
 
             # Cache the response to reuse later
-            if 'GET' == method and jqXHR.getResponseHeader('ETag')
+            if 'GET' == method and jqXHR.getResponseHeader('ETag') and clientOptions.useETags
               eTag = jqXHR.getResponseHeader('ETag')
               _cachedETags[path] = new ETagResponse(eTag, data, textStatus, jqXHR)
 
@@ -134,7 +142,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         .fail (xhr, msg, desc) ->
           # If the request was for a Boolean then a 404 should be treated as a "false"
           if options.isBoolean and 404 == xhr.status
-            promise.reolve(false)
+            promise.resolve(false)
 
           else
 
@@ -506,7 +514,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             # Just use head if path is empty
             return @getRef("heads/#{branch}") if path is ''
 
-            @getTree("#{branch}?recursive=true")
+            @getTree(branch, {recursive:true})
             .then (tree) =>
               file = _.select(tree, (file) ->
                 file.path is path
@@ -522,8 +530,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
           # Retrieve the tree a commit points to
           # -------
-          @getTree = (tree) ->
-            _request('GET', "#{_repoPath}/git/trees/#{tree}", null)
+          # Optionally set recursive to true
+          @getTree = (tree, options=null) ->
+            queryString = ''
+            if not _.isEmpty(options)
+              params = []
+              _.each _.pairs(options), ([key, value]) ->
+                params.push "#{key}=#{encodeURIComponent(value)}"
+              queryString = "?#{params.join('&')}"
+
+            _request('GET', "#{_repoPath}/git/trees/#{tree}#{queryString}", null)
             .then (res) =>
               return res.tree
             # Return the promise
@@ -600,6 +616,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
 
 
+          # Get a single commit
+          # --------------------
+          @getCommit = (sha) ->
+            _request('GET', "#{_repoPath}/commits/#{sha}", null)
+
           # List commits on a repository.
           # -------
           # Takes an object of optional paramaters:
@@ -642,6 +663,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           _git = git
           _getRef = getRef or -> throw 'BUG: No way to fetch branch ref!'
 
+          # Get a single commit
+          # --------------------
+          @getCommit = (sha) -> _git.getCommit(sha)
+
           # List commits on a branch.
           # -------
           # Takes an object of optional paramaters:
@@ -671,6 +696,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               _git.getSha(branch, path)
               .then (sha) =>
                 _git.getBlob(sha, isBase64)
+                .then (bytes) =>
+                  # Return both the commit hash and the content
+                  return {sha:sha, content:bytes}
             # Return the promise
             .promise()
 
@@ -682,7 +710,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             .then (branch) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
-                _git.getTree("#{latestCommit}?recursive=true")
+                _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
 
                   # Update Tree
@@ -712,7 +740,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             .then (branch) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
-                _git.getTree("#{latestCommit}?recursive=true")
+                _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
 
                   # Update Tree
@@ -745,11 +773,12 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
                   _git.updateTree(latestCommit, path, blob)
                   .then (tree) =>
                     _git.commit(latestCommit, tree, message)
-                    .then (commit) =>
-                      _git.updateHead(branch, commit)
+                    .then (commitSha) =>
+                      _git.updateHead(branch, commitSha)
                       .then (res) =>
                         # Finally, return the result
-                        return res
+                        # Return something that has a `.sha` to match the signature for read
+                        return res.object
             # Return the promise
             .promise()
 
