@@ -773,11 +773,12 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
                   _git.updateTree(latestCommit, path, blob)
                   .then (tree) =>
                     _git.commit(latestCommit, tree, message)
-                    .then (commit) =>
-                      _git.updateHead(branch, commit)
+                    .then (commitSha) =>
+                      _git.updateHead(branch, commitSha)
                       .then (res) =>
                         # Finally, return the result
-                        return res
+                        # Return something that has a `.sha` to match the signature for read
+                        return res.object
             # Return the promise
             .promise()
 

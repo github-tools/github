@@ -695,9 +695,9 @@
                 return _git._updateTree(branch).then(function(latestCommit) {
                   return _git.postBlob(content, isBase64).then(function(blob) {
                     return _git.updateTree(latestCommit, path, blob).then(function(tree) {
-                      return _git.commit(latestCommit, tree, message).then(function(commit) {
-                        return _git.updateHead(branch, commit).then(function(res) {
-                          return res;
+                      return _git.commit(latestCommit, tree, message).then(function(commitSha) {
+                        return _git.updateHead(branch, commitSha).then(function(res) {
+                          return res.object;
                         });
                       });
                     });
