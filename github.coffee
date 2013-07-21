@@ -926,6 +926,65 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               return false
 
 
+          # List all hooks
+          # -------
+          @getHooks = () ->
+            _request 'GET', "#{@repoPath}/hooks", null
+
+          # Get single hook
+          # -------
+          @getHook = (id) ->
+            _request 'GET', "#{@repoPath}/hooks/#{id}", null
+
+          # Create a new hook
+          # -------
+          #
+          # - `name` (Required string) : The name of the service that is being called. (See /hooks for the list of valid hook names.)
+          # - `config` (Required hash) : A Hash containing key/value pairs to provide settings for this hook. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
+          # - `events` (Optional array) : Determines what events the hook is triggered for. Default: ["push"].
+          # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
+          @createHook = (name, config, events=['push'], active=true) ->
+            data =
+              name: name
+              config: config
+              events: events
+              active: active
+
+            _request 'POST', "#{@repoPath}/hooks", data
+
+          # Edit a hook
+          # -------
+          #
+          # - `config` (Optional hash) : A Hash containing key/value pairs to provide settings for this hook. Modifying this will replace the entire config object. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
+          # - `events` (Optional array) : Determines what events the hook is triggered for. This replaces the entire array of events. Default: ["push"].
+          # - `addEvents` (Optional array) : Determines a list of events to be added to the list of events that the Hook triggers for.
+          # - `removeEvents` (Optional array) : Determines a list of events to be removed from the list of events that the Hook triggers for.
+          # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
+          @editHook = (id, config=null, events=null, addEvents=null, removeEvents=null, active=null) ->
+            data = {}
+            data.config = config if config != null
+            data.events = events if events != null
+            data.add_events = addEvents if addEvents != null
+            data.remove_events = removeEvents if removeEvents != null
+            data.active = active if active != null
+
+            _request 'PATCH', "#{@repoPath}/hooks/#{id}", data
+
+          # Test a `push` hook
+          # -------
+          # This will trigger the hook with the latest push to the current
+          # repository if the hook is subscribed to push events.
+          # If the hook is not subscribed to push events, the server will
+          # respond with 204 but no test POST will be generated.
+          @testHook = (id) ->
+            _request 'POST', "#{@repoPath}/hooks/#{id}/tests", null
+
+          # Delete a hook
+          # -------
+          @deleteHook = (id) ->
+            _request 'DELETE', "#{@repoPath}/hooks/#{id}", null
+
+
       # Gist API
       # -------
       class Gist
