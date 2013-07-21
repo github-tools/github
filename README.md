@@ -1,10 +1,24 @@
 # github-client
 
 github-client provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain),
-exposing an API for manipulating GitHub repositories on the file level.
+exposing an API for manipulating GitHub repositories, users, groups, and gists.
 It is being developed in the context of [github-book](http://github.com/philschatz/github-book), an EPUB3 editor for GitHub.
 
-This package can also be used in `nodejs` or as a `requirejs` module.
+This package can also be used in `nodejs` or as an AMD module in the browser.
+
+## Key Features
+
+- Simple `read` and `write` methods for text and binary files
+- Creating gists, Pull Requests, forks, and new Repositories
+- `ETag` Caching
+- Promises instead of callbacks (for better error-handling and progress updating)
+- Starring and Following repositories, users, and organizations
+- Editing Team and Organization Membership
+- User/Org/Repo events and notifications
+- Listeners for rate limit changes
+- Public Keys
+- Hooks (commit, comment, etc)
+
 
 ## Usage
 
@@ -72,32 +86,63 @@ repo.getInfo()
 .fail(function(err) {});
 ```
 
-Other methods (which return Promises):
+List all branches in a Repository
 
 ```js
-repo.getBranches(...)
-repo.getBranch(...)
-repo.getDefaultBranch(...)
-repo.getInfo(...)
-repo.contents(...)
-repo.fork(...)
-repo.createPullRequest(...)
-repo.getCommits(...)
-repo.getEvents(...)
-repo.getIssueEvents(...)
-repo.getNetworkEvents(...)
-repo.getNotifications(...)
-repo.getCollaborators(...)
-repo.isCollaborator(...)
-repo.canCollaborate(...)
-repo.getHooks(...)
-repo.getHook(...)
-repo.createHook(...)
-repo.editHook(...)
-repo.testHook(...)
-repo.deleteHook(...)
+repo.getBranches()
+.done(function(branches) {});
 ```
 
+Fork a repository
+
+```js
+repo.fork()
+.done(function() {});
+```
+
+Create a Pull Request
+
+```js
+repo.createPullRequest()
+.done(function() {});
+```
+
+Get recent commits to the repository
+
+```js
+var options = {};
+repo.getCommits(options)
+.done(function(commits) {});
+```
+
+List Repository events
+
+```js
+repo.getEvents()
+.done(function(events) {});
+```
+
+List Issue events for the repository
+
+```js
+repo.getIssueEvents()
+.done(function(events) {});
+```
+
+List events for a network of Repositories
+
+```js
+repo.getNetworkEvents()
+.done(function(events) {});
+```
+
+List unread notifications for authenticated user pertaining to this repository
+
+```js
+var options = {};
+repo.getNotifications(options)
+.done(function(events) {});
+```
 
 ### Branch API
 
@@ -397,21 +442,6 @@ gh.getOrgRepos(orgname)
 .done(function(repos) {});
 ```
 
-Determine the username of the authenticated user (if OAuth was used for example):
-
-```js
-gh.getLogin()
-.done(function(username) {})
-```
-
-Other methods (all return a Promise):
-
-```js
-gh.getAllUsers()
-gh.getPublicGists()
-gh.getPublicEvents()
-gh.getNotifications()
-```
 
 
 
