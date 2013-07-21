@@ -72,63 +72,32 @@ repo.getInfo()
 .fail(function(err) {});
 ```
 
-List all branches in a Repository
+Other methods (which return Promises):
 
 ```js
-repo.getBranches()
-.done(function(branches) {});
+repo.getBranches(...)
+repo.getBranch(...)
+repo.getDefaultBranch(...)
+repo.getInfo(...)
+repo.contents(...)
+repo.fork(...)
+repo.createPullRequest(...)
+repo.getCommits(...)
+repo.getEvents(...)
+repo.getIssueEvents(...)
+repo.getNetworkEvents(...)
+repo.getNotifications(...)
+repo.getCollaborators(...)
+repo.isCollaborator(...)
+repo.canCollaborate(...)
+repo.getHooks(...)
+repo.getHook(...)
+repo.createHook(...)
+repo.editHook(...)
+repo.testHook(...)
+repo.deleteHook(...)
 ```
 
-Fork a repository
-
-```js
-repo.fork()
-.done(function() {});
-```
-
-Create a Pull Request
-
-```js
-repo.createPullRequest()
-.done(function() {});
-```
-
-Get recent commits to the repository
-
-```js
-var options = {};
-repo.getCommits(options)
-.done(function(commits) {});
-```
-
-List Repository events
-
-```js
-repo.getEvents()
-.done(function(events) {});
-```
-
-List Issue events for the repository
-
-```js
-repo.getIssueEvents()
-.done(function(events) {});
-```
-
-List events for a network of Repositories
-
-```js
-repo.getNetworkEvents()
-.done(function(events) {});
-```
-
-List unread notifications for authenticated user pertaining to this repository
-
-```js
-var options = {};
-repo.getNotifications(options)
-.done(function(events) {});
-```
 
 ### Branch API
 
@@ -428,6 +397,21 @@ gh.getOrgRepos(orgname)
 .done(function(repos) {});
 ```
 
+Determine the username of the authenticated user (if OAuth was used for example):
+
+```js
+gh.getLogin()
+.done(function(username) {})
+```
+
+Other methods (all return a Promise):
+
+```js
+gh.getAllUsers()
+gh.getPublicGists()
+gh.getPublicEvents()
+gh.getNotifications()
+```
 
 
 
