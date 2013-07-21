@@ -215,7 +215,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         _request 'GET', '/notifications', options
 
 
-
       # Github Users API
       # =======
       class User
@@ -356,6 +355,21 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           @updatePublicKey = (id, options) ->
             _request 'PATCH', "/user/keys/#{id}", options
 
+          # Create a repository
+          # -------
+          #
+          # Optional parameters:
+          # - `description`: String
+          # - `homepage`: String
+          # - `private`: boolean (Default `false`)
+          # - `has_issues`: boolean (Default `true`)
+          # - `has_wiki`: boolean (Default `true`)
+          # - `has_downloads`: boolean (Default `true`)
+          # - `auto_init`:  boolean (Default `false`)
+          @createRepo = (name, options={}) ->
+            options.name = name
+            _request 'POST', "/user/repos", options
+
 
 
       # Organization API
@@ -428,6 +442,15 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           @removeMember = (user) ->
             _request 'DELETE', "/orgs/#{@name}/members/#{user}", null
 
+          # Create a repository
+          # -------
+          #
+          # Optional parameters are the same as `.getUser().createRepo()` with one addition:
+          # - `team_id`:  number
+          @createRepo = (name, options={}) ->
+            options.name = name
+            _request 'POST', "/orgs/#{@name}/repos", options
+
 
       # Repository API
       # =======
@@ -443,6 +466,12 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
             sha: null
           _repoPath = "/repos/#{@repoUser}/#{@repoName}"
 
+          # Delete this Repository
+          # -------
+          # **Note:** This is here instead of on the `Repository` object
+          # so it is less likely to accidentally be used.
+          @deleteRepo = () ->
+            _request 'DELETE', "#{_repoPath}"
 
           # Uses the cache if branch has not been changed
           # -------

@@ -316,6 +316,13 @@
             this.updatePublicKey = function(id, options) {
               return _request('PATCH', "/user/keys/" + id, options);
             };
+            this.createRepo = function(name, options) {
+              if (options == null) {
+                options = {};
+              }
+              options.name = name;
+              return _request('POST', "/user/repos", options);
+            };
           }
 
           return AuthenticatedUser;
@@ -403,6 +410,13 @@
             this.removeMember = function(user) {
               return _request('DELETE', "/orgs/" + this.name + "/members/" + user, null);
             };
+            this.createRepo = function(name, options) {
+              if (options == null) {
+                options = {};
+              }
+              options.name = name;
+              return _request('POST', "/orgs/" + this.name + "/repos", options);
+            };
           }
 
           return Organization;
@@ -419,6 +433,9 @@
               sha: null
             };
             _repoPath = "/repos/" + this.repoUser + "/" + this.repoName;
+            this.deleteRepo = function() {
+              return _request('DELETE', "" + _repoPath);
+            };
             this._updateTree = function(branch) {
               var _this = this;
               if (branch === _currentTree.branch && _currentTree.sha) {
