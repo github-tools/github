@@ -551,7 +551,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               return file?.sha if file?.sha
 
               # Return a promise that has failed if no sha was found
-              (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
+              return (new jQuery.Deferred()).reject {message: 'SHA_NOT_FOUND'}
 
             # Return the promise
             .promise()
