@@ -1,0 +1,13 @@
+{
+  "name": "github-client",
+  "version": "0.8.0",
+  "description": "Javascript github client for nodejs or a web browser using promises",
+  "main": "github.js",
+  "dependencies": {
+    "jquery": ">=1.8",
+    "lodash": ">=1.0"
+  },
+  "devDependencies": {
+    "coffee-script": ">=1.3"
+  }
+}
