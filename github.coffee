@@ -44,9 +44,6 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # =======
       #
       _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
-        getURL = ->
-          url = clientOptions.rootURL + path
-          url + ((if (/\?/).test(url) then '&' else '?')) + (new Date()).getTime()
 
         # Support binary data by overriding the response mimeType
         mimeType = undefined
@@ -75,7 +72,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         promise = new jQuery.Deferred()
 
         ajaxConfig =
-          url: getURL()
+          # Be sure to **not** blow the cache with a random number
+          # (GitHub will respond with 5xx or CORS errors)
+          url: clientOptions.rootURL + path
           type: method
           contentType: 'application/json'
           mimeType: mimeType

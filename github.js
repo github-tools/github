@@ -34,7 +34,7 @@
         })();
         _cachedETags = {};
         _request = function(method, path, data, options) {
-          var ajaxConfig, auth, getURL, headers, mimeType, promise, xhr,
+          var ajaxConfig, auth, headers, mimeType, promise, xhr,
             _this = this;
           if (options == null) {
             options = {
@@ -43,11 +43,6 @@
               isBoolean: false
             };
           }
-          getURL = function() {
-            var url;
-            url = clientOptions.rootURL + path;
-            return url + (/\?/.test(url) ? '&' : '?') + (new Date()).getTime();
-          };
           mimeType = void 0;
           if (options.isBase64) {
             mimeType = 'text/plain; charset=x-user-defined';
@@ -71,7 +66,7 @@
           }
           promise = new jQuery.Deferred();
           ajaxConfig = {
-            url: getURL(),
+            url: clientOptions.rootURL + path,
             type: method,
             contentType: 'application/json',
             mimeType: mimeType,
