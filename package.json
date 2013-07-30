@@ -1,6 +1,6 @@
 {
   "name": "github-client",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Javascript github client for nodejs or a web browser using promises",
   "main": "github.js",
   "dependencies": {
