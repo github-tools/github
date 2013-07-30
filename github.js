@@ -204,7 +204,7 @@
         User = (function() {
 
           function User(_username) {
-            var _rootPath;
+            var _cachedInfo, _rootPath;
             if (_username == null) {
               _username = null;
             }
@@ -213,8 +213,23 @@
             } else {
               _rootPath = "/user";
             }
-            this.getInfo = function() {
-              return _request('GET', "" + _rootPath, null);
+            _cachedInfo = null;
+            this.getInfo = function(force) {
+              var promise;
+              if (force == null) {
+                force = false;
+              }
+              if (force) {
+                _cachedInfo = null;
+              }
+              if (_cachedInfo) {
+                promise = new jQuery.Deferred();
+                promise.resolve(_cachedInfo);
+                return promise;
+              }
+              return _request('GET', "" + _rootPath, null).done(function(info) {
+                return _cachedInfo = info;
+              });
             };
             this.getRepos = function() {
               return _request('GET', "" + _rootPath + "/repos?type=all&per_page=1000&sort=updated", null);

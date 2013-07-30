@@ -230,8 +230,18 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
           # Retrieve user information
           # -------
-          @getInfo = () ->
-            _request 'GET', "#{_rootPath}", null
+          _cachedInfo = null
+          @getInfo = (force=false) ->
+            _cachedInfo = null if force
+
+            if _cachedInfo
+              promise = new jQuery.Deferred()
+              promise.resolve(_cachedInfo)
+              return promise
+
+            _request('GET', "#{_rootPath}", null)
+            # Squirrel away the user info
+            .done (info) -> _cachedInfo = info
 
           # List user repositories
           # -------
