@@ -40,6 +40,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
       # Cached responses are stored in this object keyed by `path`
       _cachedETags = {}
 
+      # Send simple progress notifications
+      notifyStart = (promise, path) -> promise.notify {type:'start', path:path}
+      notifyEnd   = (promise, path) -> promise.notify {type:'end',   path:path}
+
       # HTTP Request Abstraction
       # =======
       #
@@ -91,13 +95,14 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         if options.isBoolean
           ajaxConfig.statusCode =
             # a Boolean 'yes'
-            204: () => promise.resolve(true)
+            204: () => notifyEnd(promise, path); promise.resolve(true)
             # a Boolean 'no'
-            404: () => promise.resolve(false)
+            404: () => notifyEnd(promise, path); promise.resolve(false)
 
         xhr = jQuery.ajax(ajaxConfig)
 
         xhr.always =>
+          notifyEnd(promise, path)
           # Fire listeners when the request completes or fails
           rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
           rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
@@ -152,7 +157,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               json = JSON.parse xhr.responseText
               promise.reject {error: json, status: xhr.status, _xhr: xhr}
 
-
+        notifyStart(promise, path)
         # Return the promise
         return promise.promise()
 

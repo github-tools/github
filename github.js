@@ -10,7 +10,7 @@
     Github = (function() {
 
       function Github(clientOptions) {
-        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, _cachedETags, _client, _listeners, _request;
+        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, notifyEnd, notifyStart, _cachedETags, _client, _listeners, _request;
         if (clientOptions == null) {
           clientOptions = {};
         }
@@ -33,6 +33,18 @@
 
         })();
         _cachedETags = {};
+        notifyStart = function(promise, path) {
+          return promise.notify({
+            type: 'start',
+            path: path
+          });
+        };
+        notifyEnd = function(promise, path) {
+          return promise.notify({
+            type: 'end',
+            path: path
+          });
+        };
         _request = function(method, path, data, options) {
           var ajaxConfig, auth, headers, mimeType, promise, xhr,
             _this = this;
@@ -78,9 +90,11 @@
           if (options.isBoolean) {
             ajaxConfig.statusCode = {
               204: function() {
+                notifyEnd(promise, path);
                 return promise.resolve(true);
               },
               404: function() {
+                notifyEnd(promise, path);
                 return promise.resolve(false);
               }
             };
@@ -88,6 +102,7 @@
           xhr = jQuery.ajax(ajaxConfig);
           xhr.always(function() {
             var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
+            notifyEnd(promise, path);
             rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
             rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
             _results = [];
@@ -139,6 +154,7 @@
               }
             }
           });
+          notifyStart(promise, path);
           return promise.promise();
         };
         this.onRateLimitChanged = function(listener) {
