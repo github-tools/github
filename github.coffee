@@ -593,6 +593,9 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # -------
           @postBlob = (content, isBase64) ->
             if typeof (content) is 'string'
+              # Base64 encode the content if it is binary (isBase64)
+              content = base64encode(content) if isBase64
+
               content =
                 content: content
                 encoding: 'utf-8'

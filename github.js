@@ -542,6 +542,9 @@
             this.postBlob = function(content, isBase64) {
               var _this = this;
               if (typeof content === 'string') {
+                if (isBase64) {
+                  content = base64encode(content);
+                }
                 content = {
                   content: content,
                   encoding: 'utf-8'
