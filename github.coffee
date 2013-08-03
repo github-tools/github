@@ -63,7 +63,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         headers['User-Agent'] = userAgent if userAgent
 
         # Send the ETag if re-requesting a URL
-        headers['If-None-Match'] = _cachedETags[path].eTag if path of _cachedETags
+        if path of _cachedETags
+          headers['If-None-Match'] = _cachedETags[path].eTag
+        else
+          # The browser will sneak in a 'If-Modified-Since' header if the GET has been requested before
+          # but for some reason the cached response does not seem to be available
+          # in the jqXHR object.
+          # So, the first time a URL is requested set this date to 0 so we always get a response the 1st time
+          # a URL is requested.
+          headers['If-Modified-Since'] = 'Thu, 01 Jan 1970 00:00:00 GMT'
+
 
         if (clientOptions.token) or (clientOptions.username and clientOptions.password)
           if clientOptions.token
@@ -114,9 +123,13 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
         xhr.done (data, textStatus, jqXHR) ->
           # If the response was a 304 then return the cached version
-          if 304 == jqXHR.status and clientOptions.useETags
-            eTagResponse = _cachedETags[path]
-            promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
+          if 304 == jqXHR.status 
+            if clientOptions.useETags and _cachedETags[path]
+              eTagResponse = _cachedETags[path]
+
+              promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR)
+            else
+              promise.resolve(jqXHR.responseText, textStatus, jqXHR)
 
           # If it was a boolean question and the server responded with 204
           # return true.

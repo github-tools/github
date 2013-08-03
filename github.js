@@ -67,6 +67,8 @@
           }
           if (path in _cachedETags) {
             headers['If-None-Match'] = _cachedETags[path].eTag;
+          } else {
+            headers['If-Modified-Since'] = 'Thu, 01 Jan 1970 00:00:00 GMT';
           }
           if (clientOptions.token || (clientOptions.username && clientOptions.password)) {
             if (clientOptions.token) {
@@ -114,9 +116,13 @@
           });
           xhr.done(function(data, textStatus, jqXHR) {
             var converted, eTag, eTagResponse, i, _i, _ref;
-            if (304 === jqXHR.status && clientOptions.useETags) {
-              eTagResponse = _cachedETags[path];
-              return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
+            if (304 === jqXHR.status) {
+              if (clientOptions.useETags && _cachedETags[path]) {
+                eTagResponse = _cachedETags[path];
+                return promise.resolve(eTagResponse.data, eTagResponse.textStatus, eTagResponse.jqXHR);
+              } else {
+                return promise.resolve(jqXHR.responseText, textStatus, jqXHR);
+              }
             } else if (204 === jqXHR.status && options.isBoolean) {
               return promise.resolve(true, textStatus, jqXHR);
             } else {
