@@ -237,6 +237,7 @@
         // Just use head if path is empty
         if (path === "") return that.getRef("heads/"+branch, cb);
         that.getTree(branch+"?recursive=true", function(err, tree) {
+          if (err) return cb(err);
           var file = _.select(tree, function(file) {
             return file.path === path;
           })[0];
