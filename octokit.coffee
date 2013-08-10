@@ -771,8 +771,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               .then (latestCommit) =>
                 _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
-                  # Update Tree
-                  newTree = _.reject(tree, (ref) ->
+                  newTree = _.reject(tree, (ref) -> # Update Tree
                     ref.path is path
                   )
                   _.each newTree, (ref) ->
@@ -784,8 +783,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                     .then (commit) =>
                       _git.updateHead(branch, commit)
                       .then (res) =>
-                        # Finally, return the result
-                        return res
+                        return res # Finally, return the result
 
             # Return the promise
             .promise()
@@ -799,9 +797,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
                 _git.getTree(latestCommit, {recursive:true})
-                .then (tree) =>
-
-                  # Update Tree
+                .then (tree) => # Update Tree
                   _.each tree, (ref) ->
                     ref.path = newPath  if ref.path is path
                     delete ref.sha  if ref.type is 'tree'
@@ -812,8 +808,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                     .then (commit) =>
                       _git.updateHead(branch, commit)
                       .then (res) =>
-                        # Finally, return the result
-                        return res
+                        return res # Finally, return the result
             # Return the promise
             .promise()
 
@@ -833,10 +828,8 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                     _git.commit(latestCommit, tree, message)
                     .then (commitSha) =>
                       _git.updateHead(branch, commitSha)
-                      .then (res) =>
-                        # Finally, return the result
-                        # Return something that has a `.sha` to match the signature for read
-                        return res.object
+                      .then (res) => # Finally, return the result
+                        return res.object # Return something that has a `.sha` to match the signature for read
             # Return the promise
             .promise()
 
@@ -981,7 +974,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               if not login
                 return false
               else
-               return @isCollaborator(login)
+                return @isCollaborator(login)
             .then null, (err) =>
               # Problem logging in (maybe bad username/password)
               return false
@@ -1000,8 +993,10 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Create a new hook
           # -------
           #
-          # - `name` (Required string) : The name of the service that is being called. (See /hooks for the list of valid hook names.)
-          # - `config` (Required hash) : A Hash containing key/value pairs to provide settings for this hook. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
+          # - `name` (Required string) : The name of the service that is being called.
+          #         (See /hooks for the list of valid hook names.)
+          # - `config` (Required hash) : A Hash containing key/value pairs to provide settings for this hook.
+          #                              These settings vary between the services and are defined in the github-services repo.
           # - `events` (Optional array) : Determines what events the hook is triggered for. Default: ["push"].
           # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
           @createHook = (name, config, events=['push'], active=true) ->
@@ -1016,8 +1011,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Edit a hook
           # -------
           #
-          # - `config` (Optional hash) : A Hash containing key/value pairs to provide settings for this hook. Modifying this will replace the entire config object. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
-          # - `events` (Optional array) : Determines what events the hook is triggered for. This replaces the entire array of events. Default: ["push"].
+          # - `config` (Optional hash) : A Hash containing key/value pairs to provide settings for this hook.
+          #                      Modifying this will replace the entire config object.
+          #                      These settings vary between the services and are defined in the github-services repo.
+          # - `events` (Optional array) : Determines what events the hook is triggered for.
+          #                     This replaces the entire array of events. Default: ["push"].
           # - `addEvents` (Optional array) : Determines a list of events to be added to the list of events that the Hook triggers for.
           # - `removeEvents` (Optional array) : Determines a list of events to be removed from the list of events that the Hook triggers for.
           # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
