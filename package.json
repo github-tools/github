@@ -4,6 +4,8 @@
   "description": "Javascript github client for nodejs or a web browser using promises",
   "main": "octokit.js",
   "dependencies": {
+    "grunt": "~0.4.1",
+    "bower": "~1.0",
     "underscore": ">=1.4.2",
     "jquery-deferred": ">=0.3.0",
     "najax": "git://github.com/philschatz/najax.git"
