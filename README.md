@@ -1,6 +1,6 @@
-# github-client
+# octokit.js
 
-github-client provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain),
+octokit.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain),
 exposing an API for manipulating GitHub repositories, users, groups, and gists.
 It is being developed in the context of [github-book](http://github.com/philschatz/github-book), an EPUB3 editor for GitHub.
 
@@ -28,10 +28,10 @@ See [jQuery.Deferred](http://api.jquery.com/category/deferred-object/) or
 
 ### In a browser without requirejs
 
-Create a Github instance.
+Create an Octokit instance.
 
 ```js
-var gh = new Github({
+var gh = new Octokit({
   username: "YOU_USER",
   password: "YOUR_PASSWORD"
 });
@@ -40,7 +40,7 @@ var gh = new Github({
 Or if you prefer OAuth, it looks like this:
 
 ```js
-var gh = new Github({
+var gh = new Octokit({
   token: "OAUTH_TOKEN"
 });
 ```
@@ -48,8 +48,8 @@ var gh = new Github({
 ### In a browser using requirejs
 
 ```js
-define(['github'], function(Github) {
-  var gh = new Github({
+define(['octokit'], function(Octokit) {
+  var gh = new Octokit({
     username: "YOU_USER",
     password: "YOUR_PASSWORD"
   });
@@ -60,11 +60,11 @@ define(['github'], function(Github) {
 
 Install instructions:
 
-    npm install github-client
+    npm install octokit
 
 ```js
-var Github = require('github-client');
-var gh = Github.new({
+var Octokit = require('octokit');
+var gh = Octokit.new({
   username: "YOU_USER",
   password: "YOUR_PASSWORD"
 });
