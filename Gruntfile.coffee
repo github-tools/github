@@ -48,6 +48,15 @@ module.exports = (grunt) ->
         files:
           'octokit.js': ['octokit.coffee']
 
+    # Release a new version and push upstream
+    bump:
+      options:
+        # Safety
+        commit: false
+        push: false
+
+        commitFiles: ['package.json', 'octokit.js', 'octokit.js.map']
+
 
   # Dependencies
   # ============
@@ -70,7 +79,9 @@ module.exports = (grunt) ->
   # -----
   grunt.registerTask 'dist', [
     'clean'
+    'coffeelint'
     'coffee'
+    'bump'
   ]
 
   # Default

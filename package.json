@@ -20,8 +20,9 @@
   },
   "devDependencies": {
     "docco": "~0.4.0",
-    "grunt-contrib-coffee": "~0.7",
     "grunt-coffeelint": "~0.0.7",
+    "grunt-bump": "~0.0.10",
+    "grunt-contrib-coffee": "~0.7",
     "grunt-contrib-clean": "~0.5"
   },
   "repository": {
