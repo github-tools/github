@@ -3,6 +3,14 @@
   "version": "0.8.0",
   "description": "Javascript github client for nodejs or a web browser using promises",
   "main": "octokit.js",
+
+  "scripts": {
+    "prepublish": "bower install",
+    "test": "grunt test --verbose",
+    "dist": "grunt dist --verbose",
+    "update": "bower update"
+  },
+
   "dependencies": {
     "grunt": "~0.4.1",
     "bower": "~1.0",
@@ -11,7 +19,10 @@
     "najax": "git://github.com/philschatz/najax.git"
   },
   "devDependencies": {
-    "docco": "~0.4.0"
+    "docco": "~0.4.0",
+    "grunt-contrib-coffee": "~0.7",
+    "grunt-coffeelint": "~0.0.7",
+    "grunt-contrib-clean": "~0.5"
   },
   "repository": {
     "type": "git",
