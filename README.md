@@ -13,6 +13,7 @@ This package can also be used in `nodejs` or as an AMD module in the browser.
 - Creating gists, Pull Requests, forks, and new Repositories
 - `ETag` Caching
 - Promises instead of callbacks (for better error-handling and progress updating)
+- Progress Notifications for multistep operations
 - Starring and Following repositories, users, and organizations
 - Editing Team and Organization Membership
 - User/Org/Repo events and notifications
@@ -449,6 +450,11 @@ gh.getOrgRepos(orgname)
 .done(function(repos) {});
 ```
 
+## Progress Notifications
+
+For multistep operations users can listen to updates by registering a listener at `promise.progress(function(obj) {})`.
+
+For more details see jQuery's [deferred.progress documentation](http://api.jquery.com/deferred.progress/).
 
 
 
