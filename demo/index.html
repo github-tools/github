@@ -1,0 +1,73 @@
+<html>
+<head>
+  <script src="../bower_components/jquery/jquery.min.js"></script>
+  <script src="../bower_components/lodash/lodash.js"></script>
+  <script src="../bower_components/jq-console/jqconsole.min.js"></script>
+  <script src="../octokit.js"></script>
+  <style>
+    /* The console container element */
+    #console {
+      position: absolute;
+      width: 800px;
+      height: 500px;
+      background-color:black;
+    }
+    /* The inner console element. */
+    .jqconsole {
+        padding: 10px;
+    }
+    .jqconsole-header {
+        color: white;
+    }
+    /* The cursor. */
+    .jqconsole-cursor {
+        background-color: gray;
+    }
+    /* The cursor color when the console looses focus. */
+    .jqconsole-blurred .jqconsole-cursor {
+        background-color: #666;
+    }
+    /* The current prompt text color */
+    .jqconsole-prompt {
+        color: #0d0;
+    }
+    /* The command history */
+    .jqconsole-old-prompt {
+        color: #0b0;
+        font-weight: normal;
+    }
+    /* The text color when in input mode. */
+    .jqconsole-input {
+        color: #dd0;
+    }
+    /* Previously entered input. */
+    .jqconsole-old-input {
+        color: #bb0;
+        font-weight: normal;
+    }
+    /* The text color of the output. */
+    .jqconsole-output {
+        color: white;
+    }
+    /* The text color of Errors. */
+    .jqconsole-error {
+        color: #f33;
+        font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Example lines you can try out</h1>
+  <pre>
+g = new Octokit()
+repo = g.getRepo('philschatz', 'books')
+repo.getInfo()
+branch = repo.getDefaultBranch()
+branch.read('META-INF/container.xml')</pre>
+
+  <h2>Javascript Console</h2>
+  <div id="console"></div>
+
+  <script src="demo.js"></script>
+</body>
+</html>
