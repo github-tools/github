@@ -53,6 +53,7 @@ module.exports = (grunt) ->
       options:
         commit: true
         push: true
+        pushTo: ''
         commitFiles: ['package.json', 'octokit.js']
 
 
@@ -75,11 +76,18 @@ module.exports = (grunt) ->
 
   # Dist
   # -----
-  grunt.registerTask 'dist', [
+  grunt.registerTask 'release', [
     'clean'
     'coffeelint'
     'coffee'
     'bump'
+  ]
+
+  grunt.registerTask 'release-minor', [
+    'clean'
+    'coffeelint'
+    'coffee'
+    'bump:minor'
   ]
 
   # Default
