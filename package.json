@@ -1,6 +1,6 @@
 {
-  "name": "github-client",
-  "version": "0.8.0",
+  "name": "octokit",
+  "version": "0.8.1",
   "description": "Javascript github client for nodejs or a web browser using promises",
   "main": "octokit.js",
 

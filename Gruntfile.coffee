@@ -44,18 +44,16 @@ module.exports = (grunt) ->
     coffee:
       compile:
         options:
-          sourceMap: true
+          sourceMap: false # true
         files:
           'octokit.js': ['octokit.coffee']
 
     # Release a new version and push upstream
     bump:
       options:
-        # Safety
-        commit: false
-        push: false
-
-        commitFiles: ['package.json', 'octokit.js', 'octokit.js.map']
+        commit: true
+        push: true
+        commitFiles: ['package.json', 'octokit.js']
 
 
   # Dependencies
