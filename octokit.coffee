@@ -19,8 +19,8 @@
 #
 # Depending on how this is loaded (nodejs, requirejs, globals)
 # the actual underscore, jQuery.ajax/Deferred, and base64 encode functions may differ.
-makeGithub = (_, jQuery, base64encode, userAgent) =>
-  class Github
+makeOctokit = (_, jQuery, base64encode, userAgent) =>
+  class Octokit
 
     constructor: (clientOptions={}) ->
       # Provide an option to override the default URL
@@ -123,7 +123,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
         xhr.done (data, textStatus, jqXHR) ->
           # If the response was a 304 then return the cached version
-          if 304 == jqXHR.status 
+          if 304 == jqXHR.status
             if clientOptions.useETags and _cachedETags[path]
               eTagResponse = _cachedETags[path]
 
@@ -300,7 +300,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Get Received events for this user
           # -------
           @getReceivedEvents = (onlyPublic) ->
-            throw 'BUG: This does not work for authenticated users yet!' if not _username
+            throw new Error 'BUG: This does not work for authenticated users yet!' if not _username
             isPublic = ''
             isPublic = '/public' if onlyPublic
             _request 'GET', "/users/#{_username}/received_events#{isPublic}", null
@@ -308,7 +308,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Get all events for this user
           # -------
           @getEvents = (onlyPublic) ->
-            throw 'BUG: This does not work for authenticated users yet!' if not _username
+            throw new Error 'BUG: This does not work for authenticated users yet!' if not _username
             isPublic = ''
             isPublic = '/public' if onlyPublic
             _request 'GET', "/users/#{_username}/events#{isPublic}", null
@@ -720,7 +720,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
         constructor: (git, getRef) ->
           # Private variables
           _git = git
-          _getRef = getRef or -> throw 'BUG: No way to fetch branch ref!'
+          _getRef = getRef or -> throw new Error 'BUG: No way to fetch branch ref!'
 
           # Get a single commit
           # --------------------
@@ -755,8 +755,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               _git.getSha(branch, path)
               .then (sha) =>
                 _git.getBlob(sha, isBase64)
+                # Return both the commit hash and the content
                 .then (bytes) =>
-                  # Return both the commit hash and the content
                   return {sha:sha, content:bytes}
             # Return the promise
             .promise()
@@ -771,9 +771,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               .then (latestCommit) =>
                 _git.getTree(latestCommit, {recursive:true})
                 .then (tree) =>
-
-                  # Update Tree
-                  newTree = _.reject(tree, (ref) ->
+                  newTree = _.reject(tree, (ref) -> # Update Tree
                     ref.path is path
                   )
                   _.each newTree, (ref) ->
@@ -785,8 +783,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
                     .then (commit) =>
                       _git.updateHead(branch, commit)
                       .then (res) =>
-                        # Finally, return the result
-                        return res
+                        return res # Finally, return the result
 
             # Return the promise
             .promise()
@@ -800,9 +797,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               _git._updateTree(branch)
               .then (latestCommit) =>
                 _git.getTree(latestCommit, {recursive:true})
-                .then (tree) =>
-
-                  # Update Tree
+                .then (tree) => # Update Tree
                   _.each tree, (ref) ->
                     ref.path = newPath  if ref.path is path
                     delete ref.sha  if ref.type is 'tree'
@@ -813,8 +808,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
                     .then (commit) =>
                       _git.updateHead(branch, commit)
                       .then (res) =>
-                        # Finally, return the result
-                        return res
+                        return res # Finally, return the result
             # Return the promise
             .promise()
 
@@ -834,10 +828,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
                     _git.commit(latestCommit, tree, message)
                     .then (commitSha) =>
                       _git.updateHead(branch, commitSha)
-                      .then (res) =>
-                        # Finally, return the result
-                        # Return something that has a `.sha` to match the signature for read
-                        return res.object
+                      .then (res) => # Finally, return the result
+                        return res.object # Return something that has a `.sha` to match the signature for read
             # Return the promise
             .promise()
 
@@ -942,7 +934,8 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Optional arguments:
           #
           # - `all`: `true` to show notifications marked as read.
-          # - `participating`: `true` to show only notifications in which the user is directly participating or mentioned.
+          # - `participating`: `true` to show only notifications in which
+          #   the user is directly participating or mentioned.
           # - `since`: Optional time.
           @getNotifications = (options={}) ->
             # Converts a Date object to a string
@@ -955,14 +948,16 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
           # List Collaborators
           # -------
-          # When authenticating as an organization owner of an organization-owned repository,
-          # all organization owners are included in the list of collaborators.
-          # Otherwise, only users with access to the repository are returned in the collaborators list.
+          # When authenticating as an organization owner of an
+          # organization-owned repository, all organization owners
+          # are included in the list of collaborators.
+          # Otherwise, only users with access to the repository are
+          # returned in the collaborators list.
           @getCollaborators = () ->
             _request 'GET', "#{@repoPath}/collaborators", null
 
           @isCollaborator = (username=null) ->
-            throw 'BUG: username is required' if not username
+            throw new Error 'BUG: username is required' if not username
             _request 'GET', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
 
           # Can Collaborate
@@ -979,7 +974,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
               if not login
                 return false
               else
-               return @isCollaborator(login)
+                return @isCollaborator(login)
             .then null, (err) =>
               # Problem logging in (maybe bad username/password)
               return false
@@ -998,8 +993,10 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Create a new hook
           # -------
           #
-          # - `name` (Required string) : The name of the service that is being called. (See /hooks for the list of valid hook names.)
-          # - `config` (Required hash) : A Hash containing key/value pairs to provide settings for this hook. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
+          # - `name` (Required string) : The name of the service that is being called.
+          #         (See /hooks for the list of valid hook names.)
+          # - `config` (Required hash) : A Hash containing key/value pairs to provide settings for this hook.
+          #                              These settings vary between the services and are defined in the github-services repo.
           # - `events` (Optional array) : Determines what events the hook is triggered for. Default: ["push"].
           # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
           @createHook = (name, config, events=['push'], active=true) ->
@@ -1014,8 +1011,11 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
           # Edit a hook
           # -------
           #
-          # - `config` (Optional hash) : A Hash containing key/value pairs to provide settings for this hook. Modifying this will replace the entire config object. These settings vary between the services and are defined in the github-services repo. Booleans are stored internally as “1” for true, and “0” for false. Any JSON true/false values will be converted automatically.
-          # - `events` (Optional array) : Determines what events the hook is triggered for. This replaces the entire array of events. Default: ["push"].
+          # - `config` (Optional hash) : A Hash containing key/value pairs to provide settings for this hook.
+          #                      Modifying this will replace the entire config object.
+          #                      These settings vary between the services and are defined in the github-services repo.
+          # - `events` (Optional array) : Determines what events the hook is triggered for.
+          #                     This replaces the entire array of events. Default: ["push"].
           # - `addEvents` (Optional array) : Determines a list of events to be added to the list of events that the Hook triggers for.
           # - `removeEvents` (Optional array) : Determines a list of events to be removed from the list of events that the Hook triggers for.
           # - `active` (Optional boolean) : Determines whether the hook is actually triggered on pushes.
@@ -1165,7 +1165,7 @@ makeGithub = (_, jQuery, base64encode, userAgent) =>
 
 
   # Return the class for assignment
-  return Github
+  return Octokit
 
 # Register with nodejs, requirejs, or as a global
 # -------
@@ -1181,26 +1181,28 @@ if exports?
   encode = (str) ->
     buffer = new Buffer str, 'binary'
     buffer.toString 'base64'
-  Github = makeGithub _, jQuery, encode, 'github-client' # `User-Agent` (for nodejs)
-  exports.new = (options) -> new Github(options)
+  Octokit = makeOctokit _, jQuery, encode, 'octokit' # `User-Agent` (for nodejs)
+  exports.new = (options) -> new Octokit(options)
 
-# If requirejs is detected then load this module asynchronously
+# If requirejs is detected then define this module
 else if @define?
-  # If the browser has the native Base64 encode function `btoa` use it.
-  # Otherwise, try to use the javascript Base64 code.
-  if @btoa
-    @define 'github', ['underscore', 'jquery'], (_, jQuery) ->
-      return makeGithub _, jQuery, @btoa
-  else
-    @define 'github', ['underscore', 'jquery', 'base64'], (_, jQuery, Base64) ->
-      return makeGithub _, jQuery, Base64.encode
+  # Define both 'github' and 'octokit' for transition
+  for moduleName in ['github', 'octokit']
+    # If the browser has the native Base64 encode function `btoa` use it.
+    # Otherwise, try to use the javascript Base64 code.
+    if @btoa
+      @define moduleName, ['underscore', 'jquery'], (_, jQuery) ->
+        return makeOctokit _, jQuery, @btoa
+    else
+      @define moduleName, ['underscore', 'jquery', 'base64'], (_, jQuery, Base64) ->
+        return makeOctokit _, jQuery, Base64.encode
 
 # If a global jQuery and underscore is loaded then use it
 else if @_ and @jQuery and (@btoa or @Base64)
   # Use the `btoa` function if it is defined (Webkit/Mozilla) and fail back to
   # `Base64.encode` otherwise (IE)
   encode = @btoa or @Base64.encode
-  @Github = makeGithub @_, @jQuery, encode
+  @Octokit = makeOctokit @_, @jQuery, encode
 
 # Otherwise, throw an error
 else

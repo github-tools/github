@@ -1,1 +1,1 @@
-module.exports = require('./github');
+module.exports = require('./octokit');

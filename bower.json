@@ -1,8 +1,8 @@
 {
-  "name": "github-client",
+  "name": "octokit",
   "version": "0.8.0",
   "description": "Javascript github client for nodejs or a web browser using promises",
-  "main": "github.js",
+  "main": "octokit.js",
   "dependencies": {
     "jquery": ">=1.8",
     "lodash": ">=1.0"

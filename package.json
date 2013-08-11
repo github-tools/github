@@ -1,19 +1,33 @@
 {
-  "name": "github-client",
-  "version": "0.8.0",
+  "name": "octokit",
+  "version": "0.8.1",
   "description": "Javascript github client for nodejs or a web browser using promises",
-  "main": "github.js",
+  "main": "octokit.js",
+
+  "scripts": {
+    "prepublish": "bower install",
+    "test": "grunt test --verbose",
+    "dist": "grunt dist --verbose",
+    "update": "bower update"
+  },
+
   "dependencies": {
+    "grunt": "~0.4.1",
+    "bower": "~1.0",
     "underscore": ">=1.4.2",
     "jquery-deferred": ">=0.3.0",
     "najax": "git://github.com/philschatz/najax.git"
   },
   "devDependencies": {
-    "docco": "~0.4.0"
+    "docco": "~0.4.0",
+    "grunt-coffeelint": "~0.0.7",
+    "grunt-bump": "~0.0.10",
+    "grunt-contrib-coffee": "~0.7",
+    "grunt-contrib-clean": "~0.5"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/philschatz/github-client.git"
+    "url": "https://github.com/philschatz/octokit.git"
   },
   "keywords": [
     "javascript",
