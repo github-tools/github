@@ -8,6 +8,7 @@ This package can also be used in `nodejs` or as an AMD module in the browser.
 
 ## Key Features
 
+- Works in `nodejs`, a AMD module in the browser, a [bower](https://github.com/bower/bower) library
 - Simple `read` and `write` methods for text and binary files
 - Creating gists, Pull Requests, forks, and new Repositories
 - `ETag` Caching
@@ -60,7 +61,7 @@ define(['octokit'], function(Octokit) {
 
 Install instructions:
 
-    npm install octokit
+    npm install octokit --save
 
 ```js
 var Octokit = require('octokit');
@@ -69,6 +70,12 @@ var gh = Octokit.new({
   password: "YOUR_PASSWORD"
 });
 ```
+
+### Using bower
+
+This file can be included using the bower package manager:
+
+    bower install octokit --save
 
 
 ## Repository API
