@@ -179,8 +179,9 @@
           }
           return _request('GET', '/users', options);
         };
-        this.getOrgRepos = function(orgName) {
-          return _request('GET', "/orgs/" + orgName + "/repos?type=all&per_page=1000&sort=updated&direction=desc", null);
+        this.getOrgRepos = function(orgName, type) {
+          type = type || 'all';
+          return _request('GET', "/orgs/" + orgName + "/repos?type=" + type + "&per_page=1000&sort=updated&direction=desc", null);
         };
         this.getPublicGists = function(since) {
           var getDate, options;
