@@ -924,6 +924,9 @@
             this.deleteHook = function(id) {
               return _request('DELETE', "" + this.repoPath + "/hooks/" + id, null);
             };
+            this.getLanguages = function() {
+              return _request('GET', "" + this.repoPath + "/languages", null);
+            };
           }
 
           return Repository;

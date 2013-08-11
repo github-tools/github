@@ -1044,6 +1044,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           @deleteHook = (id) ->
             _request 'DELETE', "#{@repoPath}/hooks/#{id}", null
 
+          # List all Languages
+          # -------
+          @getLanguages = ->
+            _request 'GET', "#{@repoPath}/languages", null
+
 
       # Gist API
       # -------
