@@ -1210,7 +1210,11 @@ else if @_ and @jQuery and (@btoa or @Base64)
   # Use the `btoa` function if it is defined (Webkit/Mozilla) and fail back to
   # `Base64.encode` otherwise (IE)
   encode = @btoa or @Base64.encode
-  @Octokit = makeOctokit @_, @jQuery, encode
+  Octokit = makeOctokit @_, @jQuery, encode
+  # Assign to `Octokit` and `Github` global for backwards compatibility
+  @Octokit ?= Octokit
+  @Github ?= Octokit
+
 
 # Otherwise, throw an error
 else

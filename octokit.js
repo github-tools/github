@@ -1057,7 +1057,13 @@
     }
   } else if (this._ && this.jQuery && (this.btoa || this.Base64)) {
     encode = this.btoa || this.Base64.encode;
-    this.Octokit = makeOctokit(this._, this.jQuery, encode);
+    Octokit = makeOctokit(this._, this.jQuery, encode);
+    if (this.Octokit == null) {
+      this.Octokit = Octokit;
+    }
+    if (this.Github == null) {
+      this.Github = Octokit;
+    }
   } else {
     err = function(msg) {
       if (typeof console !== "undefined" && console !== null) {
