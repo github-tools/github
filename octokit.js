@@ -8,7 +8,7 @@
     var Octokit;
     Octokit = (function() {
       function Octokit(clientOptions) {
-        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, notifyEnd, notifyStart, _cachedETags, _client, _listeners, _request;
+        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, notifyEnd, notifyStart, toQueryString, _cachedETags, _client, _listeners, _request;
         if (clientOptions == null) {
           clientOptions = {};
         }
@@ -160,6 +160,19 @@
           notifyStart(promise, path);
           return promise.promise();
         };
+        toQueryString = function(options) {
+          var params;
+          if (_.isEmpty(options)) {
+            return '';
+          }
+          params = [];
+          _.each(_.pairs(options), function(_arg) {
+            var key, value;
+            key = _arg[0], value = _arg[1];
+            return params.push("" + key + "=" + (encodeURIComponent(value)));
+          });
+          return "?" + (params.join('&'));
+        };
         this.onRateLimitChanged = function(listener) {
           return _listeners.push(listener);
         };
@@ -205,7 +218,7 @@
           return _request('GET', '/events', null);
         };
         this.getNotifications = function(options) {
-          var getDate;
+          var getDate, queryString;
           if (options == null) {
             options = {};
           }
@@ -218,7 +231,8 @@
           if (options.since) {
             options.since = getDate(options.since);
           }
-          return _request('GET', '/notifications', options);
+          queryString = toQueryString(options);
+          return _request('GET', "/notifications" + queryString, null);
         };
         User = (function() {
           function User(_username) {
@@ -518,21 +532,12 @@
               }).promise();
             };
             this.getTree = function(tree, options) {
-              var params, queryString,
+              var queryString,
                 _this = this;
               if (options == null) {
                 options = null;
               }
-              queryString = '';
-              if (!_.isEmpty(options)) {
-                params = [];
-                _.each(_.pairs(options), function(_arg) {
-                  var key, value;
-                  key = _arg[0], value = _arg[1];
-                  return params.push("" + key + "=" + (encodeURIComponent(value)));
-                });
-                queryString = "?" + (params.join('&'));
-              }
+              queryString = toQueryString(options);
               return _request('GET', "" + _repoPath + "/git/trees/" + tree + queryString, null).then(function(res) {
                 return res.tree;
               }).promise();
@@ -603,7 +608,7 @@
               return _request('GET', "" + _repoPath + "/commits/" + sha, null);
             };
             this.getCommits = function(options) {
-              var getDate, params, queryString;
+              var getDate, queryString;
               if (options == null) {
                 options = {};
               }
@@ -620,16 +625,7 @@
               if (options.until) {
                 options.until = getDate(options.until);
               }
-              queryString = '';
-              if (!_.isEmpty(options)) {
-                params = [];
-                _.each(_.pairs(options), function(_arg) {
-                  var key, value;
-                  key = _arg[0], value = _arg[1];
-                  return params.push("" + key + "=" + (encodeURIComponent(value)));
-                });
-                queryString = "?" + (params.join('&'));
-              }
+              queryString = toQueryString(options);
               return _request('GET', "" + _repoPath + "/commits" + queryString, null).promise();
             };
           }
@@ -816,7 +812,7 @@
               return _request('GET', "/networks/" + _owner + "/" + _repo + "/events", null);
             };
             this.getNotifications = function(options) {
-              var getDate;
+              var getDate, queryString;
               if (options == null) {
                 options = {};
               }
@@ -829,7 +825,8 @@
               if (options.since) {
                 options.since = getDate(options.since);
               }
-              return _request('GET', "" + this.repoPath + "/notifications", options);
+              queryString = toQueryString(options);
+              return _request('GET', "" + this.repoPath + "/notifications" + queryString, null);
             };
             this.getCollaborators = function() {
               return _request('GET', "" + this.repoPath + "/collaborators", null);

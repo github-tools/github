@@ -174,6 +174,20 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
         # Return the promise
         return promise.promise()
 
+
+      # Converts a dictionary to a query string.
+      # Internal helper method
+      toQueryString = (options) ->
+
+        # Returns '' if `options` is empty so this string can always be appended to a URL
+        return '' if _.isEmpty(options)
+
+        params = []
+        _.each _.pairs(options), ([key, value]) ->
+          params.push "#{key}=#{encodeURIComponent(value)}"
+        return "?#{params.join('&')}"
+
+
       # Add a listener that fires when the `rateLimitRemaining` changes as a result of
       # communicating with github.
       @onRateLimitChanged = (listener) ->
@@ -229,7 +243,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           return time
 
         options.since = getDate(options.since) if options.since
-        _request 'GET', '/notifications', options
+
+        queryString = toQueryString(options)
+        _request 'GET', "/notifications#{queryString}", null
 
 
       # Github Users API
@@ -588,13 +604,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # -------
           # Optionally set recursive to true
           @getTree = (tree, options=null) ->
-            queryString = ''
-            if not _.isEmpty(options)
-              params = []
-              _.each _.pairs(options), ([key, value]) ->
-                params.push "#{key}=#{encodeURIComponent(value)}"
-              queryString = "?#{params.join('&')}"
-
+            queryString = toQueryString(options)
             _request('GET', "#{_repoPath}/git/trees/#{tree}#{queryString}", null)
             .then (res) =>
               return res.tree
@@ -700,12 +710,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             options.since = getDate(options.since) if options.since
             options.until = getDate(options.until) if options.until
 
-            queryString = ''
-            if not _.isEmpty(options)
-              params = []
-              _.each _.pairs(options), ([key, value]) ->
-                params.push "#{key}=#{encodeURIComponent(value)}"
-              queryString = "?#{params.join('&')}"
+            queryString = toQueryString(options)
 
             _request('GET', "#{_repoPath}/commits#{queryString}", null)
             # Return the promise
@@ -944,7 +949,10 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               return time
 
             options.since = getDate(options.since) if options.since
-            _request 'GET', "#{@repoPath}/notifications", options
+
+            queryString = toQueryString(options)
+
+            _request 'GET', "#{@repoPath}/notifications#{queryString}", null
 
           # List Collaborators
           # -------
