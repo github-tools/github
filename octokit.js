@@ -193,7 +193,9 @@
           return _request('GET', '/users', options);
         };
         this.getOrgRepos = function(orgName, type) {
-          type = type || 'all';
+          if (type == null) {
+            type = 'all';
+          }
           return _request('GET', "/orgs/" + orgName + "/repos?type=" + type + "&per_page=1000&sort=updated&direction=desc", null);
         };
         this.getPublicGists = function(since) {

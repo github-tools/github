@@ -208,8 +208,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
       # List public repositories for an Organization
       # -------
-      @getOrgRepos = (orgName, type) ->
-        type = type || 'all'
+      @getOrgRepos = (orgName, type='all') ->
         _request 'GET', "/orgs/#{orgName}/repos?type=#{type}&per_page=1000&sort=updated&direction=desc", null
 
       # Get public Gists on all of GitHub
