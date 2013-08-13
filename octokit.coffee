@@ -208,8 +208,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
       # List public repositories for an Organization
       # -------
-      @getOrgRepos = (orgName) ->
-        _request 'GET', "/orgs/#{orgName}/repos?type=all&per_page=1000&sort=updated&direction=desc", null
+      @getOrgRepos = (orgName, type) ->
+        type = type || 'all'
+        _request 'GET', "/orgs/#{orgName}/repos?type=#{type}&per_page=1000&sort=updated&direction=desc", null
 
       # Get public Gists on all of GitHub
       # -------
@@ -1050,6 +1051,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # -------
           @deleteHook = (id) ->
             _request 'DELETE', "#{@repoPath}/hooks/#{id}", null
+
+          # List all Languages
+          # -------
+          @getLanguages = ->
+            _request 'GET', "#{@repoPath}/languages", null
 
 
       # Gist API
