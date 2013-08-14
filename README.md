@@ -152,6 +152,14 @@ repo.getNotifications(options)
 .done(function(events) {});
 ```
 
+Get programming language counts (CoffeeScript, Ruby, Shell)
+
+```js
+repo.getLanguages()
+.done(function(events) {});
+```
+
+
 ### Branch API
 
 Additional methods are available for a specific branch in a repository
