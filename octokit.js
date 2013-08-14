@@ -563,19 +563,12 @@
                 return res.sha;
               }).promise();
             };
-            this.updateTree = function(baseTree, path, blob) {
+            this.updateTreeMany = function(baseTree, newTree) {
               var data,
                 _this = this;
               data = {
                 base_tree: baseTree,
-                tree: [
-                  {
-                    path: path,
-                    mode: '100644',
-                    type: 'blob',
-                    sha: blob
-                  }
-                ]
+                tree: newTree
               };
               return _request('POST', "" + _repoPath + "/git/trees", data).then(function(res) {
                 return res.sha;
@@ -729,14 +722,44 @@
               }).promise();
             };
             this.write = function(path, content, message, isBase64) {
-              var _this = this;
+              var contents;
               if (message == null) {
                 message = "Changed " + path;
               }
+              contents = {};
+              contents[path] = {
+                content: content,
+                isBase64: isBase64
+              };
+              return this.writeMany(contents, message).promise();
+            };
+            this.writeMany = function(contents, message) {
+              var _this = this;
+              if (message == null) {
+                message = "Changed Multiple";
+              }
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.postBlob(content, isBase64).then(function(blob) {
-                    return _git.updateTree(latestCommit, path, blob).then(function(tree) {
+                  var promises;
+                  promises = _.map(_.pairs(contents), function(_arg) {
+                    var content, data, isBase64, path,
+                      _this = this;
+                    path = _arg[0], data = _arg[1];
+                    content = data.content || data;
+                    isBase64 = data.isBase64 || false;
+                    return _git.postBlob(content, isBase64).then(function(blob) {
+                      return {
+                        path: path,
+                        mode: '100644',
+                        type: 'blob',
+                        sha: blob
+                      };
+                    });
+                  });
+                  return $.when.apply($, promises).then(function(newTree1, newTree2, newTreeN) {
+                    var newTrees;
+                    newTrees = _.toArray(arguments);
+                    return _git.updateTreeMany(latestCommit, newTrees).then(function(tree) {
                       return _git.commit(latestCommit, tree, message).then(function(commitSha) {
                         return _git.updateHead(branch, commitSha).then(function(res) {
                           return res.object;

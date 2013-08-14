@@ -203,6 +203,17 @@ branch.write('PATH/TO/FILE.txt', content, message, isBinary)
 .done(function() {});
 ```
 
+Write multiple files (update or add) in one commit
+
+```js
+var contents = {
+  "FILE1.txt": "Contents of the file",
+  "FILE2.txt": {isBase64: true, content: "BASE_64_ENCODED_STRING"}
+}
+branch.write(contents, message)
+.done(function() {});
+```
+
 Get recent commits to a branch
 
 ```js

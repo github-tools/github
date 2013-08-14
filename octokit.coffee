@@ -634,15 +634,18 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
           # Update an existing tree adding a new blob object getting a tree SHA back
           # -------
-          @updateTree = (baseTree, path, blob) ->
+          # `newTree` is of the form:
+          #
+          #     [ {
+          #       path: path
+          #       mode: '100644'
+          #       type: 'blob'
+          #       sha: blob
+          #     } ]
+          @updateTreeMany = (baseTree, newTree) ->
             data =
               base_tree: baseTree
-              tree: [
-                path: path
-                mode: '100644'
-                type: 'blob'
-                sha: blob
-              ]
+              tree: newTree
 
             _request('POST', "#{_repoPath}/git/trees", data)
             .then (res) =>
@@ -822,14 +825,59 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # -------
           # To write base64 encoded data set `isBase64==true`
           @write = (path, content, message="Changed #{path}", isBase64) ->
+            contents = {}
+            contents[path] =
+              content: content
+              isBase64: isBase64
+
+            @writeMany(contents, message)
+            # Return the promise
+            .promise()
+
+
+          # Write the contents of multiple files to a given branch
+          # -------
+          # Each file can also be binary.
+          #
+          # In general `contents` is a map where the key is the path and the value is `{content:'Hello World!', isBase64:false}`.
+          # In the case of non-base64 encoded files the value may be a string instead.
+          #
+          # Example:
+          #
+          #     contents = {
+          #       'hello.txt':          'Hello World!',
+          #       'path/to/hello2.txt': { content: 'Ahoy!', isBase64: false}
+          #     }
+          @writeMany = (contents, message="Changed Multiple") ->
+            # This method:
+            #
+            # 1. Asynchronously send new blobs for each file
+            # 2. Use the return of the new Blob Post to return an entry in the new Commit Tree
+            # 3. Wait on all the new blobs to finish
+            # 4. Commit and update the branch
             _getRef()
             .then (branch) =>
               _git._updateTree(branch)
-              .then (latestCommit) =>
-                _git.postBlob(content, isBase64)
-                .then (blob) =>
-                  _git.updateTree(latestCommit, path, blob)
-                  .then (tree) =>
+              .then (latestCommit) => # 1. Asynchronously send all the files as new blobs.
+                promises = _.map _.pairs(contents), ([path, data]) ->
+                  # `data` can be an object or a string.
+                  # If it is a string assume isBase64 is false and the string is the content
+                  content = data.content or data
+                  isBase64 = data.isBase64 or false
+                  _git.postBlob(content, isBase64)
+                  .then (blob) => # 2. return an entry in the new Commit Tree
+                    return {
+                      path: path
+                      mode: '100644'
+                      type: 'blob'
+                      sha: blob
+                    }
+                # 3. Wait on all the new blobs to finish
+                $.when.apply($, promises)
+                .then (newTree1, newTree2, newTreeN) =>
+                  newTrees = _.toArray(arguments) # Convert args from $.when back to an array. kludgy
+                  _git.updateTreeMany(latestCommit, newTrees)
+                  .then (tree) => # 4. Commit and update the branch
                     _git.commit(latestCommit, tree, message)
                     .then (commitSha) =>
                       _git.updateHead(branch, commitSha)
