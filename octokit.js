@@ -991,6 +991,12 @@
 
         })();
         this.getRepo = function(user, repo) {
+          if (!user) {
+            throw new Error('BUG! user is required');
+          }
+          if (!repo) {
+            throw new Error('BUG! repo is required');
+          }
           return new Repository({
             user: user,
             name: repo

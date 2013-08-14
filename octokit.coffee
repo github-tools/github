@@ -1139,6 +1139,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
       # Top Level API
       # -------
       @getRepo = (user, repo) ->
+        throw new Error('BUG! user argument is required') if not user
+        throw new Error('BUG! repo argument is required') if not repo
+
         new Repository(
           user: user
           name: repo
