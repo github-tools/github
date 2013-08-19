@@ -187,6 +187,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           params.push "#{key}=#{encodeURIComponent(value)}"
         return "?#{params.join('&')}"
 
+      # Clear the local cache
+      # -------
+      @clearCache = clearCache = () -> _cachedETags = {}
 
       # Add a listener that fires when the `rateLimitRemaining` changes as a result of
       # communicating with github.
@@ -503,10 +506,6 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
       class GitRepo
 
         constructor: (@repoUser, @repoName) ->
-          # Private variables
-          _currentTree =
-            branch: null
-            sha: null
           _repoPath = "/repos/#{@repoUser}/#{@repoName}"
 
           # Delete this Repository
@@ -519,15 +518,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Uses the cache if branch has not been changed
           # -------
           @_updateTree = (branch) ->
-            # Since this method always returns a promise, wrap the result in a deferred
-            if branch is _currentTree.branch and _currentTree.sha
-              return (new jQuery.Deferred()).resolve(_currentTree.sha)
-
             @getRef("heads/#{branch}")
-            .then (sha) =>
-              _currentTree.branch = branch
-              _currentTree.sha = sha
-              return sha
             # Return the promise
             .promise()
 
@@ -672,9 +663,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               tree: tree
 
             _request('POST', "#{_repoPath}/git/commits", data)
-            .then (res) =>
-              _currentTree.sha = res.sha # update latest commit
-              return res.sha
+            .then((commit) -> return commit.sha)
             # Return the promise
             .promise()
 
@@ -821,7 +810,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Write file contents to a given branch and path
           # -------
           # To write base64 encoded data set `isBase64==true`
-          @write = (path, content, message="Changed #{path}", isBase64) ->
+          @write = (path, content, message="Changed #{path}", isBase64) =>
+            # Clear the cache when saving.
+            # It seems there are occasionally `PATCH` errors on save because
+            # the `latestCommit` is not actually the latest
+            clearCache()
             _getRef()
             .then (branch) =>
               _git._updateTree(branch)
