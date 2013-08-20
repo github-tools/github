@@ -811,10 +811,6 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # -------
           # To write base64 encoded data set `isBase64==true`
           @write = (path, content, message="Changed #{path}", isBase64) =>
-            # Clear the cache when saving.
-            # It seems there are occasionally `PATCH` errors on save because
-            # the `latestCommit` is not actually the latest
-            clearCache()
             _getRef()
             .then (branch) =>
               _git._updateTree(branch)

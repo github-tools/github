@@ -722,7 +722,6 @@
               if (message == null) {
                 message = "Changed " + path;
               }
-              clearCache();
               return _getRef().then(function(branch) {
                 return _git._updateTree(branch).then(function(latestCommit) {
                   return _git.postBlob(content, isBase64).then(function(blob) {
