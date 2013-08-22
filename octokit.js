@@ -721,17 +721,20 @@
                 });
               }).promise();
             };
-            this.write = function(path, content, message, isBase64) {
+            this.write = function(path, content, message, isBase64, latestCommitSha) {
               var contents;
               if (message == null) {
                 message = "Changed " + path;
+              }
+              if (latestCommitSha == null) {
+                latestCommitSha = null;
               }
               contents = {};
               contents[path] = {
                 content: content,
                 isBase64: isBase64
               };
-              return this.writeMany(contents, message).promise();
+              return this.writeMany(contents, message, latestCommitSha).promise();
             };
             this.writeMany = function(contents, message, latestCommitSha) {
               var _this = this;
