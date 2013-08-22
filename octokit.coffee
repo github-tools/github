@@ -848,17 +848,17 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           #       'hello.txt':          'Hello World!',
           #       'path/to/hello2.txt': { content: 'Ahoy!', isBase64: false}
           #     }
-          @writeMany = (contents, message="Changed Multiple") ->
+          @writeMany = (contents, message="Changed Multiple", latestCommitSha=null) ->
             # This method:
             #
+            # 0. Finds the latest commit if one is not provided
             # 1. Asynchronously send new blobs for each file
             # 2. Use the return of the new Blob Post to return an entry in the new Commit Tree
             # 3. Wait on all the new blobs to finish
             # 4. Commit and update the branch
             _getRef()
-            .then (branch) =>
-              _git._updateTree(branch)
-              .then (latestCommit) => # 1. Asynchronously send all the files as new blobs.
+            .then (branch) => # See below for Step 0.
+              afterLatestCommit = (latestCommit) => # 1. Asynchronously send all the files as new blobs.
                 promises = _.map _.pairs(contents), ([path, data]) ->
                   # `data` can be an object or a string.
                   # If it is a string assume isBase64 is false and the string is the content
@@ -883,6 +883,13 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                       _git.updateHead(branch, commitSha)
                       .then (res) => # Finally, return the result
                         return res.object # Return something that has a `.sha` to match the signature for read
+
+              # 0. Finds the latest commit if one is not provided
+              if latestCommitSha
+                return afterLatestCommit(latestCommitSha)
+              else
+                return _git._updateTree(branch).then(afterLatestCommit)
+
             # Return the promise
             .promise()
 

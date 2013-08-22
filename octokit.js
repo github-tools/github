@@ -733,13 +733,17 @@
               };
               return this.writeMany(contents, message).promise();
             };
-            this.writeMany = function(contents, message) {
+            this.writeMany = function(contents, message, latestCommitSha) {
               var _this = this;
               if (message == null) {
                 message = "Changed Multiple";
               }
+              if (latestCommitSha == null) {
+                latestCommitSha = null;
+              }
               return _getRef().then(function(branch) {
-                return _git._updateTree(branch).then(function(latestCommit) {
+                var afterLatestCommit;
+                afterLatestCommit = function(latestCommit) {
                   var promises;
                   promises = _.map(_.pairs(contents), function(_arg) {
                     var content, data, isBase64, path,
@@ -767,7 +771,12 @@
                       });
                     });
                   });
-                });
+                };
+                if (latestCommitSha) {
+                  return afterLatestCommit(latestCommitSha);
+                } else {
+                  return _git._updateTree(branch).then(afterLatestCommit);
+                }
               }).promise();
             };
           }
@@ -1015,10 +1024,10 @@
         })();
         this.getRepo = function(user, repo) {
           if (!user) {
-            throw new Error('BUG! user is required');
+            throw new Error('BUG! user argument is required');
           }
           if (!repo) {
-            throw new Error('BUG! repo is required');
+            throw new Error('BUG! repo argument is required');
           }
           return new Repository({
             user: user,
