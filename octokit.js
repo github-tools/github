@@ -8,7 +8,7 @@
     var Octokit;
     Octokit = (function() {
       function Octokit(clientOptions) {
-        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, notifyEnd, notifyStart, toQueryString, _cachedETags, _client, _listeners, _request;
+        var AuthenticatedUser, Branch, ETagResponse, Gist, GitRepo, Organization, Repository, Team, User, clearCache, notifyEnd, notifyStart, toQueryString, _cachedETags, _client, _listeners, _request;
         if (clientOptions == null) {
           clientOptions = {};
         }
@@ -172,6 +172,9 @@
             return params.push("" + key + "=" + (encodeURIComponent(value)));
           });
           return "?" + (params.join('&'));
+        };
+        this.clearCache = clearCache = function() {
+          return _cachedETags = {};
         };
         this.onRateLimitChanged = function(listener) {
           return _listeners.push(listener);
@@ -466,27 +469,15 @@
         })();
         GitRepo = (function() {
           function GitRepo(repoUser, repoName) {
-            var _currentTree, _repoPath;
+            var _repoPath;
             this.repoUser = repoUser;
             this.repoName = repoName;
-            _currentTree = {
-              branch: null,
-              sha: null
-            };
             _repoPath = "/repos/" + this.repoUser + "/" + this.repoName;
             this.deleteRepo = function() {
               return _request('DELETE', "" + _repoPath);
             };
             this._updateTree = function(branch) {
-              var _this = this;
-              if (branch === _currentTree.branch && _currentTree.sha) {
-                return (new jQuery.Deferred()).resolve(_currentTree.sha);
-              }
-              return this.getRef("heads/" + branch).then(function(sha) {
-                _currentTree.branch = branch;
-                _currentTree.sha = sha;
-                return sha;
-              }).promise();
+              return this.getRef("heads/" + branch).promise();
             };
             this.getRef = function(ref) {
               var _this = this;
@@ -583,8 +574,7 @@
               }).promise();
             };
             this.commit = function(parents, tree, message) {
-              var data,
-                _this = this;
+              var data;
               if (!_.isArray(parents)) {
                 parents = [parents];
               }
@@ -593,9 +583,8 @@
                 parents: parents,
                 tree: tree
               };
-              return _request('POST', "" + _repoPath + "/git/commits", data).then(function(res) {
-                _currentTree.sha = res.sha;
-                return res.sha;
+              return _request('POST', "" + _repoPath + "/git/commits", data).then(function(commit) {
+                return commit.sha;
               }).promise();
             };
             this.updateHead = function(head, commit) {
