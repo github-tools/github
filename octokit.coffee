@@ -825,13 +825,16 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Write file contents to a given branch and path
           # -------
           # To write base64 encoded data set `isBase64==true`
-          @write = (path, content, message="Changed #{path}", isBase64, latestCommitSha=null) ->
+          #
+          # Optionally takes a `parentCommitSha` which will be used as the
+          # parent of this commit
+          @write = (path, content, message="Changed #{path}", isBase64, parentCommitSha=null) ->
             contents = {}
             contents[path] =
               content: content
               isBase64: isBase64
 
-            @writeMany(contents, message, latestCommitSha)
+            @writeMany(contents, message, parentCommitSha)
             # Return the promise
             .promise()
 
@@ -849,7 +852,10 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           #       'hello.txt':          'Hello World!',
           #       'path/to/hello2.txt': { content: 'Ahoy!', isBase64: false}
           #     }
-          @writeMany = (contents, message="Changed Multiple", latestCommitSha=null) ->
+          #
+          # Optionally takes an array of `parentCommitShas` which will be used as the
+          # parents of this commit.
+          @writeMany = (contents, message="Changed Multiple", parentCommitShas=null) ->
             # This method:
             #
             # 0. Finds the latest commit if one is not provided
@@ -859,7 +865,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             # 4. Commit and update the branch
             _getRef()
             .then (branch) => # See below for Step 0.
-              afterLatestCommit = (latestCommit) => # 1. Asynchronously send all the files as new blobs.
+              afterParentCommitShas = (parentCommitShas) => # 1. Asynchronously send all the files as new blobs.
                 promises = _.map _.pairs(contents), ([path, data]) ->
                   # `data` can be an object or a string.
                   # If it is a string assume isBase64 is false and the string is the content
@@ -877,19 +883,19 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                 $.when.apply($, promises)
                 .then (newTree1, newTree2, newTreeN) =>
                   newTrees = _.toArray(arguments) # Convert args from $.when back to an array. kludgy
-                  _git.updateTreeMany(latestCommit, newTrees)
+                  _git.updateTreeMany(parentCommitShas, newTrees)
                   .then (tree) => # 4. Commit and update the branch
-                    _git.commit(latestCommit, tree, message)
+                    _git.commit(parentCommitShas, tree, message)
                     .then (commitSha) =>
                       _git.updateHead(branch, commitSha)
                       .then (res) => # Finally, return the result
                         return res.object # Return something that has a `.sha` to match the signature for read
 
               # 0. Finds the latest commit if one is not provided
-              if latestCommitSha
-                return afterLatestCommit(latestCommitSha)
+              if parentCommitShas
+                return afterParentCommitShas(parentCommitShas)
               else
-                return _git._updateTree(branch).then(afterLatestCommit)
+                return _git._updateTree(branch).then(afterParentCommitShas)
 
             # Return the promise
             .promise()

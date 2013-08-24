@@ -724,32 +724,32 @@
                 });
               }).promise();
             };
-            this.write = function(path, content, message, isBase64, latestCommitSha) {
+            this.write = function(path, content, message, isBase64, parentCommitSha) {
               var contents;
               if (message == null) {
                 message = "Changed " + path;
               }
-              if (latestCommitSha == null) {
-                latestCommitSha = null;
+              if (parentCommitSha == null) {
+                parentCommitSha = null;
               }
               contents = {};
               contents[path] = {
                 content: content,
                 isBase64: isBase64
               };
-              return this.writeMany(contents, message, latestCommitSha).promise();
+              return this.writeMany(contents, message, parentCommitSha).promise();
             };
-            this.writeMany = function(contents, message, latestCommitSha) {
+            this.writeMany = function(contents, message, parentCommitShas) {
               var _this = this;
               if (message == null) {
                 message = "Changed Multiple";
               }
-              if (latestCommitSha == null) {
-                latestCommitSha = null;
+              if (parentCommitShas == null) {
+                parentCommitShas = null;
               }
               return _getRef().then(function(branch) {
-                var afterLatestCommit;
-                afterLatestCommit = function(latestCommit) {
+                var afterParentCommitShas;
+                afterParentCommitShas = function(parentCommitShas) {
                   var promises;
                   promises = _.map(_.pairs(contents), function(_arg) {
                     var content, data, isBase64, path,
@@ -769,8 +769,8 @@
                   return $.when.apply($, promises).then(function(newTree1, newTree2, newTreeN) {
                     var newTrees;
                     newTrees = _.toArray(arguments);
-                    return _git.updateTreeMany(latestCommit, newTrees).then(function(tree) {
-                      return _git.commit(latestCommit, tree, message).then(function(commitSha) {
+                    return _git.updateTreeMany(parentCommitShas, newTrees).then(function(tree) {
+                      return _git.commit(parentCommitShas, tree, message).then(function(commitSha) {
                         return _git.updateHead(branch, commitSha).then(function(res) {
                           return res.object;
                         });
@@ -778,10 +778,10 @@
                     });
                   });
                 };
-                if (latestCommitSha) {
-                  return afterLatestCommit(latestCommitSha);
+                if (parentCommitShas) {
+                  return afterParentCommitShas(parentCommitShas);
                 } else {
-                  return _git._updateTree(branch).then(afterLatestCommit);
+                  return _git._updateTree(branch).then(afterParentCommitShas);
                 }
               }).promise();
             };
