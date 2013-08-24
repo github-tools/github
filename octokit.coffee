@@ -668,10 +668,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Create a new commit object with the current commit SHA as the parent
           # and the new tree SHA, getting a commit SHA back
           # -------
-          @commit = (parent, tree, message) ->
+          @commit = (parents, tree, message) ->
+            parents = [parents] if not _.isArray(parents)
             data =
               message: message
-              parents: [parent]
+              parents: parents
               tree: tree
 
             _request('POST', "#{_repoPath}/git/commits", data)

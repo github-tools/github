@@ -582,12 +582,15 @@
                 return res.sha;
               }).promise();
             };
-            this.commit = function(parent, tree, message) {
+            this.commit = function(parents, tree, message) {
               var data,
                 _this = this;
+              if (!_.isArray(parents)) {
+                parents = [parents];
+              }
               data = {
                 message: message,
-                parents: [parent],
+                parents: parents,
                 tree: tree
               };
               return _request('POST', "" + _repoPath + "/git/commits", data).then(function(res) {
