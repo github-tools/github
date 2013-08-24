@@ -554,19 +554,12 @@
                 return res.sha;
               }).promise();
             };
-            this.updateTree = function(baseTree, path, blob) {
+            this.updateTreeMany = function(baseTree, newTree) {
               var data,
                 _this = this;
               data = {
                 base_tree: baseTree,
-                tree: [
-                  {
-                    path: path,
-                    mode: '100644',
-                    type: 'blob',
-                    sha: blob
-                  }
-                ]
+                tree: newTree
               };
               return _request('POST', "" + _repoPath + "/git/trees", data).then(function(res) {
                 return res.sha;
@@ -580,11 +573,14 @@
                 return res.sha;
               }).promise();
             };
-            this.commit = function(parent, tree, message) {
+            this.commit = function(parents, tree, message) {
               var data;
+              if (!_.isArray(parents)) {
+                parents = [parents];
+              }
               data = {
                 message: message,
-                parents: [parent],
+                parents: parents,
                 tree: tree
               };
               return _request('POST', "" + _repoPath + "/git/commits", data).then(function(commit) {
@@ -627,8 +623,7 @@
         })();
         Branch = (function() {
           function Branch(git, getRef) {
-            var _getRef, _git,
-              _this = this;
+            var _getRef, _git;
             _git = git;
             _getRef = getRef || function() {
               throw new Error('BUG: No way to fetch branch ref!');
@@ -718,22 +713,65 @@
                 });
               }).promise();
             };
-            this.write = function(path, content, message, isBase64) {
+            this.write = function(path, content, message, isBase64, parentCommitSha) {
+              var contents;
               if (message == null) {
                 message = "Changed " + path;
               }
+              if (parentCommitSha == null) {
+                parentCommitSha = null;
+              }
+              contents = {};
+              contents[path] = {
+                content: content,
+                isBase64: isBase64
+              };
+              return this.writeMany(contents, message, parentCommitSha).promise();
+            };
+            this.writeMany = function(contents, message, parentCommitShas) {
+              var _this = this;
+              if (message == null) {
+                message = "Changed Multiple";
+              }
+              if (parentCommitShas == null) {
+                parentCommitShas = null;
+              }
               return _getRef().then(function(branch) {
-                return _git._updateTree(branch).then(function(latestCommit) {
-                  return _git.postBlob(content, isBase64).then(function(blob) {
-                    return _git.updateTree(latestCommit, path, blob).then(function(tree) {
-                      return _git.commit(latestCommit, tree, message).then(function(commitSha) {
+                var afterParentCommitShas;
+                afterParentCommitShas = function(parentCommitShas) {
+                  var promises;
+                  promises = _.map(_.pairs(contents), function(_arg) {
+                    var content, data, isBase64, path,
+                      _this = this;
+                    path = _arg[0], data = _arg[1];
+                    content = data.content || data;
+                    isBase64 = data.isBase64 || false;
+                    return _git.postBlob(content, isBase64).then(function(blob) {
+                      return {
+                        path: path,
+                        mode: '100644',
+                        type: 'blob',
+                        sha: blob
+                      };
+                    });
+                  });
+                  return $.when.apply($, promises).then(function(newTree1, newTree2, newTreeN) {
+                    var newTrees;
+                    newTrees = _.toArray(arguments);
+                    return _git.updateTreeMany(parentCommitShas, newTrees).then(function(tree) {
+                      return _git.commit(parentCommitShas, tree, message).then(function(commitSha) {
                         return _git.updateHead(branch, commitSha).then(function(res) {
                           return res.object;
                         });
                       });
                     });
                   });
-                });
+                };
+                if (parentCommitShas) {
+                  return afterParentCommitShas(parentCommitShas);
+                } else {
+                  return _git._updateTree(branch).then(afterParentCommitShas);
+                }
               }).promise();
             };
           }
@@ -980,6 +1018,12 @@
 
         })();
         this.getRepo = function(user, repo) {
+          if (!user) {
+            throw new Error('BUG! user argument is required');
+          }
+          if (!repo) {
+            throw new Error('BUG! repo argument is required');
+          }
           return new Repository({
             user: user,
             name: repo

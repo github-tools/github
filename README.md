@@ -152,6 +152,14 @@ repo.getNotifications(options)
 .done(function(events) {});
 ```
 
+Get programming language counts (CoffeeScript, Ruby, Shell)
+
+```js
+repo.getLanguages()
+.done(function(events) {});
+```
+
+
 ### Branch API
 
 Additional methods are available for a specific branch in a repository
@@ -200,6 +208,17 @@ var content = "Contents of the file";
 var message = "OPTIONAL COMMIT MESSAGE";
 var isBinary = false;
 branch.write('PATH/TO/FILE.txt', content, message, isBinary)
+.done(function() {});
+```
+
+Write multiple files (update or add) in one commit
+
+```js
+var contents = {
+  "FILE1.txt": "Contents of the file",
+  "FILE2.txt": {isBase64: true, content: "BASE_64_ENCODED_STRING"}
+}
+branch.write(contents, message)
 .done(function() {});
 ```
 

@@ -625,15 +625,18 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
           # Update an existing tree adding a new blob object getting a tree SHA back
           # -------
-          @updateTree = (baseTree, path, blob) ->
+          # `newTree` is of the form:
+          #
+          #     [ {
+          #       path: path
+          #       mode: '100644'
+          #       type: 'blob'
+          #       sha: blob
+          #     } ]
+          @updateTreeMany = (baseTree, newTree) ->
             data =
               base_tree: baseTree
-              tree: [
-                path: path
-                mode: '100644'
-                type: 'blob'
-                sha: blob
-              ]
+              tree: newTree
 
             _request('POST', "#{_repoPath}/git/trees", data)
             .then (res) =>
@@ -656,10 +659,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Create a new commit object with the current commit SHA as the parent
           # and the new tree SHA, getting a commit SHA back
           # -------
-          @commit = (parent, tree, message) ->
+          @commit = (parents, tree, message) ->
+            parents = [parents] if not _.isArray(parents)
             data =
               message: message
-              parents: [parent]
+              parents: parents
               tree: tree
 
             _request('POST', "#{_repoPath}/git/commits", data)
@@ -810,20 +814,78 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # Write file contents to a given branch and path
           # -------
           # To write base64 encoded data set `isBase64==true`
-          @write = (path, content, message="Changed #{path}", isBase64) =>
+          #
+          # Optionally takes a `parentCommitSha` which will be used as the
+          # parent of this commit
+          @write = (path, content, message="Changed #{path}", isBase64, parentCommitSha=null) ->
+            contents = {}
+            contents[path] =
+              content: content
+              isBase64: isBase64
+
+            @writeMany(contents, message, parentCommitSha)
+            # Return the promise
+            .promise()
+
+
+          # Write the contents of multiple files to a given branch
+          # -------
+          # Each file can also be binary.
+          #
+          # In general `contents` is a map where the key is the path and the value is `{content:'Hello World!', isBase64:false}`.
+          # In the case of non-base64 encoded files the value may be a string instead.
+          #
+          # Example:
+          #
+          #     contents = {
+          #       'hello.txt':          'Hello World!',
+          #       'path/to/hello2.txt': { content: 'Ahoy!', isBase64: false}
+          #     }
+          #
+          # Optionally takes an array of `parentCommitShas` which will be used as the
+          # parents of this commit.
+          @writeMany = (contents, message="Changed Multiple", parentCommitShas=null) ->
+            # This method:
+            #
+            # 0. Finds the latest commit if one is not provided
+            # 1. Asynchronously send new blobs for each file
+            # 2. Use the return of the new Blob Post to return an entry in the new Commit Tree
+            # 3. Wait on all the new blobs to finish
+            # 4. Commit and update the branch
             _getRef()
-            .then (branch) =>
-              _git._updateTree(branch)
-              .then (latestCommit) =>
-                _git.postBlob(content, isBase64)
-                .then (blob) =>
-                  _git.updateTree(latestCommit, path, blob)
-                  .then (tree) =>
-                    _git.commit(latestCommit, tree, message)
+            .then (branch) => # See below for Step 0.
+              afterParentCommitShas = (parentCommitShas) => # 1. Asynchronously send all the files as new blobs.
+                promises = _.map _.pairs(contents), ([path, data]) ->
+                  # `data` can be an object or a string.
+                  # If it is a string assume isBase64 is false and the string is the content
+                  content = data.content or data
+                  isBase64 = data.isBase64 or false
+                  _git.postBlob(content, isBase64)
+                  .then (blob) => # 2. return an entry in the new Commit Tree
+                    return {
+                      path: path
+                      mode: '100644'
+                      type: 'blob'
+                      sha: blob
+                    }
+                # 3. Wait on all the new blobs to finish
+                $.when.apply($, promises)
+                .then (newTree1, newTree2, newTreeN) =>
+                  newTrees = _.toArray(arguments) # Convert args from $.when back to an array. kludgy
+                  _git.updateTreeMany(parentCommitShas, newTrees)
+                  .then (tree) => # 4. Commit and update the branch
+                    _git.commit(parentCommitShas, tree, message)
                     .then (commitSha) =>
                       _git.updateHead(branch, commitSha)
                       .then (res) => # Finally, return the result
                         return res.object # Return something that has a `.sha` to match the signature for read
+
+              # 0. Finds the latest commit if one is not provided
+              if parentCommitShas
+                return afterParentCommitShas(parentCommitShas)
+              else
+                return _git._updateTree(branch).then(afterParentCommitShas)
+
             # Return the promise
             .promise()
 
@@ -1128,6 +1190,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
       # Top Level API
       # -------
       @getRepo = (user, repo) ->
+        throw new Error('BUG! user argument is required') if not user
+        throw new Error('BUG! repo argument is required') if not repo
+
         new Repository(
           user: user
           name: repo
