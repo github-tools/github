@@ -248,6 +248,35 @@
         });
       };
 
+      // Gets details for a specific pull request
+      // -------
+
+      this.getPull = function(number, cb) {
+        _request("GET", repoPath + "/pulls/" + number, null, function(err, pull) {
+          if (err) return cb(err);
+          cb(null, pull);
+        });
+      };
+
+      // List all issues of a respository
+      // -------
+
+      this.listIssues = function(options, cb) {
+        if (_.isFunction(options)) {
+          cb = options;
+          options = undefined;
+        }
+
+        var params = _.map(options, function(value, key) {
+          return encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        }).join('&');
+
+        _request("GET", repoPath + "/issues" + (params ? "?" + params : ""), null, function(err, issues) {
+          if (err) return cb(err);
+          cb(null, issues);
+        });
+      },
+
 
       // Retrieve the changes made between base and head
       // -------
