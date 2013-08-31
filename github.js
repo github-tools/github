@@ -54,11 +54,8 @@
       };
       xhr.setRequestHeader('Accept','application/vnd.github.raw');
       xhr.setRequestHeader('Content-Type','application/json');
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
+      if ( (options.token) || (options.username && options.password)) {
+           xhr.setRequestHeader('Authorization', options.token
              ? 'token '+ options.token
              : 'Basic ' + Base64.encode(options.username + ':' + options.password)
            );
