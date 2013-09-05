@@ -54,7 +54,9 @@ module.exports = (grunt) ->
         commit: true
         push: true
         pushTo: ''
-        commitFiles: ['package.json', 'octokit.js']
+        commitFiles: ['package.json', 'bower.json', 'octokit.js']
+        # Files to bump the version number of
+        files: ['package.json', 'bower.json']
 
 
   # Dependencies
