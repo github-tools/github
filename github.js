@@ -379,6 +379,41 @@
         _request("POST", repoPath + "/pulls", options, cb);
       };
 
+      // List hooks
+      // --------
+
+      this.listHooks = function(cb) {
+        _request("GET", repoPath + "/hooks", null, cb);
+      };
+
+      // Get a hook
+      // --------
+
+      this.getHook = function(id, cb) {
+        _request("GET", repoPath + "/hooks/" + id, null, cb);
+      };
+
+      // Create a hook
+      // --------
+
+      this.createHook = function(options, cb) {
+        _request("POST", repoPath + "/hooks", options, cb);
+      };
+
+      // Edit a hook
+      // --------
+
+      this.editHook = function(id, options, cb) {
+        _request("PATCH", repoPath + "/hooks/" + id, options, cb);
+      };
+
+      // Delete a hook
+      // --------
+
+      this.deleteHook = function(id, cb) {
+        _request("DELETE", repoPath + "/hooks/" + id, null, cb);
+      };
+
       // Read file at given path
       // -------
 
