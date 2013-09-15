@@ -148,7 +148,11 @@
                   _xhr: xhr
                 });
               } else {
-                json = JSON.parse(xhr.responseText);
+                if (xhr.responseText) {
+                  json = JSON.parse(xhr.responseText);
+                } else {
+                  json = '';
+                }
                 return promise.reject({
                   error: json,
                   status: xhr.status,

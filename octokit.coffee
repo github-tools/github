@@ -167,7 +167,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
               promise.reject {error: xhr.responseText, status: xhr.status, _xhr: xhr}
 
             else
-              json = JSON.parse xhr.responseText
+              if xhr.responseText
+                json = JSON.parse xhr.responseText
+              else
+                # In the case of 404 errors, `responseText` is an empty string
+                json = ''
               promise.reject {error: json, status: xhr.status, _xhr: xhr}
 
         notifyStart(promise, path)
