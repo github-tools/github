@@ -49,7 +49,7 @@ Show repository information
 repo.show(function(err, repo) {});
 ```
 
-Get contents at a particular path.
+Get contents at a particular path in a particular branch.
 
 ```js
 repo.contents("master", "path/to/dir", function(err, contents) {});
