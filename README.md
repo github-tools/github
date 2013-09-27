@@ -1,4 +1,4 @@
-[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
+﻿[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
 
 
 [![Build Status](https://travis-ci.org/darvin/github.png?branch=master)](https://travis-ci.org/darvin/github)
@@ -234,10 +234,14 @@ gist.update(delta, function(err, gist) {
 ```
 ## Issues API
 
-To read all the issues of a given repository
+```js
+var issues = github.getIssues(username, reponame);
+```
+
+To read all the issues of a given repository 
 
 ```js
-github.getIssues(owner, repo, function(err, issues) {})
+issues.list(options, function(err, issues) {});
 ```
 
 ## Tests
