@@ -354,6 +354,24 @@
         _request("POST", repoPath + "/forks", null, cb);
       };
 
+      // Branch repository  
+      // --------  
+ 
+      this.branch = function(oldBranch,newBranch,cb) {
+        if(arguments.length === 2 && typeof arguments[1] === "function") {
+          cb = newBranch;
+          newBranch = oldBranch;
+          oldBranch = "master";
+        }
+        this.getRef("heads/" + oldBranch, function(err,ref) {
+          if(err && cb) return cb(err);
+          that.createRef({
+            ref: "refs/heads/" + newBranch,
+            sha: ref
+          },cb);
+        });
+      }
+
       // Create pull request
       // --------
 
