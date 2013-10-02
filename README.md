@@ -49,10 +49,10 @@ Show repository information
 repo.show(function(err, repo) {});
 ```
 
-Get contents at a particular path in a particular branch.
+Get contents at a particular path in a particular branch. Set sync to true to get contents via sync method.
 
 ```js
-repo.contents("master", "path/to/dir", function(err, contents) {});
+repo.contents(branch, "path/to/dir", function(err, contents) {}, sync);
 ```
 
 Fork repository. This operation runs asynchronously. You may want to poll for `repo.contents` until the forked repo is ready.
