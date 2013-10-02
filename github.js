@@ -344,7 +344,7 @@
       // --------
 
       this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
+        _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb);
       };
 
       // Fork repository
