@@ -236,6 +236,46 @@
         _request("DELETE", repoPath, options, cb);  
       };
 
+      // List all tags of a repository
+      // -------
+
+      this.listTags = function(cb) {
+        _request("GET", repoPath + "/tags", null, function(err, tags) {
+          if (err) return cb(err);
+          cb(null, tags);
+        });
+      };
+
+      // List all pull requests of a respository
+      // -------
+
+      this.listPulls = function(state, cb) {
+        _request("GET", repoPath + "/pulls" + (state ? '?state=' + state : ''), null, function(err, pulls) {
+          if (err) return cb(err);
+          cb(null, pulls);
+        });
+      };
+
+      // Gets details for a specific pull request
+      // -------
+
+      this.getPull = function(number, cb) {
+        _request("GET", repoPath + "/pulls/" + number, null, function(err, pull) {
+          if (err) return cb(err);
+          cb(null, pull);
+        });
+      };
+
+      // Retrieve the changes made between base and head
+      // -------
+
+      this.compare = function(base, head, cb) {
+        _request("GET", repoPath + "/compare/" + base + "..." + head, null, function(err, diff) {
+          if (err) return cb(err);
+          cb(null, diff);
+        });
+      };
+
       // List all branches of a repository
       // -------
 
