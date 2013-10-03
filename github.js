@@ -527,6 +527,33 @@
           cb(err,res);
         });
       };
+
+      // Star a gist
+      // --------
+
+      this.star = function(cb) {
+        _request("PUT", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Untar a gist
+      // --------
+
+      this.unstar = function(cb) {
+        _request("DELETE", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+      // Check if a gist is starred
+      // --------
+
+      this.isStarred = function(cb) {
+        _request("GET", gistPath+"/star", null, function(err,res) {
+          cb(err,res);
+        });
+      };
     };
 
     // Issues API
