@@ -271,6 +271,9 @@ Include these before github.js :
 
 ## Change Log
 
+### 0.8.X
+
+Fixes and tweaks, plus follow/unfollow users, get current user info, create gists, simpler auth, get issues, create branch, CI tests and node.js support
 
 ### 0.7.X
 

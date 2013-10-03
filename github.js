@@ -1,4 +1,4 @@
-// Github.js 0.8.0
+// Github.js 0.8.1
 // (c) 2013 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
 // For all details and documentation:
