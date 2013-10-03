@@ -41,7 +41,9 @@ You can use either:
 * Personal Access Tokens (simpler to set up), used on command lines, scripts etc, created in GitHub web UI
 
 See these pages for more info:
+
 [Creating an access token for command-line use](https://help.github.com/articles/creating-an-access-token-for-command-line-use)
+
 [Github API OAuth Overview] (http://developer.github.com/v3/oauth)
 
 ## Repository API
