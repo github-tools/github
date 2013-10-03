@@ -36,6 +36,11 @@ var github = new Github({
 });
 ```
 
+You can use either:
+* Authorised App Tokens (via client/secret pairs), used for bigger applications
+* Personal Access Tokens (simpler to set up), used on command lines, scripts etc
+See this page for more info: [Creating an access token for command-line use](https://help.github.com/articles/creating-an-access-token-for-command-line-use)
+
 ## Repository API
 
 
