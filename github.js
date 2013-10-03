@@ -54,8 +54,8 @@
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw');
-      xhr.setRequestHeader('Content-Type','application/json');
+      xhr.setRequestHeader('Accept','application/vnd.github.raw+json');
+      xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
            xhr.setRequestHeader('Authorization', options.token
              ? 'token '+ options.token
@@ -220,6 +220,20 @@
 
       this.deleteRef = function(ref, cb) {
         _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+      };
+
+      // Create a repo  
+      // -------
+
+      this.createRepo = function(options, cb) {
+        _request("POST", "/user/repos", options, cb);
+      };
+
+      // Delete a repo  
+      // --------  
+
+      this.deleteRepo = function(cb) {  
+        _request("DELETE", repoPath, options, cb);  
       };
 
       // List all branches of a repository
