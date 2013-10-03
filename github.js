@@ -467,6 +467,43 @@
           });
         });
       };
+
+      // List commits on a repository. Takes an object of optional paramaters:
+      // sha: SHA or branch to start listing commits from
+      // path: Only commits containing this file path will be returned
+      // since: ISO 8601 date - only commits after this date will be returned
+      // until: ISO 8601 date - only commits before this date will be returned
+      // -------
+
+      this.getCommits = function(options, cb) {
+          options = options || {};
+          var url = repoPath + "/commits";
+          var params = [];
+          if (options.sha) {
+              params.push("sha=" + encodeURIComponent(options.sha));
+          }
+          if (options.path) {
+              params.push("path=" + encodeURIComponent(options.path));
+          }
+          if (options.since) {
+              var since = options.since;
+              if (since.constructor === Date) {
+                  since = since.toISOString();
+              }
+              params.push("since=" + encodeURIComponent(since));
+          }
+          if (options.until) {
+              var until = options.until;
+              if (until.constructor === Date) {
+                  until = until.toISOString();
+              }
+              params.push("until=" + encodeURIComponent(until));
+          }
+          if (params.length > 0) {
+              url += "?" + params.join("&");
+          }
+          _request("GET", url, null, cb);
+      };
     };
 
     // Gists API
