@@ -597,8 +597,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
           # Get contents (file/dir)
           # -------
-          @getContents = (path) ->
-            _request('GET', "#{_repoPath}/contents/#{path}", null, {raw:true})
+          @getContents = (path, sha=null) ->
+            queryString = ''
+            if sha != null
+              queryString = toQueryString({ref:sha})
+            _request('GET', "#{_repoPath}/contents/#{path}#{queryString}", null, {raw:true})
             .then (contents) =>
               return contents
             # Return the promise
@@ -779,9 +782,11 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           @contents = (path) ->
             _getRef()
             .then (branch) =>
-              _git.getContents(path)
-              .then (contents) =>
-                return contents
+              _git.getSha(branch, '')
+              .then (sha) =>
+                _git.getContents(path, sha)
+                .then (contents) =>
+                  return contents
             # Return the promise
             .promise()
 
