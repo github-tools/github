@@ -753,9 +753,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           @createBranch = (newBranchName) ->
             _getRef()
             .then (branch) =>
-              _git.getSha(branch, "")
+              _git.getSha(branch, '')
               .then (sha) =>
-                _git.createRef({sha:sha, ref:"refs/heads/" + newBranchName})
+                _git.createRef({sha:sha, ref:"refs/heads/#{newBranchName}"})
 
             # Return the promise
             .promise()
