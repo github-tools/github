@@ -595,6 +595,19 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             .promise()
 
 
+          # Get contents (file/dir)
+          # -------
+          @getContents = (path, sha=null) ->
+            queryString = ''
+            if sha != null
+              queryString = toQueryString({ref:sha})
+            _request('GET', "#{_repoPath}/contents/#{path}#{queryString}", null, {raw:true})
+            .then (contents) =>
+              return contents
+            # Return the promise
+            .promise()
+
+
           # Retrieve the tree a commit points to
           # -------
           # Optionally set recursive to true
@@ -760,6 +773,20 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                 # Return both the commit hash and the content
                 .then (bytes) =>
                   return {sha:sha, content:bytes}
+            # Return the promise
+            .promise()
+
+
+          # Get contents at given path
+          # -------
+          @contents = (path) ->
+            _getRef()
+            .then (branch) =>
+              _git.getSha(branch, '')
+              .then (sha) =>
+                _git.getContents(path, sha)
+                .then (contents) =>
+                  return contents
             # Return the promise
             .promise()
 

@@ -193,6 +193,20 @@ branch.remove('PATH/TO/FILE.txt', message)
 .done(function() {});
 ```
 
+Read the contents (raw) of a file or directory
+
+```js
+branch.contents('DIRECTORY/PATH')
+.done(function(contents) {});
+```
+
+or
+
+```js
+branch.contents('DIRECTORY/PATH/FILE.txt')
+.done(function(contents) {});
+```
+
 Move a file
 
 ```js
