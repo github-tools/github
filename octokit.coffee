@@ -985,7 +985,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
           # Get contents
           # --------
-          @contents = (branch, path) ->
+          @getContents = (branch, path) ->
             _request 'GET', "#{@repoPath}/contents?ref=#{branch}", {path: path}
 
 
