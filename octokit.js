@@ -654,6 +654,17 @@
                 return _git.getCommits(options);
               }).promise();
             };
+            this.createBranch = function(newBranchName) {
+              var _this = this;
+              return _getRef().then(function(branch) {
+                return _git.getSha(branch, "").then(function(sha) {
+                  return _git.createRef({
+                    sha: sha,
+                    ref: "refs/heads/" + newBranchName
+                  });
+                });
+              }).promise();
+            };
             this.read = function(path, isBase64) {
               var _this = this;
               return _getRef().then(function(branch) {

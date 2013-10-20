@@ -761,6 +761,19 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             .promise()
 
 
+          # Creates a new branch based on the current reference of this branch
+          # -------
+          @createBranch = (newBranchName) ->
+            _getRef()
+            .then (branch) =>
+              _git.getSha(branch, '')
+              .then (sha) =>
+                _git.createRef({sha:sha, ref:"refs/heads/#{newBranchName}"})
+
+            # Return the promise
+            .promise()
+
+
           # Read file at given path
           # -------
           # Set `isBase64=true` to get back a base64 encoded binary file

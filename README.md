@@ -244,6 +244,13 @@ branch.getCommits(options)
 .done(function(commits) {});
 ```
 
+Create a new branch
+
+```js
+branch.createBranch("new-branch-name")
+.done(function() {});
+```
+
 
 ### Low-level Repo API
 
