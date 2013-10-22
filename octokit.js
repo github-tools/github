@@ -787,7 +787,7 @@
                       };
                     });
                   });
-                  return $.when.apply($, promises).then(function(newTree1, newTree2, newTreeN) {
+                  return jQuery.when.apply(jQuery, promises).then(function(newTree1, newTree2, newTreeN) {
                     var newTrees;
                     newTrees = _.toArray(arguments);
                     return _git.updateTreeMany(parentCommitShas, newTrees).then(function(tree) {
@@ -907,7 +907,7 @@
             this.canCollaborate = function() {
               var _this = this;
               if (!(clientOptions.password || clientOptions.token)) {
-                return (new $.Deferred()).resolve(false);
+                return (new jQuery.Deferred()).resolve(false);
               }
               return _client.getLogin().then(function(login) {
                 if (!login) {
