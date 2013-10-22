@@ -913,9 +913,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
                       sha: blob
                     }
                 # 3. Wait on all the new blobs to finish
-                $.when.apply($, promises)
+                jQuery.when.apply(jQuery, promises)
                 .then (newTree1, newTree2, newTreeN) =>
-                  newTrees = _.toArray(arguments) # Convert args from $.when back to an array. kludgy
+                  newTrees = _.toArray(arguments) # Convert args from jQuery.when back to an array. kludgy
                   _git.updateTreeMany(parentCommitShas, newTrees)
                   .then (tree) => # 4. Commit and update the branch
                     _git.commit(parentCommitShas, tree, message)
@@ -1070,7 +1070,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           @canCollaborate = () ->
             # Short-circuit if no credentials provided
             if not (clientOptions.password or clientOptions.token)
-              return (new $.Deferred()).resolve(false)
+              return (new jQuery.Deferred()).resolve(false)
 
             _client.getLogin()
             .then (login) =>
