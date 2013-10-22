@@ -35,7 +35,7 @@
 
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
-        var url = API_URL + path;
+        var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
       }
 
@@ -47,9 +47,9 @@
         xhr.onreadystatechange = function () {
           if (this.readyState == 4) {
             if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true);
+              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
-              cb({request: this, error: this.status});
+              cb({path: path, request: this, error: this.status});
             }
           }
         }
@@ -66,6 +66,33 @@
       if (sync) return xhr.response;
     }
 
+    function _requestAllPages(path, cb) {
+      var results = [];
+      (function iterate() {
+        _request("GET", path, null, function(err, res, xhr) {
+          if (err) {
+            return cb(err);
+          }
+
+          results.push.apply(results, res);
+
+          var links = (xhr.getResponseHeader('link') || '').split(/\s*,\s*/g),
+              next = _.find(links, function(link) { return /rel="next"/.test(link); });
+
+          if (next) {
+            next = (/<(.*)>/.exec(next) || [])[1];
+          }
+
+          if (!next) {
+            cb(err, results);
+          } else {
+            path = next;
+            iterate();
+          }
+        });
+      })();
+    }
+
 
 
     // User API
@@ -73,7 +100,8 @@
 
     Github.User = function() {
       this.repos = function(cb) {
-        _request("GET", "/user/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+        // Github does not always honor the 1000 limit so we want to iterate over the data set.
+        _requestAllPages("/user/repos?type=all&per_page=1000&sort=updated", function(err, res) {
           cb(err, res);
         });
       };
@@ -120,7 +148,8 @@
       // -------
 
       this.userRepos = function(username, cb) {
-        _request("GET", "/users/"+username+"/repos?type=all&per_page=1000&sort=updated", null, function(err, res) {
+        // Github does not always honor the 1000 limit so we want to iterate over the data set.
+        _requestAllPages("/users/"+username+"/repos?type=all&per_page=1000&sort=updated", function(err, res) {
           cb(err, res);
         });
       };
@@ -138,7 +167,8 @@
       // -------
 
       this.orgRepos = function(orgname, cb) {
-        _request("GET", "/orgs/"+orgname+"/repos?type=all&per_page=1000&sort=updated&direction=desc", null, function(err, res) {
+        // Github does not always honor the 1000 limit so we want to iterate over the data set.
+        _requestAllPages("/orgs/"+orgname+"/repos?type=all&&page_num=1000&sort=updated&direction=desc", function(err, res) {
           cb(err, res);
         });
       };
