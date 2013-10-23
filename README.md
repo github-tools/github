@@ -287,9 +287,18 @@ Include these before github.js :
 
 ## Change Log
 
+### 0.9.X
+
+Paging (introduced at tail end of 0.8.X, note: different callbacks for success & errors now)
+
 ### 0.8.X
 
-Fixes and tweaks, plus follow/unfollow users, get current user info, create gists, simpler auth, get issues, create branch, CI tests and node.js support
+Fixes and tweaks, simpler auth, CI tests, node.js support, Raw+JSON, UTF8, plus:
+Users - follow, unfollow, get info, notifications
+Gists - create
+Issues - get
+Repos - createRepo, deleteRepo, createBranch, star, unstar, isStarred, getCommits, listTags, listPulls, getPull, compare
+Hooks - listHooks, getHook, createHook, editHook, deleteHook
 
 ### 0.7.X
 
