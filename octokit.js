@@ -43,7 +43,7 @@
           });
         };
         _request = function(method, path, data, options) {
-          var ajaxConfig, auth, headers, mimeType, promise, xhr,
+          var ajaxConfig, auth, headers, jqXHR, mimeType, promise,
             _this = this;
           if (options == null) {
             options = {
@@ -98,12 +98,12 @@
               }
             };
           }
-          xhr = jQuery.ajax(ajaxConfig);
-          xhr.always(function() {
+          jqXHR = jQuery.ajax(ajaxConfig);
+          jqXHR.always(function() {
             var listener, rateLimit, rateLimitRemaining, _i, _len, _results;
             notifyEnd(promise, path);
-            rateLimit = parseFloat(xhr.getResponseHeader('X-RateLimit-Limit'));
-            rateLimitRemaining = parseFloat(xhr.getResponseHeader('X-RateLimit-Remaining'));
+            rateLimit = parseFloat(jqXHR.getResponseHeader('X-RateLimit-Limit'));
+            rateLimitRemaining = parseFloat(jqXHR.getResponseHeader('X-RateLimit-Remaining'));
             _results = [];
             for (_i = 0, _len = _listeners.length; _i < _len; _i++) {
               listener = _listeners[_i];
@@ -111,7 +111,7 @@
             }
             return _results;
           });
-          xhr.done(function(data, textStatus, jqXHR) {
+          jqXHR.done(function(data, textStatus) {
             var converted, eTag, eTagResponse, i, _i, _ref;
             if (304 === jqXHR.status) {
               if (clientOptions.useETags && _cachedETags[path]) {
@@ -136,27 +136,27 @@
               }
               return promise.resolve(data, textStatus, jqXHR);
             }
-          }).fail(function(xhr, msg, desc) {
+          }).fail(function(unused, msg, desc) {
             var json;
-            if (options.isBoolean && 404 === xhr.status) {
+            if (options.isBoolean && 404 === jqXHR.status) {
               return promise.resolve(false);
             } else {
-              if (xhr.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
+              if (jqXHR.getResponseHeader('Content-Type') !== 'application/json; charset=utf-8') {
                 return promise.reject({
-                  error: xhr.responseText,
-                  status: xhr.status,
-                  _xhr: xhr
+                  error: jqXHR.responseText,
+                  status: jqXHR.status,
+                  _jqXHR: jqXHR
                 });
               } else {
-                if (xhr.responseText) {
-                  json = JSON.parse(xhr.responseText);
+                if (jqXHR.responseText) {
+                  json = JSON.parse(jqXHR.responseText);
                 } else {
                   json = '';
                 }
                 return promise.reject({
                   error: json,
-                  status: xhr.status,
-                  _xhr: xhr
+                  status: jqXHR.status,
+                  _jqXHR: jqXHR
                 });
               }
             }

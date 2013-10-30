@@ -108,20 +108,20 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             # a Boolean 'no'
             404: () => notifyEnd(promise, path); promise.resolve(false)
 
-        xhr = jQuery.ajax(ajaxConfig)
+        jqXHR = jQuery.ajax(ajaxConfig)
 
-        xhr.always =>
+        jqXHR.always =>
           notifyEnd(promise, path)
           # Fire listeners when the request completes or fails
-          rateLimit = parseFloat(xhr.getResponseHeader 'X-RateLimit-Limit')
-          rateLimitRemaining = parseFloat(xhr.getResponseHeader 'X-RateLimit-Remaining')
+          rateLimit = parseFloat(jqXHR.getResponseHeader 'X-RateLimit-Limit')
+          rateLimitRemaining = parseFloat(jqXHR.getResponseHeader 'X-RateLimit-Remaining')
 
           for listener in _listeners
             listener(rateLimitRemaining, rateLimit, method, path, data, options)
 
 
         # Return the result and Base64 encode it if `options.isBase64` flag is set.
-        xhr.done (data, textStatus, jqXHR) ->
+        jqXHR.done (data, textStatus) ->
           # If the response was a 304 then return the cached version
           if 304 == jqXHR.status
             if clientOptions.useETags and _cachedETags[path]
@@ -156,23 +156,23 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
             promise.resolve(data, textStatus, jqXHR)
 
         # Parse the error if one occurs
-        .fail (xhr, msg, desc) ->
+        .fail (unused, msg, desc) ->
           # If the request was for a Boolean then a 404 should be treated as a "false"
-          if options.isBoolean and 404 == xhr.status
+          if options.isBoolean and 404 == jqXHR.status
             promise.resolve(false)
 
           else
 
-            if xhr.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
-              promise.reject {error: xhr.responseText, status: xhr.status, _xhr: xhr}
+            if jqXHR.getResponseHeader('Content-Type') != 'application/json; charset=utf-8'
+              promise.reject {error: jqXHR.responseText, status: jqXHR.status, _jqXHR: jqXHR}
 
             else
-              if xhr.responseText
-                json = JSON.parse xhr.responseText
+              if jqXHR.responseText
+                json = JSON.parse jqXHR.responseText
               else
                 # In the case of 404 errors, `responseText` is an empty string
                 json = ''
-              promise.reject {error: json, status: xhr.status, _xhr: xhr}
+              promise.reject {error: json, status: jqXHR.status, _jqXHR: jqXHR}
 
         notifyStart(promise, path)
         # Return the promise
