@@ -252,18 +252,18 @@
         _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
       };
 
-      // Create a repo  
+      // Create a repo
       // -------
 
       this.createRepo = function(options, cb) {
         _request("POST", "/user/repos", options, cb);
       };
 
-      // Delete a repo  
-      // --------  
+      // Delete a repo
+      // --------
 
-      this.deleteRepo = function(cb) {  
-        _request("DELETE", repoPath, options, cb);  
+      this.deleteRepo = function(cb) {
+        _request("DELETE", repoPath, options, cb);
       };
 
       // List all tags of a repository
@@ -365,6 +365,23 @@
         });
       };
 
+      // Update a file (As blob), getting its SHA back
+      // -------
+
+      this.updateBlob = function(branch, path, content, originalSHA, message, cb) {
+        data = {
+          "branch": branch,
+          "message": message,
+          "content": btoa(content),
+          sha: originalSHA
+        };
+
+        _request("PUT", repoPath + "/contents/" + path, data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.commit.sha);
+        });
+      };
+
       // Update an existing tree adding a new blob object getting a tree SHA back
       // -------
 
@@ -450,9 +467,9 @@
         _request("POST", repoPath + "/forks", null, cb);
       };
 
-      // Branch repository  
-      // --------  
- 
+      // Branch repository
+      // --------
+
       this.branch = function(oldBranch,newBranch,cb) {
         if(arguments.length === 2 && typeof arguments[1] === "function") {
           cb = newBranch;
@@ -582,6 +599,22 @@
                 if (err) return cb(err);
                 that.updateHead(branch, commit, cb);
               });
+            });
+          });
+        });
+      };
+
+      // Update file contents to a given branch and path
+      // -------
+
+      this.update = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.getSha(branch, path, function(err, sha) {
+            if (!sha) return cb("not found", null);
+            that.updateBlob(branch, path, content, sha, message, function(err, commit) {
+              if(err) cb(err);
+              that.updateHead(branch, commit, cb);
             });
           });
         });
