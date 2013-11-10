@@ -71,6 +71,12 @@ Fork repository. This operation runs asynchronously. You may want to poll for `r
 repo.fork(function(err) {});
 ```
 
+Fork repository to an organzation.
+
+```js
+repo.fork("your-org-name", function(err){});
+```
+
 Create new branch for repo. You can omit oldBranchName to default to "master".
 
 ```js
