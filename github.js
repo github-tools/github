@@ -446,8 +446,15 @@
       // Fork repository
       // -------
 
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
+      this.fork = function(org, cb) {
+        if(typeof org =="function"){
+          cb = org;
+          org = null;
+        }
+        else{
+          org = {organization: org};
+        }
+        _request("POST", repoPath + "/forks", org, cb);
       };
 
       // Branch repository  
