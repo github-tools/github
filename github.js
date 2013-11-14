@@ -497,7 +497,7 @@
       // --------
 
       this.contents = function(ref, path, cb) {
-        _request("GET", repoPath + "/contents/"+path, { ref: ref }, cb);
+        _request("GET", repoPath + "/contents" + (path ? "/" + path : ""), { ref: ref }, cb);
       };
 
       // Fork repository
