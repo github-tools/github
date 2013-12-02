@@ -27,6 +27,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
       _.defaults clientOptions,
         rootURL: 'https://api.github.com'
         useETags: true
+        usePostInsteadOfPatch: false
 
       _client = @ # Useful for other classes (like Repo) to get the current Client object
 
@@ -48,6 +49,9 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
       # =======
       #
       _request = (method, path, data, options={raw:false, isBase64:false, isBoolean:false}) ->
+
+        if 'PATCH' == method and clientOptions.usePostInsteadOfPatch
+          method = 'POST'
 
         # Support binary data by overriding the response mimeType
         mimeType = undefined
@@ -691,8 +695,10 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
 
           # Update the reference of your head to point to the new commit SHA
           # -------
-          @updateHead = (head, commit) ->
-            _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", {sha: commit}
+          @updateHead = (head, commit, force=false) ->
+            options = {sha:commit}
+            options.force = true if force
+            _request 'PATCH', "#{_repoPath}/git/refs/heads/#{head}", options
 
 
           # Get a single commit
@@ -1026,7 +1032,7 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # List events for a network of Repositories
           # -------
           @getNetworkEvents = () ->
-            _request 'GET', "/networks/#{_owner}/#{_repo}/events", null
+            _request 'GET', "/networks/#{_user}/#{_repo}/events", null
 
 
           # List unread notifications for authenticated user
@@ -1058,6 +1064,14 @@ makeOctokit = (_, jQuery, base64encode, userAgent) =>
           # returned in the collaborators list.
           @getCollaborators = () ->
             _request 'GET', "#{@repoPath}/collaborators", null
+
+          @addCollaborator = (username) ->
+            throw new Error 'BUG: username is required' if not username
+            _request 'PUT', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
+
+          @removeCollaborator = (username) ->
+            throw new Error 'BUG: username is required' if not username
+            _request 'DELETE', "#{@repoPath}/collaborators/#{username}", null, {isBoolean:true}
 
           @isCollaborator = (username=null) ->
             throw new Error 'BUG: username is required' if not username
@@ -1315,8 +1329,8 @@ else if @_ and @jQuery and (@btoa or @Base64)
   encode = @btoa or @Base64.encode
   Octokit = makeOctokit @_, @jQuery, encode
   # Assign to `Octokit` and `Github` global for backwards compatibility
-  @Octokit ?= Octokit
-  @Github ?= Octokit
+  @Octokit = Octokit
+  @Github = Octokit
 
 
 # Otherwise, throw an error

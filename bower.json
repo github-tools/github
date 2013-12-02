@@ -5,7 +5,8 @@
   "main": "octokit.js",
   "dependencies": {
     "jquery": ">=1.8",
-    "lodash": ">=1.0"
+    "lodash": ">=1.0",
+    "blanket": "#development"
   },
   "devDependencies": {
     "jq-console": "replit/jq-console",

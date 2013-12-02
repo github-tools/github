@@ -14,7 +14,8 @@
         }
         _.defaults(clientOptions, {
           rootURL: 'https://api.github.com',
-          useETags: true
+          useETags: true,
+          usePostInsteadOfPatch: false
         });
         _client = this;
         _listeners = [];
@@ -51,6 +52,9 @@
               isBase64: false,
               isBoolean: false
             };
+          }
+          if ('PATCH' === method && clientOptions.usePostInsteadOfPatch) {
+            method = 'POST';
           }
           mimeType = void 0;
           if (options.isBase64) {
@@ -609,10 +613,18 @@
                 return commit.sha;
               }).promise();
             };
-            this.updateHead = function(head, commit) {
-              return _request('PATCH', "" + _repoPath + "/git/refs/heads/" + head, {
+            this.updateHead = function(head, commit, force) {
+              var options;
+              if (force == null) {
+                force = false;
+              }
+              options = {
                 sha: commit
-              });
+              };
+              if (force) {
+                options.force = true;
+              }
+              return _request('PATCH', "" + _repoPath + "/git/refs/heads/" + head, options);
             };
             this.getCommit = function(sha) {
               return _request('GET', "" + _repoPath + "/commits/" + sha, null);
@@ -882,7 +894,7 @@
               return _request('GET', "" + this.repoPath + "/issues/events", null);
             };
             this.getNetworkEvents = function() {
-              return _request('GET', "/networks/" + _owner + "/" + _repo + "/events", null);
+              return _request('GET', "/networks/" + _user + "/" + _repo + "/events", null);
             };
             this.getNotifications = function(options) {
               var getDate, queryString;
@@ -903,6 +915,22 @@
             };
             this.getCollaborators = function() {
               return _request('GET', "" + this.repoPath + "/collaborators", null);
+            };
+            this.addCollaborator = function(username) {
+              if (!username) {
+                throw new Error('BUG: username is required');
+              }
+              return _request('PUT', "" + this.repoPath + "/collaborators/" + username, null, {
+                isBoolean: true
+              });
+            };
+            this.removeCollaborator = function(username) {
+              if (!username) {
+                throw new Error('BUG: username is required');
+              }
+              return _request('DELETE', "" + this.repoPath + "/collaborators/" + username, null, {
+                isBoolean: true
+              });
             };
             this.isCollaborator = function(username) {
               if (username == null) {
@@ -1140,12 +1168,8 @@
   } else if (this._ && this.jQuery && (this.btoa || this.Base64)) {
     encode = this.btoa || this.Base64.encode;
     Octokit = makeOctokit(this._, this.jQuery, encode);
-    if (this.Octokit == null) {
-      this.Octokit = Octokit;
-    }
-    if (this.Github == null) {
-      this.Github = Octokit;
-    }
+    this.Octokit = Octokit;
+    this.Github = Octokit;
   } else {
     err = function(msg) {
       if (typeof console !== "undefined" && console !== null) {

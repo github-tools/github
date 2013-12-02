@@ -7,10 +7,13 @@
     "prepublish": "bower install",
     "test": "grunt test --verbose",
     "dist": "grunt dist --verbose",
-    "update": "bower update"
+    "update": "bower update",
+    "blanket": {
+      "pattern": ["octokit.js"]
+    }
   },
   "dependencies": {
-    "grunt": "~0.4.1",
+    "grunt": "~0.4.2",
     "bower": "~1.0",
     "underscore": ">=1.4.2",
     "jquery-deferred": ">=0.3.0",
@@ -22,7 +25,13 @@
     "grunt-bump": "~0.0.10",
     "grunt-contrib-coffee": "~0.7",
     "grunt-contrib-clean": "~0.5",
-    "jamjs": "~0.2.17"
+    "grunt-mocha-test": "~0.8.0",
+    "grunt-mocha-cov": "0.0.7",
+    "grunt-blanket-mocha": "git://github.com/philschatz/grunt-blanket-mocha.git#fixes-for-octokit.js",
+    "jamjs": "~0.2.17",
+    "chai": "~1.8.1",
+    "mocha": "~1.14.0",
+    "blanket": "~1.1.5"
   },
   "repository": {
     "type": "git",
