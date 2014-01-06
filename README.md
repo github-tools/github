@@ -24,7 +24,8 @@ Create a Github instance.
 ```js
 var github = new Github({
   username: "YOU_USER",
-  password: "YOUR_PASSWORD"
+  password: "YOUR_PASSWORD",
+  auth: "basic"
 });
 ```
 
@@ -32,7 +33,8 @@ Or if you prefer OAuth, it looks like this:
 
 ```js
 var github = new Github({
-  token: "OAUTH_TOKEN"
+  token: "OAUTH_TOKEN",
+  auth: "oauth"
 });
 ```
 
