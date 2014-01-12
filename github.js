@@ -776,8 +776,7 @@
         for (var key in options) {
           query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
         }
-
-        _request("GET", path + '?' + query.join("&"), false, cb);
+        _requestAllPages(path + '?' + query.join("&"), cb);
       };
     };
 
