@@ -544,7 +544,24 @@
           });
         });
       };
-
+      
+      // Delete a file from the tree
+      // -------
+      
+      this.delete = function(branch, path, cb) {
+        that.getSha(branch, path, function(err, sha) {
+          if (!sha) return cb("not found", null);
+          var delPath = repoPath + "/contents/" + path;
+          var params = {
+            "message": "Deleted " + path,
+            "sha": sha 
+          };
+          delPath += "?message=" + encodeURIComponent(params.message);
+          delPath += "&sha=" + encodeURIComponent(params.sha);
+          _request("DELETE", delPath, null, cb);
+        })
+      }
+      
       // Move a file to a new location
       // -------
 
