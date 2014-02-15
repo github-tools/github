@@ -357,7 +357,12 @@
             "content": content,
             "encoding": "utf-8"
           };
-        }
+        } else {
+          	content = {
+              "content": btoa(String.fromCharCode.apply(null, new Uint8Array(content))),
+              "encoding": "base64"
+            };
+          }
 
         _request("POST", repoPath + "/git/blobs", content, function(err, res) {
           if (err) return cb(err);
