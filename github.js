@@ -54,7 +54,7 @@
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw+json');
+      xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
            xhr.setRequestHeader('Authorization', options.token
