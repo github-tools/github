@@ -612,6 +612,7 @@
       // List commits on a repository. Takes an object of optional paramaters:
       // sha: SHA or branch to start listing commits from
       // path: Only commits containing this file path will be returned
+      // per_page: number of commits to list
       // since: ISO 8601 date - only commits after this date will be returned
       // until: ISO 8601 date - only commits before this date will be returned
       // -------
@@ -625,6 +626,9 @@
           }
           if (options.path) {
               params.push("path=" + encodeURIComponent(options.path));
+          }
+          if (options.per_page) {
+              params.push("per_page="+ encodeURIComponent(options.per_page));
           }
           if (options.since) {
               var since = options.since;
