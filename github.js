@@ -645,6 +645,17 @@
           }
           _request("GET", url, null, cb);
       };
+
+      // List contributors to a repository.
+      // anon: "true" or "1" will include anonymous contributors in the list.
+      // -------
+
+      this.getContributors = function(anon, cb) {
+        var data = {
+          "anon":anon
+        };
+        _request("GET", repoPath + "/contributors", data, cb);
+      };
     };
 
     // Gists API
