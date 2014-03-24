@@ -645,9 +645,10 @@
           }
           _request("GET", url, null, cb);
       };
-    };
 
-    this.req=_request;
+      this.req=_request;
+
+    };
 
     // Gists API
     // =======
