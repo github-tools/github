@@ -647,6 +647,8 @@
       };
     };
 
+    this.req=_request;
+
     // Gists API
     // =======
 
