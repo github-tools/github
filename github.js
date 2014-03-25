@@ -46,7 +46,7 @@
       if (!sync) {
         xhr.onreadystatechange = function () {
           if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
+            if (this.status >= 200 && this.status < 300 || this.status === 304 || this.status === 0) {
               cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
               cb({path: path, request: this, error: this.status});
