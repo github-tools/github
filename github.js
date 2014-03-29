@@ -172,6 +172,27 @@
           cb(err, res);
         });
       };
+      
+      // List organization members
+      // -------
+
+      this.orgMembers = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/members", null, cb);
+      }
+
+      // List organization teams
+      // -------
+
+      this.orgTeams = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/teams", null, cb);
+      }
+
+      // List organization team members
+      // -------
+
+      this.teamMembers = function(teamId, cb) {
+        _request("GET", "/teams/"+teamId+"/members", null, cb);
+      }
 
       // Follow user
       // -------
