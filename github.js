@@ -33,28 +33,28 @@
     //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw, sync) {
+    function _request(method, path, data, cb, datatype, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+      if (!datatype)datatype="json";
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
         xhr.onreadystatechange = function () {
           if (this.readyState == 4) {
             if (this.status >= 200 && this.status < 300 || this.status === 304 || this.status === 0) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+              cb(null, datatype ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
               cb({path: path, request: this, error: this.status});
             }
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw+json');
+      xhr.setRequestHeader('Accept','application/vnd.github.'+datatype);
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
            xhr.setRequestHeader('Authorization', options.token
