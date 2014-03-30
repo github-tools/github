@@ -444,8 +444,9 @@
       // Get contents
       // --------
 
-      this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
+      this.contents = function(branch, path, cb, sync, datatype) {
+	if(!datatype)datatype='raw';
+        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, datatype, sync);
       };
 
       // Fork repository
