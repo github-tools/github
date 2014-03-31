@@ -33,28 +33,28 @@
     //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw, sync) {
+    function _request(method, path, data, cb, datatype, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+      if (!datatype)datatype="json";
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
         xhr.onreadystatechange = function () {
           if (this.readyState == 4) {
-            if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+            if (this.status >= 200 && this.status < 300 || this.status === 304 || this.status === 0) {
+              cb(null, /^(?!json)/.test(datatype) ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
               cb({path: path, request: this, error: this.status});
             }
           }
         }
       };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw+json');
+      xhr.setRequestHeader('Accept','application/vnd.github.'+datatype);
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
            xhr.setRequestHeader('Authorization', options.token
@@ -444,9 +444,18 @@
       // Get contents
       // --------
 
-      this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
+      this.contents = function(branch, path, cb, sync, datatype) {
+	if(!datatype)datatype='raw';// use 'json' if you want to get sha of content as well, it's need for update contents
+        return _request("GET", repoPath + "/contents/" + (path ? path : "") + "?ref=" + branch, null, cb, datatype, sync);
       };
+
+      // Update contents
+      // --------
+
+      this.contents_update = function(branch, path, message, content, previous_sha, cb, sync) {
+        return _request("PUT", repoPath + "/contents/" + (path ? path : "") + "?ref=" + branch,
+                 { message:message, content:Base64.encode(content), sha:previous_sha }, cb, null, sync);
+      }
 
       // Fork repository
       // -------
@@ -612,6 +621,7 @@
       // List commits on a repository. Takes an object of optional paramaters:
       // sha: SHA or branch to start listing commits from
       // path: Only commits containing this file path will be returned
+      // per_page: number of commits to list
       // since: ISO 8601 date - only commits after this date will be returned
       // until: ISO 8601 date - only commits before this date will be returned
       // -------
@@ -625,6 +635,9 @@
           }
           if (options.path) {
               params.push("path=" + encodeURIComponent(options.path));
+          }
+          if (options.per_page) {
+              params.push("per_page="+ encodeURIComponent(options.per_page));
           }
           if (options.since) {
               var since = options.since;
@@ -645,6 +658,9 @@
           }
           _request("GET", url, null, cb);
       };
+
+      this.req=_request;
+
     };
 
     // Gists API
