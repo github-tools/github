@@ -445,9 +445,17 @@
       // --------
 
       this.contents = function(branch, path, cb, sync, datatype) {
-	if(!datatype)datatype='raw';
+	if(!datatype)datatype='raw';// use 'json' if you want to get sha of content as well, it's need for update contents
         return _request("GET", repoPath + "/contents/" + (path ? path : "") + "?ref=" + branch, null, cb, datatype, sync);
       };
+
+      // Update contents
+      // --------
+
+      this.contents_update = function(branch, path, message, content, previous_sha, cb, sync) {
+        return _request("PUT", repoPath + "/contents/" + (path ? path : "") + "?ref=" + branch,
+                 { message:message, content:Base64.encode(content), sha:previous_sha }, cb, null, sync);
+      }
 
       // Fork repository
       // -------
