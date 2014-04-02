@@ -28,6 +28,10 @@
 
   var Github = function(options) {
 
+    if (options.api_url) {
+      API_URL = options.api_url
+    }
+
     // HTTP Request Abstraction
     // =======
     //
