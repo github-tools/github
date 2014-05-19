@@ -563,6 +563,7 @@
           };
           delPath += "?message=" + encodeURIComponent(params.message);
           delPath += "&sha=" + encodeURIComponent(params.sha);
+          delPath += '&branch=' + encodeURIComponent(branch);
           _request("DELETE", delPath, null, cb);
         })
       }
