@@ -10,16 +10,19 @@
   // -------------
 
   var XMLHttpRequest, Base64, _;
-  if (typeof exports !== 'undefined') {
+  if (typeof window == 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
       Base64 = require('./lib/base64.js');
   }else{
-      _ = window._;
+      // use native ECMAScript 5 if underscore is not available
+      _ = window._ || (Array.prototype.map && Array.prototype.forEach && Array.prototype.slice && {
+          map: Array.prototype.map,
+          each: Array.prototype.forEach,
+          last: function(array) { return array == null ? void 0 : array[array.length -1];}
+      });
       Base64 = window.Base64;
-  }
-  //prefer native XMLHttpRequest always
-  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
+      // use native XMLHttpRequest
       XMLHttpRequest = window.XMLHttpRequest;
   }
 
