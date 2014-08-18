@@ -10,16 +10,35 @@
   // -------------
 
   var XMLHttpRequest, Base64, _;
-  if (typeof exports !== 'undefined') {
+  if (typeof window == 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
       Base64 = require('./lib/base64.js');
   }else{
-      _ = window._;
+      // use native ECMAScript 5 if underscore is not available
+      _ = window._ || (Array.prototype.map && Array.prototype.forEach && Array.prototype.slice && {
+          map: function(arr,it,ctx){ return (arr == null) ? [] : arr.map(it,ctx);},
+          each: function(arr,it,ctx){return (arr == null) ? arr : arr.forEach(it,ctx);},
+          last: function(arr) { return (arr == null) ? void 0 : arr[arr.length -1];},
+          select: function(arr,pred,ctx){ return Array.prototype.filter.call(arr,pred,ctx);},
+          reject: function(obj, pred, ctx){
+              return obj.filter(function(value, index, list) {
+                  return !pred.call(ctx, value, index, list);
+              });
+          },
+          find: function(array, predicate, ctx) {
+              var result;
+              array.some(function(el,ind,arr){
+                  if(predicate.call(ctx,el,ind,arr)){
+                      result = el;
+                      return true;
+                  }
+              });
+              return result;
+          }
+      });
       Base64 = window.Base64;
-  }
-  //prefer native XMLHttpRequest always
-  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
+      // use native XMLHttpRequest
       XMLHttpRequest = window.XMLHttpRequest;
   }
 
@@ -40,14 +59,14 @@
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+      if (!raw) {xhr.responseType = xhr.dataType = "json";}
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
         xhr.onreadystatechange = function () {
           if (this.readyState == 4) {
             if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+              cb(null, raw ? this.responseText : this.response, this);
             } else {
               cb({path: path, request: this, error: this.status});
             }
