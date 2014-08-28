@@ -81,6 +81,9 @@
 
           if (next) {
             next = (/<(.*)>/.exec(next) || [])[1];
+
+            // Extract time from next link. Time is represented as 13 digit number (until 2033)
+            next = next.replace(/\&\d{13}\=/gi, '').replace(/\&\d{13}/gi, '')
           }
 
           if (!next) {
