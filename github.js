@@ -407,22 +407,26 @@
       // -------
 
       this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.user
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
+        var user = new Github.User();
+        user.show(null, function(err, userData){
           if (err) return cb(err);
-          currentTree.sha = res.sha; // update latest commit
-          cb(null, res.sha);
-        });
+          var data = {
+            "message": message,
+            "author": {
+              "name": options.user,
+              "email": userData.email
+            },
+            "parents": [
+              parent
+            ],
+            "tree": tree
+          };
+          _request("POST", repoPath + "/git/commits", data, function(err, res) {
+            if (err) return cb(err);
+            currentTree.sha = res.sha; // update latest commit
+            cb(null, res.sha);
+          });
+        })
       };
 
       // Update the reference of your head to point to the new commit SHA

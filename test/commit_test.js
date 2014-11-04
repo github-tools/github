@@ -19,7 +19,11 @@ describe("Repo", function(){
   it("should return commit errors correctly", function(done){
     var repo = github.getRepo(TEST_USERNAME, TEST_REPO);
     repo.commit("broken-parent-hash", "broken-tree-hash", "commit message", function(err){
-      done();
+      if (err != null && err.request != null && err.request.status == 500) {
+        done();
+      } else {
+        done(new Error("No `err` passed to .commit callback"));
+      }
     });
   });
 
