@@ -410,7 +410,7 @@
         var data = {
           "message": message,
           "author": {
-            "name": options.username
+            "name": options.user
           },
           "parents": [
             parent
