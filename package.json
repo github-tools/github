@@ -8,12 +8,13 @@
     "underscore": "*"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*"
+    "chai": "*",
+    "jshint": "^2.5.8",
+    "mocha": "*"
   },
   "scripts": {
-    "test": "mocha"
-
+    "test": "mocha",
+    "lint": "jshint github.js"
   },
   "repository": {
     "type": "git",
@@ -96,5 +97,4 @@
     ],
     "harness": "mocha"
   }
-
 }
