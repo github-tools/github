@@ -419,8 +419,8 @@
         };
 
         _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
           if (err) return cb(err);
+          currentTree.sha = res.sha; // update latest commit
           cb(null, res.sha);
         });
       };
