@@ -640,6 +640,12 @@
               }
               params.push("until=" + encodeURIComponent(until));
           }
+          if (options.page) {
+              params.push("page=" + options.page);
+          }
+          if (options.perpage) {
+              params.push("per_page=" + options.perpage);
+          }
           if (params.length > 0) {
               url += "?" + params.join("&");
           }
