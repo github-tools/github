@@ -15,14 +15,13 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest, Base64, _;
+  var XMLHttpRequest,  _;
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
-      Base64 = require('./lib/base64.js');
-  }else{
+      btoa = require('btoa');
+  } else {
       _ = window._;
-      Base64 = window.Base64;
   }
   //prefer native XMLHttpRequest always
   if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
@@ -63,7 +62,7 @@
       xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
-        var authorization = options.token ? 'token ' + options.token : 'Basic ' + Base64.encode(options.username + ':' + options.password);
+        var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
         xhr.setRequestHeader('Authorization', authorization);
       }
       if (data)
