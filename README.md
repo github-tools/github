@@ -63,6 +63,12 @@ Show repository information
 repo.show(function(err, repo) {});
 ```
 
+Delete a repository
+
+```js
+repo.deleteRepo(function(err, res) {});
+```
+
 Get contents at a particular path in a particular branch. Set sync to true to get contents via sync method.
 
 ```js
@@ -78,7 +84,7 @@ repo.fork(function(err) {});
 Create new branch for repo. You can omit oldBranchName to default to "master".
 
 ```js
-repo.branch(oldBranchName, newBranchName, function(err) {}); 
+repo.branch(oldBranchName, newBranchName, function(err) {});
 ```
 
 Create Pull Request.
@@ -208,6 +214,15 @@ List public repositories for a particular user.
 user.userRepos(username, function(err, repos) {});
 ```
 
+Create a new repo for the authenticated user
+
+```js
+user.createRepo({"name": "test"}, function(err, res) {});
+```
+Repo description, homepage, private/public can also be set.
+For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
+
+
 List repositories for a particular organization. Includes private repositories if you are authorized.
 
 ```js
@@ -234,7 +249,7 @@ gist.read(function(err, gist) {
 });
 ```
 
-Updating the contents of a Gist. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/). 
+Updating the contents of a Gist. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/).
 
 ```js
 var delta = {
@@ -255,7 +270,7 @@ var delta = {
 };
 
 gist.update(delta, function(err, gist) {
-  
+
 });
 ```
 ## Issues API
@@ -264,7 +279,7 @@ gist.update(delta, function(err, gist) {
 var issues = github.getIssues(username, reponame);
 ```
 
-To read all the issues of a given repository 
+To read all the issues of a given repository
 
 ```js
 issues.list(options, function(err, issues) {});
@@ -313,7 +328,7 @@ Adds support for organizations and fixes an encoding issue.
 
 ### 0.5.X
 
-Smart caching of latest commit sha. 
+Smart caching of latest commit sha.
 
 ### 0.4.X
 

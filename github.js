@@ -95,27 +95,9 @@
             path = next;
             iterate();
           }
-<<<<<<< HEAD
         });
       })();
-=======
-        }
-      };
-      xhr.setRequestHeader('Accept','application/json');
-      xhr.setRequestHeader('Content-Type','application/json');
-      if (
-         (options.auth == 'oauth' && options.token) ||
-         (options.auth == 'basic' && options.username && options.password)
-         ) {
-           xhr.setRequestHeader('Authorization',options.auth == 'oauth'
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
->>>>>>> c75337c4b3621f8509ebcddd27bdc4a85b51170a
     }
-
 
 
     // User API
@@ -220,12 +202,7 @@
         _request("POST", "/user/repos", options, cb);
       };
 
-
-
-
-
     };
-
 
     // Repository API
     // =======
@@ -369,21 +346,10 @@
       // -------
 
       this.getSha = function(branch, path, cb) {
-<<<<<<< HEAD
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
-          if (err) return cb(err);
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
-=======
         if (!path || path === "") return that.getRef("heads/"+branch, cb);
         _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {
           if (err) return cb(err);
           cb(null, pathContent.sha);
->>>>>>> c75337c4b3621f8509ebcddd27bdc4a85b51170a
         });
       };
 
@@ -497,13 +463,8 @@
       // Get contents
       // --------
 
-<<<<<<< HEAD
-      this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
-=======
       this.contents = function(ref, path, cb) {
         _request("GET", repoPath + "/contents/"+path, { ref: ref }, cb);
->>>>>>> c75337c4b3621f8509ebcddd27bdc4a85b51170a
       };
 
       // Fork repository
@@ -581,8 +542,8 @@
           if (err && err.error === 404) return cb("not found", null, null);
 
           if (err) return cb(err);
-          var sha = obj.sha
-            , content = Base64.decode(obj.content);
+          var sha = obj.sha,
+              content = atob(obj.content);
 
           cb(null, content, sha);
         });
@@ -651,14 +612,13 @@
           if (err && err.error!=404) return cb(err);
           _request("PUT", repoPath + "/contents/" + path, {
             message: message,
-            content: Base64.encode(content),
+            content: btoa(content),
             branch: branch,
             sha: sha
           }, cb);
         });
       };
 
-<<<<<<< HEAD
       // List commits on a repository. Takes an object of optional paramaters:
       // sha: SHA or branch to start listing commits from
       // path: Only commits containing this file path will be returned
@@ -695,8 +655,6 @@
           }
           _request("GET", url, null, cb);
       };
-=======
->>>>>>> c75337c4b3621f8509ebcddd27bdc4a85b51170a
     };
 
     // Gists API
