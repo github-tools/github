@@ -435,8 +435,8 @@
       // Update the reference of your head to point to the new commit SHA
       // -------
 
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+      this.updateHead = function(head, commit, cb, force) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit, "force":force }, function(err, res) {
           cb(err);
         });
       };
@@ -600,7 +600,7 @@
       // Write file contents to a given branch and path
       // -------
 
-      this.write = function(branch, path, content, message, cb) {
+      this.write = function(branch, path, content, message, cb, force) {
         updateTree(branch, function(err, latestCommit) {
           if (err) return cb(err);
           that.postBlob(content, function(err, blob) {
@@ -609,7 +609,7 @@
               if (err) return cb(err);
               that.commit(latestCommit, tree, message, function(err, commit) {
                 if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
+                that.updateHead(branch, commit, cb, force);
               });
             });
           });
