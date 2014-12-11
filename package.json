@@ -4,17 +4,16 @@
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
   "dependencies": {
-    "xmlhttprequest": "~1.6.0",
-    "underscore": "~1.6.0"
+    "tape": "^3.0.3",
+    "underscore": "~1.6.0",
+    "xmlhttprequest": "~1.6.0"
   },
   "devDependencies": {
     "chai": "*",
-    "jshint": "^2.5.8",
-    "mocha": "*"
+    "jshint": "^2.5.8"
   },
   "scripts": {
-    "test": "mocha",
-    "lint": "jshint github.js"
+    "test": "tape test/test.* && jshint github.js test/*"
   },
   "repository": {
     "type": "git",
