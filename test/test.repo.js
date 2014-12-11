@@ -46,3 +46,23 @@ test("Repo API", function(t) {
     t.end();
 
 });
+
+test('Repo Returns commit errors correctly', function(t){
+    var timeout = setTimeout(function () { t.fail(); }, 10000);
+    var github = new Github({
+      username: test_user.USERNAME,
+      password: test_user.PASSWORD,
+      auth: "basic"
+    });
+    var repo = github.getRepo(test_user.USERNAME, test_user.REPO);
+
+    repo.commit("broken-parent-hash", "broken-tree-hash", "commit message", function(err){
+        t.ok(err, 'error thrown for bad commit');
+        t.ok(err.request);
+        t.equals(err.request.status, 422, 'Returns 422 status');
+        clearTimeout(timeout);
+        t.end();
+    });
+
+
+});
