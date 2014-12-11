@@ -9,7 +9,6 @@
     "xmlhttprequest": "~1.6.0"
   },
   "devDependencies": {
-    "chai": "*",
     "jshint": "^2.5.8"
   },
   "scripts": {
