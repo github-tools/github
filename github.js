@@ -100,7 +100,6 @@
     }
 
 
-
     // User API
     // =======
 
@@ -196,8 +195,14 @@
           cb(err, res);
         });
       };
-    };
 
+      // Create a repo
+      // -------
+      this.createRepo = function(options, cb) {
+        _request("POST", "/user/repos", options, cb);
+      };
+
+    };
 
     // Repository API
     // =======
@@ -212,6 +217,14 @@
       var currentTree = {
         "branch": null,
         "sha": null
+      };
+
+
+      // Delete a repo
+      // --------
+
+      this.deleteRepo = function(cb) {
+        _request("DELETE", repoPath, options, cb);
       };
 
       // Uses the cache if branch has not been changed
@@ -333,14 +346,10 @@
       // -------
 
       this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
+        if (!path || path === "") return that.getRef("heads/"+branch, cb);
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {
           if (err) return cb(err);
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
+          cb(null, pathContent.sha);
         });
       };
 
@@ -454,8 +463,8 @@
       // Get contents
       // --------
 
-      this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
+      this.contents = function(ref, path, cb) {
+        _request("GET", repoPath + "/contents/"+path, { ref: ref }, cb);
       };
 
       // Fork repository
@@ -529,34 +538,29 @@
       // -------
 
       this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, obj) {
+          if (err && err.error === 404) return cb("not found", null, null);
+
+          if (err) return cb(err);
+          var sha = obj.sha,
+              content = atob(obj.content);
+
+          cb(null, content, sha);
         });
       };
 
-      // Remove a file from the tree
+
+      // Remove a file
       // -------
 
       this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
+        that.getSha(branch, path, function(err, sha) {
+          if (err) return cb(err);
+          _request("DELETE", repoPath + "/contents/" + path, {
+            message: path + " is removed",
+            sha: sha,
+            branch: branch
+          }, cb);
         });
       };
 
@@ -604,18 +608,14 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
+        that.getSha(branch, path, function(err, sha) {
+          if (err && err.error!=404) return cb(err);
+          _request("PUT", repoPath + "/contents/" + path, {
+            message: message,
+            content: btoa(content),
+            branch: branch,
+            sha: sha
+          }, cb);
         });
       };
 
