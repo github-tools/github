@@ -414,21 +414,25 @@
       // -------
 
       this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
+        var user = new Github.User();
+        user.show(null, function(err, userData){
           if (err) return cb(err);
-          cb(null, res.sha);
+          var data = {
+            "message": message,
+            "author": {
+              "name": options.user,
+              "email": userData.email
+            },
+            "parents": [
+              parent
+            ],
+            "tree": tree
+          };
+          _request("POST", repoPath + "/git/commits", data, function(err, res) {
+            if (err) return cb(err);
+            currentTree.sha = res.sha; // update latest commit
+            cb(null, res.sha);
+          });
         });
       };
 
