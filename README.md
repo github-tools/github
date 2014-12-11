@@ -279,13 +279,12 @@ Github.js is automatically™ tested by the users of [Prose](http://prose.io). B
 Github.js has the following dependencies:
 
 - Underscore
-- Base64 (for basic auth). You can leave this if you are not using basic auth.
+- btoa (included in modern browsers, an npm module is included in package.json for node)
 
 Include these before github.js :
 
 ```
 <script src="lib/underscore-min.js">
-<script src="lib/base64.js">
 <script src="github.js">
 ```
 
