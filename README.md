@@ -232,7 +232,7 @@ gist.read(function(err, gist) {
 });
 ```
 
-Updating the contents of a Git. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/). 
+Updating the contents of a Gist. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/). 
 
 ```js
 var delta = {
