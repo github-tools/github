@@ -305,6 +305,10 @@ Include these before github.js :
 
 ## Change Log
 
+### 0.10.X
+
+Create and delete repositories
+
 ### 0.9.X
 
 Paging (introduced at tail end of 0.8.X, note: different callbacks for success & errors now)
