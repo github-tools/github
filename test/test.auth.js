@@ -1,14 +1,12 @@
 var test = require('tape');
 var Github = require("../");
-
-var TEST_USERNAME = "mikedeboertest";
-var TEST_PASSWORD = "test1324";
+var test_user = require('./user.json');
 
 test("Basic Auth", function(t) {
     var timeout = setTimeout(function () { t.fail(); }, 10000);
     var github = new Github({
-      username: TEST_USERNAME,
-      password: TEST_PASSWORD,
+      username: test_user.USERNAME,
+      password: test_user.PASSWORD,
       auth: "basic"
     });
     var user = github.getUser();
