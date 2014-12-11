@@ -416,14 +416,17 @@
       this.commit = function(parent, tree, message, cb) {
         var data = {
           "message": message,
-          "author": {
-            "name": options.username
-          },
           "parents": [
             parent
           ],
           "tree": tree
         };
+				
+        if(options.hasOwnProperty('username')){
+          data["author"] = {
+            "name": options.username
+          }
+        }
 
         _request("POST", repoPath + "/git/commits", data, function(err, res) {
           currentTree.sha = res.sha; // update latest commit
@@ -452,7 +455,7 @@
       // --------
 
       this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
+				return _request("GET", repoPath + "/contents/" + path + "?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
       };
 
       // Fork repository
