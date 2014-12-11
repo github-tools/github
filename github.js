@@ -52,17 +52,18 @@
               cb({path: path, request: this, error: this.status});
             }
           }
-        }
-      };
+        };
+      }
       xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
-           xhr.setRequestHeader('Authorization', options.token
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
+        var authorization = options.token ? 'token ' + options.token : 'Basic ' + Base64.encode(options.username + ':' + options.password);
+        xhr.setRequestHeader('Authorization', authorization);
+      }
+      if (data)
+        xhr.send(JSON.stringify(data));
+      else
+        xhr.send();
       if (sync) return xhr.response;
     }
 
@@ -252,18 +253,18 @@
         _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
       };
 
-      // Create a repo  
+      // Create a repo
       // -------
 
       this.createRepo = function(options, cb) {
         _request("POST", "/user/repos", options, cb);
       };
 
-      // Delete a repo  
-      // --------  
+      // Delete a repo
+      // --------
 
-      this.deleteRepo = function(cb) {  
-        _request("DELETE", repoPath, options, cb);  
+      this.deleteRepo = function(cb) {
+        _request("DELETE", repoPath, options, cb);
       };
 
       // List all tags of a repository
@@ -455,9 +456,9 @@
         _request("POST", repoPath + "/forks", null, cb);
       };
 
-      // Branch repository  
-      // --------  
- 
+      // Branch repository
+      // --------
+
       this.branch = function(oldBranch,newBranch,cb) {
         if(arguments.length === 2 && typeof arguments[1] === "function") {
           cb = newBranch;
@@ -471,7 +472,7 @@
             sha: ref
           },cb);
         });
-      }
+      };
 
       // Create pull request
       // --------
@@ -549,24 +550,24 @@
           });
         });
       };
-      
+
       // Delete a file from the tree
       // -------
-      
+
       this.delete = function(branch, path, cb) {
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
           var delPath = repoPath + "/contents/" + path;
           var params = {
             "message": "Deleted " + path,
-            "sha": sha 
+            "sha": sha
           };
           delPath += "?message=" + encodeURIComponent(params.message);
           delPath += "&sha=" + encodeURIComponent(params.sha);
           _request("DELETE", delPath, null, cb);
-        })
-      }
-      
+        });
+      };
+
       // Move a file to a new location
       // -------
 
@@ -741,9 +742,7 @@
       var path = "/repos/" + options.user + "/" + options.repo + "/issues";
 
       this.list = function(options, cb) {
-        _request("GET", path, options, function(err, res) {
-          cb(err,res)
-        });
+        _request("GET", path, options, cb);
       };
     };
 
