@@ -1,8 +1,14 @@
-// Github.js 0.9.0
-// (c) 2013 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
+/*!
+ * @overview  Github.js 0.9.0
+ *
+ * @copyright (c) 2013 Michael Aufreiter, Development Seed
+ *            Github.js is freely distributable.
+ *
+ * @license   Licensed under MIT license
+ *
+ *            For all details and documentation:
+ *            http://substance.io/michael/github
+ */
 
 (function() {
 
