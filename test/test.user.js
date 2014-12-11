@@ -11,41 +11,69 @@ test("User API", function(t) {
     });
     var user = github.getUser();
 
-    user.orgs(function(err, res) {
-        t.error(err, 'user orgs');
+    t.test('user.orgs', function(q) {
+        user.orgs(function(err, res) {
+            q.error(err, 'user orgs');
+            q.end();
+        });
     });
 
-    user.gists(function(err, res) {
-        t.error(err, 'user gists');
+    t.test('user.gists', function(q) {
+        user.gists(function(err, res) {
+            q.error(err, 'user gists');
+            q.end();
+        });
     });
 
-    user.notifications(function(err, res) {
-        t.error(err, 'user notifications');
+    t.test('user.notifications', function(q) {
+        user.notifications(function(err, res) {
+            q.error(err, 'user notifications');
+            q.end();
+        });
     });
 
-    user.show('ingalls', function(err, res) {
-        t.error(err, 'user show');
+    t.test('user.show', function(q) {
+        user.show('ingalls', function(err, res) {
+            q.error(err, 'user show');
+            q.end();
+        });
     });
 
-    user.userRepos(test_user.USERNAME, function(err, res) {
-        t.error(err, 'alt user repos');
+    t.test('user.userRepos', function(q) {
+        user.userRepos(test_user.USERNAME, function(err, res) {
+            q.error(err, 'alt user repos');
+            q.end();
+        });
     });
 
-    user.userGists(test_user.USERNAME, function(err, res) {
-        t.error(err, 'alt user gists');
+    t.test('user.userGists', function(q) {
+        user.userGists(test_user.USERNAME, function(err, res) {
+            q.error(err, 'alt user gists');
+            q.end();
+        });
     });
 
-    user.orgRepos('openaddresses', function(err, res) {
-        t.error(err, 'org users');
+    t.test('user.orgRepos', function(q) {
+        user.orgRepos('openaddresses', function(err, res) {
+            q.error(err, 'org users');
+            q.end();
+        });
     });
 
-    user.follow('ingalls', function(err, res) {
-        t.error(err, 'follow ingalls');
+    t.test('user.follow', function(q) {
+        user.follow('ingalls', function(err, res) {
+            q.error(err, 'follow ingalls');
+            q.end();
+        });
     });
 
-    user.unfollow('ingalls', function(err, res) {
-        t.error(err, 'unfollow ingalls');
+    t.test('user.unfollow', function(q) {
+        user.unfollow('ingalls', function(err, res) {
+            q.error(err, 'unfollow ingalls');
+            q.end();
+        });
     });
+
     clearTimeout(timeout);
     t.end();
 
