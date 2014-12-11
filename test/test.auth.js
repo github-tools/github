@@ -2,7 +2,7 @@ var test = require('tape');
 var Github = require("../");
 var test_user = require('./user.json');
 
-test("Basic Auth", function(t) {
+test("Basic Auth - Pass", function(t) {
     var timeout = setTimeout(function () { t.fail(); }, 10000);
     var github = new Github({
       username: test_user.USERNAME,
@@ -17,3 +17,4 @@ test("Basic Auth", function(t) {
     t.end(); 
     
 });
+
