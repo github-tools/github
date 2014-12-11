@@ -1,5 +1,5 @@
 /*!
- * @overview  Github.js 0.9.0
+ * @overview  Github.js 0.7.1
  *
  * @copyright (c) 2013 Michael Aufreiter, Development Seed
  *            Github.js is freely distributable.
