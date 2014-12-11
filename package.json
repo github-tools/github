@@ -4,8 +4,8 @@
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
   "dependencies": {
-    "xmlhttprequest": "*",
-    "underscore": "*"
+    "xmlhttprequest": "~1.6.0",
+    "underscore": "~1.6.0"
   },
   "devDependencies": {
     "chai": "*",
