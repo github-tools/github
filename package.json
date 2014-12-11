@@ -5,15 +5,15 @@
   "main": "github.js",
   "dependencies": {
     "btoa": "^1.1.2",
-    "tape": "^3.0.3",
     "underscore": "~1.6.0",
     "xmlhttprequest": "~1.6.0"
   },
   "devDependencies": {
-    "jshint": "^2.5.8"
+    "jshint": "^2.5.8",
+    "tape": "^3.0.3"
   },
   "scripts": {
-    "test": "tape test/test.* && jshint github.js test/*"
+    "test": "tape test/test.*.js && jshint github.js test/*.js"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "xmlhttprequest": false
   },
   "testling": {
-    "files": "test/*_test.js",
+    "files": "test/test.*.js",
     "browsers": [
       "iexplore/10.0",
       "iexplore/9.0",
@@ -93,7 +93,6 @@
       "ipad/6.0",
       "safari/6.0",
       "android-browser/4.2"
-    ],
-    "harness": "mocha"
+    ]
   }
 }
