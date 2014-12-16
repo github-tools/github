@@ -661,6 +661,21 @@
           }
           _request("GET", url, null, cb);
       };
+
+      // Set Commit Status
+      // -------
+      //
+      // {
+      //   state: 'pending'|'success'|'failure'|'error' (required),
+      //   target_url: 'http://ci.example.com/user/repo/build/sha',
+      //   description: 'text of status, shown to user',
+      //   context: 'continuous-integration/my-service'
+      // }
+
+      this.setStatus = function(sha, options, cb) {
+        _request("POST", repoPath + "/statuses/" + sha, options, cb);
+      };
+
     };
 
     // Gists API
