@@ -285,10 +285,6 @@ To read all the issues of a given repository
 issues.list(options, function(err, issues) {});
 ```
 
-## Tests
-
-Github.js is automatically™ tested by the users of [Prose](http://prose.io). Because of that, we decided to save some time by not maintaining a test suite. Yes, you heard right. :) However, you can still consider it stable since it is used in production.
-
 ##Setup
 
 Github.js has the following dependencies:
