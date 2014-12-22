@@ -1,9 +1,10 @@
 {
   "name": "github-api",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
   "dependencies": {
+    "atob": "^1.1.2",
     "btoa": "^1.1.2",
     "underscore": "~1.6.0",
     "xmlhttprequest": "~1.6.0"

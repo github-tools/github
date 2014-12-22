@@ -542,11 +542,8 @@
           if (err && err.error === 404) return cb("not found", null, null);
 
           if (err) return cb(err);
-          var sha = obj.sha,
-              content = atob(obj.content);
-
-          cb(null, content, sha);
-        });
+          cb(null, obj);
+        }, true);
       };
 
 

@@ -42,6 +42,13 @@ test("Repo API", function(t) {
         });
     });
 
+    t.test('repo.read', function(q) {
+        repo.read('master', 'README.md', function(err, res) {
+            q.ok(res.indexOf('##Setup') !== -1, true, 'Returned REAMDE');
+            q.end();
+        });
+    });
+
     clearTimeout(timeout);
     t.end();
 
@@ -81,7 +88,7 @@ test('delete Repo', function(t) {
         clearTimeout(timeout);
         t.end();
     });
-    
+
 });
 
 test('Repo Returns commit errors correctly', function(t) {
