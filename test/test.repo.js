@@ -65,13 +65,23 @@ test('Create Repo', function(t) {
     });
     var user = github.getUser();
 
-    user.createRepo({ "name": repoTest }, function (err, res) {
-        t.error(err);
-        t.equals(res.name, repoTest.toString(), 'Repo created');
-        clearTimeout(timeout);
-        t.end();
+    t.test('user.createRepo', function(q) {
+        user.createRepo({ "name": repoTest }, function (err, res) {
+            q.error(err);
+            q.equals(res.name, repoTest.toString(), 'Repo created');
+            q.end();
+        });
     });
+    var repo = github.getRepo(test_user.USERNAME, repoTest);
 
+    t.test('repo.write', function(q) {
+        repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
+            q.error(err);
+            q.end();
+        });
+    });
+    clearTimeout(timeout);
+    t.end();
 });
 
 test('delete Repo', function(t) {
