@@ -177,6 +177,27 @@
           cb(err, res);
         });
       };
+      
+      // List organization members
+      // -------
+
+      this.orgMembers = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/members", null, cb);
+      }
+
+      // List organization teams
+      // -------
+
+      this.orgTeams = function(orgname, cb) {
+        _request("GET", "/orgs/"+orgname+"/teams", null, cb);
+      }
+
+      // List organization team members
+      // -------
+
+      this.teamMembers = function(teamId, cb) {
+        _request("GET", "/teams/"+teamId+"/members", null, cb);
+      }
 
       // Follow user
       // -------
@@ -658,6 +679,17 @@
               url += "?" + params.join("&");
           }
           _request("GET", url, null, cb);
+      };
+
+      // List contributors to a repository.
+      // anon: "true" or "1" will include anonymous contributors in the list.
+      // -------
+
+      this.getContributors = function(anon, cb) {
+        var data = {
+          "anon":anon
+        };
+        _request("GET", repoPath + "/contributors", data, cb);
       };
     };
 
