@@ -50,6 +50,15 @@ See these pages for more info:
 
 [Github API OAuth Overview] (http://developer.github.com/v3/oauth)
 
+Enterprise Github instances may be specified using the `apiUrl` option:
+
+```js
+var github = new Github({
+  apiUrl: "https://serverName/api/v3",
+  ...
+});
+```
+
 ## Repository API
 
 
