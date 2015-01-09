@@ -885,6 +885,30 @@
       };
     };
 
+    // Search API
+    // ==========
+
+    Github.Search = function(options) {
+      var path = "/search/";
+      var query = "?q=" + options.query;
+
+      this.repositories = function(options, cb) {
+        _request("GET", path + "repositories" + query, options, cb);
+      };
+
+      this.code = function(options, cb) {
+        _request("GET", path + "code" + query, options, cb);
+      };
+
+      this.issues = function(options, cb) {
+        _request("GET", path + "issues" + query, options, cb);
+      };
+
+      this.users = function(options, cb) {
+        _request("GET", path + "users" + query, options, cb);
+      };
+    };
+
     return Github;
   };
 
@@ -910,6 +934,10 @@
 
   Github.getGist = function(id) {
     return new Github.Gist({id: id});
+  };
+
+  Github.getSearch = function(query) {
+    return new Github.Search({query: query});
   };
 
   return Github;

@@ -334,6 +334,51 @@ To comment in a issue
 issues.comment(issue, comment,function(err, comment) {});
 ```
 
+## Search API
+
+```js
+var search = github.getSearch(query);
+```
+
+### Search repositories
+
+Suppose you want to search for popular Tetris repositories written in Assembly. Your query might look like this:
+
+```js
+var search = github.getSearch("tetris+language:assembly&sort=stars&order=desc");
+search.repositories(options, function (err, repositories) {});
+```
+
+### Search code
+
+Suppose you want to find the definition of the addClass function inside jQuery. Your query would look something like this:
+
+```js
+var search = github.getSearch("addClass+in:file+language:js+repo:jquery/jquery");
+search.code(options, function (err, codes) {});
+```
+
+### Search issues
+
+Let’s say you want to find the oldest unresolved Python bugs on Windows. Your query might look something like this:
+
+```js
+var search = github.getSearch("windows+label:bug+language:python+state:open&sort=created&order=asc");
+search.issues(options, function (err, issues) {});
+```
+
+### Search users
+
+Imagine you’re looking for a list of popular users. You might try out this query:
+
+```js
+var search = github.getSearch("tom+repos:%3E42+followers:%3E1000");
+search.users(options, function (err, users) {});
+```
+
+Here, we’re looking at users with the name Tom. We’re only interested in those with more than 42 repositories, and only if they have over 1,000 followers.
+
+
 ## Change Log
 
 ### 0.10.X
