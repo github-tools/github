@@ -45,7 +45,7 @@
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+      if (!raw) {xhr.responseType = "json";}
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
