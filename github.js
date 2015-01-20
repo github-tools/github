@@ -629,7 +629,7 @@
           var url = repoPath + "/commits";
           var params = [];
           if (options.sha) {
-              params.push("sha=" + encodeURIComponent(options.sha));
+              url += encodeURIComponent(options.sha);
           }
           if (options.path) {
               params.push("path=" + encodeURIComponent(options.path));
