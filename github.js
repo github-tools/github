@@ -759,9 +759,22 @@
       };
     };
 
+    // Rate Limit API
+    // ==========
+
+    Github.RateLimit = function(cb) {
+      var path = "/rate_limit";
+
+      _request("GET", path, options, cb);
+    };
+
     // Top Level API
     // -------
 
+    this.getRateLimit = function(cb) {
+      return new Github.RateLimit(cb);
+    };
+    
     this.getIssues = function(user, repo) {
       return new Github.Issue({user: user, repo: repo});
     };
