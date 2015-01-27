@@ -315,6 +315,26 @@
         });
       };
 
+      // Gets files for a specific pull request
+      // -------
+
+      this.getPullFiles = function(number, cb) {
+        _request("GET", repoPath + "/pulls/" + number + "files", null, function(err, pull) {
+          if (err) return cb(err);
+          cb(null, pull);
+        });
+      };
+
+      // Create a comment for a specific pull request/issue
+      // -------
+
+      this.createPullComment = function(number, comment, cb) {
+        _request("POST", repoPath + "/issues/" + number + "comments", {body: comment}, function(err, pull) {
+          if (err) return cb(err);
+          cb(null, pull);
+        });
+      };
+
       // Retrieve the changes made between base and head
       // -------
 
