@@ -319,7 +319,7 @@
       // -------
 
       this.getPullFiles = function(number, cb) {
-        _request("GET", repoPath + "/pulls/" + number + "files", null, function(err, pull) {
+        _request("GET", repoPath + "/pulls/" + number + "/files", null, function(err, pull) {
           if (err) return cb(err);
           cb(null, pull);
         });
@@ -329,7 +329,7 @@
       // -------
 
       this.createPullComment = function(number, comment, cb) {
-        _request("POST", repoPath + "/issues/" + number + "comments", {body: comment}, function(err, pull) {
+        _request("POST", repoPath + "/issues/" + number + "/comments", {body: comment}, function(err, pull) {
           if (err) return cb(err);
           cb(null, pull);
         });
