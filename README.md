@@ -251,6 +251,12 @@ List public repositories for a particular user.
 user.userRepos(username, function(err, repos) {});
 ```
 
+List starred repositories for a particular user.
+
+```js
+user.userStarred(username, function(err, repos) {});
+```
+
 Create a new repo for the authenticated user
 
 ```js
