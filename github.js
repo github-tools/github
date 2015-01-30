@@ -159,6 +159,16 @@
         });
       };
 
+      // List user starred repositories
+      // -------
+
+      this.userStarred = function(username, cb) {
+        // Github does not always honor the 1000 limit so we want to iterate over the data set.
+        _requestAllPages("/users/"+username+"/starred?type=all&per_page=1000", function(err, res) {
+          cb(err, res);
+        });
+      };
+
       // List a user's gists
       // -------
 

@@ -46,6 +46,13 @@ test("User API", function(t) {
         });
     });
 
+    t.test('user.userStarred', function(q) {
+        user.userStarred(test_user.USERNAME, function(err, res) {
+            q.error(err, 'alt user starred');
+            q.end();
+        });
+    });
+
     t.test('user.userGists', function(q) {
         user.userGists(test_user.USERNAME, function(err, res) {
             q.error(err, 'alt user gists');
