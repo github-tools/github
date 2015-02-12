@@ -659,6 +659,34 @@
           }
           _request("GET", url, null, cb);
       };
+
+        // Create a new release
+        // --------
+
+        this.createRelease = function(options, cb) {
+            _request("POST", repoPath + "/releases", options, cb);
+        };
+
+        // Edit a release
+        // --------
+
+        this.editRelease = function(id, options, cb) {
+            _request("PATCH", repoPath + "/releases/" + id, options, cb);
+        };
+
+        // Get a single release
+        // --------
+
+        this.getRelease = function(id, options, cb) {
+            _request("GET", repoPath + "/releases/" + id, options, cb);
+        };
+
+        // Remove a release
+        // --------
+
+        this.deleteRelease = function(id, options, cb) {
+            _request("DELETE", repoPath + "/releases/" + id, options, cb);
+        };
     };
 
     // Gists API
