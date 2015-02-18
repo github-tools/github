@@ -661,6 +661,14 @@
       };
     };
 
+    // Get a single commit from a repository
+    // sha: the SHA of the commit that you want
+
+    this.getCommit = function(sha, cb) {
+      var url = repoPath + "/commits/" + sha;
+      _request("GET", url, null, cb);
+    };
+
     // Gists API
     // =======
 
