@@ -755,7 +755,12 @@
       var path = "/repos/" + options.user + "/" + options.repo + "/issues";
 
       this.list = function(options, cb) {
-        _request("GET", path, options, cb);
+        var query = [];
+        for (var key in options) {
+          query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
+        }
+
+        _request("GET", path + '?' + query.join("&"), false, cb);
       };
     };
 
