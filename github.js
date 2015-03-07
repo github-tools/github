@@ -324,6 +324,16 @@
           cb(null, pull);
         });
       };
+      
+      // Get all comments for a specific pull request/issue
+      // -------
+
+      this.getPullComments = function(number, cb) {
+        _request("GET", repoPath + "/issues/" + number + "/comments", null, function(err, comments) {
+          if (err) return cb(err);
+          cb(null, comments);
+        });
+      };
 
       // Create a comment for a specific pull request/issue
       // -------
