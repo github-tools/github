@@ -45,7 +45,7 @@
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
@@ -59,7 +59,14 @@
           }
         };
       }
-      xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+
+      if (!raw) {
+        xhr.dataType = "json";
+        xhr.setRequestHeader('Accept','application/vnd.github.v3+json');
+      } else {
+        xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+      }
+
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
         var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
