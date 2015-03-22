@@ -49,6 +49,15 @@ test("Repo API", function(t) {
         });
     });
 
+    t.test('repo.getCommit', function(q) {
+        repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
+            q.error(err, 'get commit' + err);
+            q.ok(commit.message, 'v0.10.4', 'Returned commit message.');
+            q.ok(commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
+            q.end();
+        });
+    });
+
     clearTimeout(timeout);
     t.end();
 

@@ -352,6 +352,16 @@
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
       // -------
 
+      this.getCommit = function(branch, sha, cb) {
+        _request("GET", repoPath + "/git/commits/"+sha, null, function(err, commit) {
+          if (err) return cb(err);
+          cb(null, commit);
+        });
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
       this.getSha = function(branch, path, cb) {
         if (!path || path === "") return that.getRef("heads/"+branch, cb);
         _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {

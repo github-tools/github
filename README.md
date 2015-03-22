@@ -133,6 +133,12 @@ repo.remove('master', 'path/to/file', function(err) {});
 Exploring files of a repository is easy too by accessing the top level tree object.
 
 ```js
+repo.getCommit('master', sha, function(err, commit) {});
+```
+
+Get information about a particular commit.
+
+```js
 repo.getTree('master', function(err, tree) {});
 ```
 
@@ -304,6 +310,7 @@ Include these before github.js :
 ### 0.10.X
 
 Create and delete repositories
+Repos - getCommit
 
 ### 0.9.X
 
