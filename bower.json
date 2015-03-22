@@ -1,7 +1,7 @@
 {
   "name": "github-api",
   "main": "github.js",
-  "version": "0.10.3",
+  "version": "0.10.5",
   "homepage": "https://github.com/michael/github",
   "authors": [
     "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)"
