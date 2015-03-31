@@ -345,6 +345,16 @@
         });
       };
 
+      // Create a commit comment
+      // https://developer.github.com/v3/repos/comments/#create-a-commit-comment
+      // -------
+      this.createCommitComment = function(sha, path, comment, position, cb) {
+        _request("POST", repoPath + "/commits/" + sha + "/comments", {body: comment, path: path, position: position}, function(err, response) {
+          if (err) return cb(err);
+          cb(null, response);
+        });
+      };
+
       // Retrieve the changes made between base and head
       // -------
 
