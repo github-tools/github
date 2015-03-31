@@ -335,11 +335,22 @@
         });
       };
 
-      // Create a comment for a specific pull request/issue
+      // Create a comment for a specific pull issue
       // -------
 
-      this.createPullComment = function(number, comment, cb) {
+      this.createIssueComment = function(number, comment, cb) {
         _request("POST", repoPath + "/issues/" + number + "/comments", {body: comment}, function(err, pull) {
+          if (err) return cb(err);
+          cb(null, pull);
+        });
+      };
+
+      // Create a comment for a specific pull request
+      // https://developer.github.com/v3/pulls/comments/#create-a-comment
+      // -------
+
+      this.createPullComment = function(number, sha, path, comment, position, cb) {
+        _request("POST", repoPath + "/pulls/" + number + "/comments", {body: comment, commit_id: sha, path: path, position: position}, function(err, pull) {
           if (err) return cb(err);
           cb(null, pull);
         });
@@ -348,6 +359,7 @@
       // Create a commit comment
       // https://developer.github.com/v3/repos/comments/#create-a-commit-comment
       // -------
+
       this.createCommitComment = function(sha, path, comment, position, cb) {
         _request("POST", repoPath + "/commits/" + sha + "/comments", {body: comment, path: path, position: position}, function(err, response) {
           if (err) return cb(err);
