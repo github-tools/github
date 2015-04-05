@@ -370,6 +370,41 @@
         });
       };
 
+      // 获取指定目录下所有的文件及文件夹信息
+      // Access to the specified directory file and folder information
+      // 解决中文8进制编码转换
+      // To solve Chinese octal transcoding
+      // -------
+
+      this.getList=function(branch, path, cb) {
+        // Just use head if path is empty
+        if (path === "") return that.getRef("heads/"+branch, cb);
+       that.getTree(branch+"?recursive=true", function(err, tree) {
+          var file = _.select(tree, function(file) {
+            path.search('\/')==-1&&(path=path+'\/');
+             var E=file.path;
+            if (E.search('\"')!=-1) {
+                var E_A=E.split("\\");
+                 var length = E_A.length;
+                var it='';
+                for (var i = 0; i < length; i++) {
+                    var S=parseInt(E_A[i].substring(0,3),8).toString(16)+E_A[i].substring(3);
+                    S.search("NaN")==0&&(it+=E_A[i])||(it+="%"+S);
+                }
+                try {
+                  E=decodeURIComponent(it).replace("\"","");
+//                  console.log('success:'+E+'\n');
+                } catch (e) {
+                  console.log('false:'+it+'\n');
+                }
+              }
+            file.path=E;
+            return E.search(path)==0;
+          });
+          cb(null, file );
+        });
+      };
+      
       // Retrieve the tree a commit points to
       // -------
 
