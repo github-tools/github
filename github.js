@@ -402,6 +402,23 @@
         });
       };
 
+      // Update a file (As blob), getting its SHA back
+      // -------
+
+      this.updateBlob = function(branch, path, content, originalSHA, message, cb) {
+        data = {
+          "branch": branch,
+          "message": message,
+          "content": btoa(content),
+          sha: originalSHA
+        };
+
+        _request("PUT", repoPath + "/contents/" + path, data, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res.commit.sha);
+        });
+      };
+
       // Update an existing tree adding a new blob object getting a tree SHA back
       // -------
 
@@ -631,6 +648,22 @@
             branch: branch,
             sha: sha
           }, cb);
+        });
+      };
+
+      // Update file contents to a given branch and path
+      // -------
+
+      this.update = function(branch, path, content, message, cb) {
+        updateTree(branch, function(err, latestCommit) {
+          if (err) return cb(err);
+          that.getSha(branch, path, function(err, sha) {
+            if (!sha) return cb("not found", null);
+            that.updateBlob(branch, path, content, sha, message, function(err, commit) {
+              if(err) cb(err);
+              that.updateHead(branch, commit, cb);
+            });
+          });
         });
       };
 
