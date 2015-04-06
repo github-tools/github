@@ -10,11 +10,16 @@
     "xmlhttprequest": "~1.6.0"
   },
   "devDependencies": {
+    "argg": "0.0.1",
+    "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
-    "tape": "^3.0.3"
+    "plato": "^1.4.0",
+    "tape": "^3.0.3",
+    "testling": "^1.7.1"
   },
   "scripts": {
-    "test": "tape test/test.*.js && jshint github.js test/*.js"
+    "test": "node node_modules/argg test/*.js && node node_modules/jshint/bin/jshint github.js test/*.js",
+    "jshint": "node node_modules/jshint/bin/jshint github.js test/*.js"
   },
   "repository": {
     "type": "git",
@@ -24,12 +29,16 @@
     "github",
     "api"
   ],
-  "author": "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)",
+  "contributors": [
+    "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)",
+    "Michael Aufreiter (http://substance.io)",
+    "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)"
+  ],
   "license": "BSD",
   "readmeFilename": "README.md",
   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
   "bugs": {
-    "url": "https://github.com/darvin/github/issues"
+    "url": "https://github.com/michael/github/issues"
   },
   "browser": {
     "xmlhttprequest": false
