@@ -358,6 +358,26 @@
         });
       };
 
+      // List all statuses for a given ref
+      // -------
+
+      this.listStatuses = function(ref, cb) {
+        _request("GET", repoPath + "/statuses/" + ref, null, function(err, statuses) {
+          if (err) return cb(err);
+          cb(null, statuses);
+        });
+      };
+
+      // List all comments for a given issue
+      // -------
+
+      this.listComments = function(issue, cb) {
+        _request("GET", repoPath + "/issues/" + issue + "/comments", null, function(err, comments) {
+          if (err) return cb(err);
+          cb(null, comments);
+        });
+      };
+
       // Retrieve the contents of a blob
       // -------
 
@@ -647,6 +667,16 @@
             branch: branch,
             sha: sha
           }, cb);
+        });
+      };
+      
+      // Get a specific commit
+      // -------
+
+      this.getCommit = function(ref, cb) {
+        _request("GET", repoPath + "/git/commits/" + ref, null, function(err, res) {
+          if (err) return cb(err);
+          cb(null, res);
         });
       };
 
