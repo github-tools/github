@@ -3,6 +3,8 @@
 
 [![Build Status](https://travis-ci.org/darvin/github.png?branch=master)](https://travis-ci.org/darvin/github)
 
+[![Coverage Status](https://img.shields.io/coveralls/michael/github.svg)](https://coveralls.io/r/michael/github)
+
 # Github.js
 
 Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of [Prose](http://prose.io), a content editor for GitHub.
@@ -48,6 +50,15 @@ See these pages for more info:
 
 [Github API OAuth Overview] (http://developer.github.com/v3/oauth)
 
+Enterprise Github instances may be specified using the `apiUrl` option:
+
+```js
+var github = new Github({
+  apiUrl: "https://serverName/api/v3",
+  ...
+});
+```
+
 ## Repository API
 
 
@@ -59,6 +70,12 @@ Show repository information
 
 ```js
 repo.show(function(err, repo) {});
+```
+
+Delete a repository
+
+```js
+repo.deleteRepo(function(err, res) {});
 ```
 
 Get contents at a particular path in a particular branch. Set sync to true to get contents via sync method.
@@ -76,7 +93,7 @@ repo.fork(function(err) {});
 Create new branch for repo. You can omit oldBranchName to default to "master".
 
 ```js
-repo.branch(oldBranchName, newBranchName, function(err) {}); 
+repo.branch(oldBranchName, newBranchName, function(err) {});
 ```
 
 Create Pull Request.
@@ -123,6 +140,12 @@ repo.remove('master', 'path/to/file', function(err) {});
 ```
 
 Exploring files of a repository is easy too by accessing the top level tree object.
+
+```js
+repo.getCommit('master', sha, function(err, commit) {});
+```
+
+Get information about a particular commit.
 
 ```js
 repo.getTree('master', function(err, tree) {});
@@ -206,6 +229,15 @@ List public repositories for a particular user.
 user.userRepos(username, function(err, repos) {});
 ```
 
+Create a new repo for the authenticated user
+
+```js
+user.createRepo({"name": "test"}, function(err, res) {});
+```
+Repo description, homepage, private/public can also be set.
+For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
+
+
 List repositories for a particular organization. Includes private repositories if you are authorized.
 
 ```js
@@ -232,7 +264,7 @@ gist.read(function(err, gist) {
 });
 ```
 
-Updating the contents of a Git. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/). 
+Updating the contents of a Gist. Please consult the documentation on [GitHub](http://developer.github.com/v3/gists/).
 
 ```js
 var delta = {
@@ -253,7 +285,7 @@ var delta = {
 };
 
 gist.update(delta, function(err, gist) {
-  
+
 });
 ```
 ## Issues API
@@ -262,32 +294,32 @@ gist.update(delta, function(err, gist) {
 var issues = github.getIssues(username, reponame);
 ```
 
-To read all the issues of a given repository 
+To read all the issues of a given repository
 
 ```js
 issues.list(options, function(err, issues) {});
 ```
-
-## Tests
-
-Github.js is automatically™ tested by the users of [Prose](http://prose.io). Because of that, we decided to save some time by not maintaining a test suite. Yes, you heard right. :) However, you can still consider it stable since it is used in production.
 
 ##Setup
 
 Github.js has the following dependencies:
 
 - Underscore
-- Base64 (for basic auth). You can leave this if you are not using basic auth.
+- btoa (included in modern browsers, an npm module is included in package.json for node)
 
 Include these before github.js :
 
 ```
 <script src="lib/underscore-min.js">
-<script src="lib/base64.js">
 <script src="github.js">
 ```
 
 ## Change Log
+
+### 0.10.X
+
+Create and delete repositories
+Repos - getCommit
 
 ### 0.9.X
 
@@ -312,7 +344,7 @@ Adds support for organizations and fixes an encoding issue.
 
 ### 0.5.X
 
-Smart caching of latest commit sha. 
+Smart caching of latest commit sha.
 
 ### 0.4.X
 

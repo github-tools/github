@@ -1,32 +1,41 @@
-// Github.js 0.9.0
-// (c) 2013 Michael Aufreiter, Development Seed
-// Github.js is freely distributable under the MIT license.
-// For all details and documentation:
-// http://substance.io/michael/github
+/*!
+ * @overview  Github.js
+ *
+ * @copyright (c) 2013 Michael Aufreiter, Development Seed
+ *            Github.js is freely distributable.
+ *
+ * @license   Licensed under MIT license
+ *
+ *            For all details and documentation:
+ *            http://substance.io/michael/github
+ */
 
 (function() {
-
+  'use strict';
+  
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest, Base64, _;
+  var XMLHttpRequest,  _;
+  /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
-      Base64 = require('./lib/base64.js');
-  }else{
-      _ = window._;
-      Base64 = window.Base64;
+      var btoa = require('btoa'); //jshint ignore:line
+  } else { 
+      _ = window._; 
   }
+  
   //prefer native XMLHttpRequest always
+  /* istanbul ignore if  */
   if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
       XMLHttpRequest = window.XMLHttpRequest;
   }
 
 
-  var API_URL = 'https://api.github.com';
 
   var Github = function(options) {
+    var API_URL = options.apiUrl || 'https://api.github.com';
 
     // HTTP Request Abstraction
     // =======
@@ -36,40 +45,51 @@
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
-        return url + ((/\?/).test(url) ? "&" : "?") + (new Date()).getTime();
+        return url + ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
       }
 
       var xhr = new XMLHttpRequest();
-      if (!raw) {xhr.dataType = "json";}
+
 
       xhr.open(method, getURL(), !sync);
       if (!sync) {
         xhr.onreadystatechange = function () {
-          if (this.readyState == 4) {
+          if (this.readyState === 4) {
             if (this.status >= 200 && this.status < 300 || this.status === 304) {
               cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
               cb({path: path, request: this, error: this.status});
             }
           }
-        }
-      };
-      xhr.setRequestHeader('Accept','application/vnd.github.raw+json');
+        };
+      }
+
+      if (!raw) {
+        xhr.dataType = 'json';
+        xhr.setRequestHeader('Accept','application/vnd.github.v3+json');
+      } else {
+        xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+      }
+
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
-           xhr.setRequestHeader('Authorization', options.token
-             ? 'token '+ options.token
-             : 'Basic ' + Base64.encode(options.username + ':' + options.password)
-           );
-         }
-      data ? xhr.send(JSON.stringify(data)) : xhr.send();
-      if (sync) return xhr.response;
+        var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
+        xhr.setRequestHeader('Authorization', authorization);
+      }
+      if (data) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
+      if (sync) {
+        return xhr.response;
+      }
     }
 
     function _requestAllPages(path, cb) {
       var results = [];
       (function iterate() {
-        _request("GET", path, null, function(err, res, xhr) {
+        _request('GET', path, null, function(err, res, xhr) {
           if (err) {
             return cb(err);
           }
@@ -94,14 +114,13 @@
     }
 
 
-
     // User API
     // =======
 
     Github.User = function() {
       this.repos = function(cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages("/user/repos?type=all&per_page=1000&sort=updated", function(err, res) {
+        _requestAllPages('/user/repos?type=all&per_page=1000&sort=updated', function(err, res) {
           cb(err, res);
         });
       };
@@ -110,7 +129,7 @@
       // -------
 
       this.orgs = function(cb) {
-        _request("GET", "/user/orgs", null, function(err, res) {
+        _request("GET", '/user/orgs', null, function(err, res) {
           cb(err, res);
         });
       };
@@ -119,7 +138,7 @@
       // -------
 
       this.gists = function(cb) {
-        _request("GET", "/gists", null, function(err, res) {
+        _request("GET", '/gists', null, function(err, res) {
           cb(err,res);
         });
       };
@@ -128,7 +147,7 @@
       // -------
 
       this.notifications = function(cb) {
-        _request("GET", "/notifications", null, function(err, res) {
+        _request("GET", '/notifications', null, function(err, res) {
           cb(err,res);
         });
       };
@@ -137,9 +156,9 @@
       // -------
 
       this.show = function(username, cb) {
-        var command = username ? "/users/"+username : "/user";
+        var command = username ? '/users/' + username : '/user';
 
-        _request("GET", command, null, function(err, res) {
+        _request('GET', command, null, function(err, res) {
           cb(err, res);
         });
       };
@@ -149,7 +168,7 @@
 
       this.userRepos = function(username, cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages("/users/"+username+"/repos?type=all&per_page=1000&sort=updated", function(err, res) {
+        _requestAllPages('/users/' + username + '/repos?type=all&per_page=1000&sort=updated', function(err, res) {
           cb(err, res);
         });
       };
@@ -158,7 +177,7 @@
       // -------
 
       this.userGists = function(username, cb) {
-        _request("GET", "/users/"+username+"/gists", null, function(err, res) {
+        _request('GET', '/users/' + username + '/gists', null, function(err, res) {
           cb(err,res);
         });
       };
@@ -168,7 +187,7 @@
 
       this.orgRepos = function(orgname, cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages("/orgs/"+orgname+"/repos?type=all&&page_num=1000&sort=updated&direction=desc", function(err, res) {
+        _requestAllPages('/orgs/' + orgname + '/repos?type=all&&page_num=1000&sort=updated&direction=desc', function(err, res) {
           cb(err, res);
         });
       };
@@ -177,7 +196,7 @@
       // -------
 
       this.follow = function(username, cb) {
-        _request("PUT", "/user/following/"+username, null, function(err, res) {
+        _request('PUT', '/user/following/' + username, null, function(err, res) {
           cb(err, res);
         });
       };
@@ -186,12 +205,18 @@
       // -------
 
       this.unfollow = function(username, cb) {
-        _request("DELETE", "/user/following/"+username, null, function(err, res) {
+        _request('DELETE', '/user/following/' + username, null, function(err, res) {
           cb(err, res);
         });
       };
-    };
 
+      // Create a repo
+      // -------
+      this.createRepo = function(options, cb) {
+        _request('POST', '/user/repos', options, cb);
+      };
+
+    };
 
     // Repository API
     // =======
@@ -201,19 +226,30 @@
       var user = options.user;
 
       var that = this;
-      var repoPath = "/repos/" + user + "/" + repo;
+      var repoPath = '/repos/' + user + '/' + repo;
 
       var currentTree = {
-        "branch": null,
-        "sha": null
+        'branch': null,
+        'sha': null
+      };
+
+
+      // Delete a repo
+      // --------
+
+      this.deleteRepo = function(cb) {
+        _request('DELETE', repoPath, options, cb);
       };
 
       // Uses the cache if branch has not been changed
       // -------
 
       function updateTree(branch, cb) {
-        if (branch === currentTree.branch && currentTree.sha) return cb(null, currentTree.sha);
-        that.getRef("heads/"+branch, function(err, sha) {
+        if (branch === currentTree.branch && currentTree.sha) {
+          return cb(null, currentTree.sha);
+        }
+        
+        that.getRef('heads/' + branch, function(err, sha) {
           currentTree.branch = branch;
           currentTree.sha = sha;
           cb(err, sha);
@@ -224,8 +260,11 @@
       // -------
 
       this.getRef = function(ref, cb) {
-        _request("GET", repoPath + "/git/refs/" + ref, null, function(err, res) {
-          if (err) return cb(err);
+        _request('GET', repoPath + '/git/refs/' + ref, null, function(err, res) {
+          if (err) {
+            return cb(err);
+          }
+          
           cb(null, res.object.sha);
         });
       };
@@ -239,7 +278,7 @@
       // }
 
       this.createRef = function(options, cb) {
-        _request("POST", repoPath + "/git/refs", options, cb);
+        _request('POST', repoPath + '/git/refs', options, cb);
       };
 
       // Delete a reference
@@ -249,29 +288,32 @@
       // repo.deleteRef('tags/v1.0')
 
       this.deleteRef = function(ref, cb) {
-        _request("DELETE", repoPath + "/git/refs/"+ref, options, cb);
+        _request('DELETE', repoPath + '/git/refs/' + ref, options, cb);
       };
 
-      // Create a repo  
+      // Create a repo
       // -------
 
       this.createRepo = function(options, cb) {
-        _request("POST", "/user/repos", options, cb);
+        _request('POST', '/user/repos', options, cb);
       };
 
-      // Delete a repo  
-      // --------  
+      // Delete a repo
+      // --------
 
-      this.deleteRepo = function(cb) {  
-        _request("DELETE", repoPath, options, cb);  
+      this.deleteRepo = function(cb) {
+        _request('DELETE', repoPath, options, cb);
       };
 
       // List all tags of a repository
       // -------
 
       this.listTags = function(cb) {
-        _request("GET", repoPath + "/tags", null, function(err, tags) {
-          if (err) return cb(err);
+        _request('GET', repoPath + '/tags', null, function(err, tags) {
+          if (err) {
+            return cb(err);
+          }
+          
           cb(null, tags);
         });
       };
@@ -280,7 +322,7 @@
       // -------
 
       this.listPulls = function(state, cb) {
-        _request("GET", repoPath + "/pulls" + (state ? '?state=' + state : ''), null, function(err, pulls) {
+        _request('GET', repoPath + "/pulls" + (state ? '?state=' + state : ''), null, function(err, pulls) {
           if (err) return cb(err);
           cb(null, pulls);
         });
@@ -346,15 +388,21 @@
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
       // -------
 
-      this.getSha = function(branch, path, cb) {
-        // Just use head if path is empty
-        if (path === "") return that.getRef("heads/"+branch, cb);
-        that.getTree(branch+"?recursive=true", function(err, tree) {
+      this.getCommit = function(branch, sha, cb) {
+        _request("GET", repoPath + "/git/commits/"+sha, null, function(err, commit) {
           if (err) return cb(err);
-          var file = _.select(tree, function(file) {
-            return file.path === path;
-          })[0];
-          cb(null, file ? file.sha : null);
+          cb(null, commit);
+        });
+      };
+
+      // For a given file path, get the corresponding sha (blob for files, tree for dirs)
+      // -------
+
+      this.getSha = function(branch, path, cb) {
+        if (!path || path === "") return that.getRef("heads/"+branch, cb);
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {
+          if (err) return cb(err);
+          cb(null, pathContent.sha);
         });
       };
 
@@ -427,21 +475,25 @@
       // -------
 
       this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
+        var user = new Github.User();
+        user.show(null, function(err, userData){
           if (err) return cb(err);
-          cb(null, res.sha);
+          var data = {
+            "message": message,
+            "author": {
+              "name": options.user,
+              "email": userData.email
+            },
+            "parents": [
+              parent
+            ],
+            "tree": tree
+          };
+          _request("POST", repoPath + "/git/commits", data, function(err, res) {
+            if (err) return cb(err);
+            currentTree.sha = res.sha; // update latest commit
+            cb(null, res.sha);
+          });
         });
       };
 
@@ -449,7 +501,7 @@
       // -------
 
       this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err) {
           cb(err);
         });
       };
@@ -464,8 +516,8 @@
       // Get contents
       // --------
 
-      this.contents = function(branch, path, cb, sync) {
-        return _request("GET", repoPath + "/contents?ref=" + branch + (path ? "&path=" + path : ""), null, cb, 'raw', sync);
+      this.contents = function(ref, path, cb) {
+        _request("GET", repoPath + "/contents/"+path, { ref: ref }, cb);
       };
 
       // Fork repository
@@ -475,9 +527,9 @@
         _request("POST", repoPath + "/forks", null, cb);
       };
 
-      // Branch repository  
-      // --------  
- 
+      // Branch repository
+      // --------
+
       this.branch = function(oldBranch,newBranch,cb) {
         if(arguments.length === 2 && typeof arguments[1] === "function") {
           cb = newBranch;
@@ -491,7 +543,7 @@
             sha: ref
           },cb);
         });
-      }
+      };
 
       // Create pull request
       // --------
@@ -539,54 +591,47 @@
       // -------
 
       this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
+        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, obj) {
+          if (err && err.error === 404) return cb("not found", null, null);
+
+          if (err) return cb(err);
+          cb(null, obj);
+        }, true);
       };
 
-      // Remove a file from the tree
+
+      // Remove a file
       // -------
 
       this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
+        that.getSha(branch, path, function(err, sha) {
+          if (err) return cb(err);
+          _request("DELETE", repoPath + "/contents/" + path, {
+            message: path + " is removed",
+            sha: sha,
+            branch: branch
+          }, cb);
         });
       };
-      
+
       // Delete a file from the tree
       // -------
-      
+
       this.delete = function(branch, path, cb) {
         that.getSha(branch, path, function(err, sha) {
           if (!sha) return cb("not found", null);
           var delPath = repoPath + "/contents/" + path;
           var params = {
             "message": "Deleted " + path,
-            "sha": sha 
+            "sha": sha
           };
           delPath += "?message=" + encodeURIComponent(params.message);
           delPath += "&sha=" + encodeURIComponent(params.sha);
+          delPath += '&branch=' + encodeURIComponent(branch);
           _request("DELETE", delPath, null, cb);
-        })
-      }
-      
+        });
+      };
+
       // Move a file to a new location
       // -------
 
@@ -614,18 +659,14 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
+        that.getSha(branch, path, function(err, sha) {
+          if (err && err.error !== 404) return cb(err);
+          _request("PUT", repoPath + "/contents/" + path, {
+            message: message,
+            content: btoa(content),
+            branch: branch,
+            sha: sha
+          }, cb);
         });
       };
       
@@ -669,6 +710,12 @@
                   until = until.toISOString();
               }
               params.push("until=" + encodeURIComponent(until));
+          }
+          if (options.page) {
+              params.push("page=" + options.page);
+          }
+          if (options.perpage) {
+              params.push("per_page=" + options.perpage);
           }
           if (params.length > 0) {
               url += "?" + params.join("&");
@@ -771,9 +818,13 @@
       var path = "/repos/" + options.user + "/" + options.repo + "/issues";
 
       this.list = function(options, cb) {
-        _request("GET", path, options, function(err, res) {
-          cb(err,res)
-        });
+        var query = [];
+        for (var key in options) {
+          if (options.hasOwnProperty(key)) {
+            query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
+          }
+        }
+        _requestAllPages(path + '?' + query.join("&"), cb);
       };
     };
 
@@ -797,9 +848,8 @@
     };
   };
 
-
+  /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
-    // Github = exports;
     module.exports = Github;
   } else {
     window.Github = Github;
