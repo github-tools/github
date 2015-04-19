@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/michael/github.png?label=ready&title=Ready)](https://waffle.io/michael/github)
 ﻿[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
 
 
