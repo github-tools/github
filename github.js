@@ -493,6 +493,27 @@
         _request("GET", repoPath, null, cb);
       };
 
+      // Show repository contributors
+      // -------
+
+      this.contributors = function (cb, retry) {
+        retry = retry || 1000;
+        var self = this;
+        _request("GET", repoPath + "/stats/contributors", null, function (err, data, response) {
+          if (err) return cb(err);
+          if (response.status === 202) {
+            setTimeout(
+              function () {
+                self.contributors(cb, retry);
+              },
+              retry
+            );
+          } else {
+            cb(err, data);
+          }
+        });
+      };
+
       // Get contents
       // --------
 

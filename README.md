@@ -185,6 +185,11 @@ Delete a reference.
 repo.deleteRef('heads/gh-pages', function(err) {});
 ```
 
+Get contributors list with additions, deletions, and commit counts.
+
+```js
+repo.contributors(function(err, data) {});
+```
 
 ## User API
 

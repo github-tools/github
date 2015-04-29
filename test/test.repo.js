@@ -35,6 +35,18 @@ test("Repo API", function(t) {
         });
     });
 
+    t.test('repo.contributors', function(q) {
+      repo.contributors(function(err, res) {
+        q.error(err, 'repo contributors');
+        q.ok(res instanceof Array, 'list of contributors');
+        q.ok(res.length, 'at least one contributor');
+        q.ok(res[0].author, 'contributor info');
+        q.ok(res[0].total, 'total number of commits');
+        q.ok(res[0].weeks, 'weekly hash');
+        q.end();
+      });
+    });
+
     //@TODO repo.branch, repo.pull
 
     t.test('repo.listBranches', function(q) {
