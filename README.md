@@ -78,10 +78,10 @@ Delete a repository
 repo.deleteRepo(function(err, res) {});
 ```
 
-Get contents at a particular path in a particular branch. Set sync to true to get contents via sync method.
+Get contents at a particular path in a particular branch.
 
 ```js
-repo.contents(branch, "path/to/dir", function(err, contents) {}, sync);
+repo.contents(branch, "path/to/dir", function(err, contents) {});
 ```
 
 Fork repository. This operation runs asynchronously. You may want to poll for `repo.contents` until the forked repo is ready.
