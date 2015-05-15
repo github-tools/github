@@ -1,12 +1,6 @@
-[![Stories in Ready](https://badge.waffle.io/michael/github.png?label=ready&title=Ready)](https://waffle.io/michael/github)
-﻿[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
-
-
-[![Build Status](https://travis-ci.org/darvin/github.svg?branch=master)](https://travis-ci.org/darvin/github)
-
-[![Coverage Status](https://img.shields.io/coveralls/michael/github.svg)](https://coveralls.io/r/michael/github)
-
 # Github.js
+
+[![Stories in Ready](https://badge.waffle.io/michael/github.png?label=ready&title=Ready)](https://waffle.io/michael/github)[![Build Status](https://travis-ci.org/darvin/github.svg?branch=master)](https://travis-ci.org/darvin/github)[![Coverage Status](https://img.shields.io/coveralls/michael/github.svg)](https://coveralls.io/r/michael/github)
 
 Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of [Prose](http://prose.io), a content editor for GitHub.
 
@@ -319,6 +313,10 @@ Include these before github.js :
 <script src="lib/underscore-min.js">
 <script src="github.js">
 ```
+
+## Compatibility
+
+[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
 
 ## Change Log
 
