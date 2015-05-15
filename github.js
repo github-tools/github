@@ -21,7 +21,7 @@
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
-      var btoa = require('btoa'); //jshint ignore:line
+      btoa = require('btoa'); //jshint ignore:line
   } else { 
       _ = window._; 
   }
