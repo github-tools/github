@@ -21,7 +21,10 @@
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
-      btoa = require('btoa'); //jshint ignore:line
+      if (typeof btoa === 'undefined') {
+        var btoa = require('btoa'); //jshint ignore:line
+      }
+      
   } else { 
       _ = window._; 
   }
@@ -518,6 +521,7 @@
       // --------
 
       this.contents = function(ref, path, cb) {
+        path = encodeURI(path);
         _request("GET", repoPath + "/contents" + (path ? "/" + path : ""), { ref: ref }, cb);
       };
 
@@ -592,7 +596,7 @@
       // -------
 
       this.read = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, obj) {
+        _request("GET", repoPath + "/contents/"+encodeURI(path), {ref: branch}, function(err, obj) {
           if (err && err.error === 404) return cb("not found", null, null);
 
           if (err) return cb(err);
@@ -660,9 +664,9 @@
       // -------
 
       this.write = function(branch, path, content, message, cb) {
-        that.getSha(branch, path, function(err, sha) {
+        that.getSha(branch, encodeURI(path), function(err, sha) {
           if (err && err.error !== 404) return cb(err);
-          _request("PUT", encodeURI(repoPath + "/contents/" + path), {
+          _request("PUT", repoPath + "/contents/" + encodeURI(path), {
             message: message,
             content: btoa(content),
             branch: branch,

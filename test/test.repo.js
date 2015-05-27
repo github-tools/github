@@ -103,6 +103,13 @@ test('Create Repo', function(t) {
       q.end();
     });
   });
+
+  t.test('repo.writeChinese', function(q) {
+    repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
   clearTimeout(timeout);
   t.end();
 });
