@@ -91,6 +91,20 @@ Create new branch for repo. You can omit oldBranchName to default to "master".
 repo.branch(oldBranchName, newBranchName, function(err) {});
 ```
 
+List Pull Requests.
+
+```js
+var state = 'open'; //or 'closed', or 'all'
+repo.listPulls(state, function(err, pullRequests) {});
+```
+
+Get details of a Pull Request.
+
+```js
+var pullRequestID = 123;
+repo.getPull(pullRequestID, function(err, pullRequestInfo) {});
+```
+
 Create Pull Request.
 
 ```js
@@ -102,7 +116,6 @@ var pull = {
 };
 repo.createPullRequest(pull, function(err, pullRequest) {});
 ```
-
 
 Retrieve all available branches (aka heads) of a repository.
 
