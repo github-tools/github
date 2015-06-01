@@ -38,6 +38,7 @@
 
 
   var Github = function(options) {
+    options = options || {}
     var API_URL = options.apiUrl || 'https://api.github.com';
 
     // HTTP Request Abstraction
@@ -371,11 +372,8 @@
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
       // -------
 
-      this.getCommit = function(branch, sha, cb) {
-        _request("GET", repoPath + "/git/commits/"+sha, null, function(err, commit) {
-          if (err) return cb(err);
-          cb(null, commit);
-        });
+      this.getCommit = function(sha, cb) {
+        _request("GET", repoPath + "/commits/"+sha, null, cb);
       };
 
       // For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -683,7 +681,10 @@
       // -------
 
       this.getCommits = function(options, cb) {
-          options = options || {};
+          if(arguments.length === 1 && typeof arguments[0] === "function") {
+            cb = options;
+            options = {}
+          }
           var url = repoPath + "/commits";
           var params = [];
           if (options.sha) {
@@ -717,6 +718,49 @@
           }
           _request("GET", url, null, cb);
       };
+
+      // List commit comments.
+      // -------
+
+      this.getComments = function(sha, cb) {
+        var commentsPath;
+        if(arguments.length === 1 && typeof arguments[0] === "function") {
+          cb = sha;
+          sha = null;
+          commentsPath = '/comments';
+        } else {
+          commentsPath = '/commits/'+sha+'/comments';
+        }
+
+        _request("GET", repoPath + commentsPath, null, cb);
+      }
+
+      // Create a commit comment
+      // -------
+
+      this.createComment = function(sha, body, options, cb) {
+        if(arguments.length === 3 && typeof arguments[2] === "function") {
+          cb = options;
+          options = {}
+        }
+        options.body = body;
+        _request("POST", repoPath + '/commits/' + sha + '/comments', options, cb);
+      }
+
+      // Update a comment
+      // -------
+
+      this.updateComment = function(id, body, cb) {
+        _request("PATCH", repoPath + '/comments/' + id, {body: body}, cb);
+      }
+
+      // Delete a comment
+      // -------
+
+      this.deleteComment = function(id, cb) {
+        _request("DELETE", repoPath + '/comments/' + id, null, function(){});
+      }
+
     };
 
     // Gists API
