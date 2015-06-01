@@ -38,7 +38,7 @@
 
 
   var Github = function(options) {
-    options = options || {}
+    options = options || {};
     var API_URL = options.apiUrl || 'https://api.github.com';
 
     // HTTP Request Abstraction
@@ -683,7 +683,7 @@
       this.getCommits = function(options, cb) {
           if(arguments.length === 1 && typeof arguments[0] === "function") {
             cb = options;
-            options = {}
+            options = {};
           }
           var url = repoPath + "/commits";
           var params = [];
@@ -733,7 +733,7 @@
         }
 
         _request("GET", repoPath + commentsPath, null, cb);
-      }
+      };
 
       // Create a commit comment
       // -------
@@ -741,25 +741,25 @@
       this.createComment = function(sha, body, options, cb) {
         if(arguments.length === 3 && typeof arguments[2] === "function") {
           cb = options;
-          options = {}
+          options = {};
         }
         options.body = body;
         _request("POST", repoPath + '/commits/' + sha + '/comments', options, cb);
-      }
+      };
 
       // Update a comment
       // -------
 
       this.updateComment = function(id, body, cb) {
         _request("PATCH", repoPath + '/comments/' + id, {body: body}, cb);
-      }
+      };
 
       // Delete a comment
       // -------
 
       this.deleteComment = function(id, cb) {
-        _request("DELETE", repoPath + '/comments/' + id, null, function(){});
-      }
+        _request("DELETE", repoPath + '/comments/' + id, null, cb);
+      };
 
     };
 

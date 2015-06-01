@@ -64,11 +64,35 @@ test("Repo API", function(t) {
     });
 
     t.test('repo.getCommit', function(q) {
-        repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
+        repo.getCommit('20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
             q.error(err, 'get commit' + err);
-            q.ok(commit.message, 'v0.10.4', 'Returned commit message.');
-            q.ok(commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
+            q.ok(commit.commit.message, 'v0.10.4', 'Returned commit message.');
+            q.ok(commit.commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
             q.end();
+        });
+    });
+
+    t.test('repo.getCommits', function(q) {
+        repo.getCommits(function(err, commits) {
+          q.error(err, 'get commits' + err);
+          q.ok(typeof commits[0].commit.message === 'string', 'Returned commits.');
+          q.end();
+        });
+    }); 
+
+    t.test('repo.getComments for a given commit', function(q) {
+        repo.getComments('750a7c677d6d78dcd453570b1e3aa02c27bd2142', function(err, comments) {
+          q.error(err, 'get comments for commit 750a7c677d6d78dcd453570b1e3aa02c27bd2142' + err);
+          q.ok(comments[0].commit_id === '750a7c677d6d78dcd453570b1e3aa02c27bd2142', 'Returned comments for 750a7c677d6d78dcd453570b1e3aa02c27bd2142.');
+          q.end();
+        });
+    });
+
+    t.test('repo.getComments for a given commit', function(q) {
+        repo.getComments(function(err, comments) {
+          q.error(err, 'get comments for entire repo' + err);
+          q.ok(typeof comments[0].body === 'string', 'Returned comments.');
+          q.end();
         });
     });
 
@@ -110,6 +134,7 @@ test('Create Repo', function(t) {
       q.end();
     });
   });
+
   clearTimeout(timeout);
   t.end();
 });
