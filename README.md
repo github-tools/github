@@ -35,6 +35,12 @@ var github = new Github({
 });
 ```
 
+You can always choose not to authenticate the user, although you will only be able to access certain things as specified in the [GitHub Developer API documentation](https://developer.github.com/v3/). That looks like this:
+
+```js
+var noauthgithub = new Github({});
+```
+
 You can use either:
 * Authorised App Tokens (via client/secret pairs), used for bigger applications, created in web-flows/on the fly
 * Personal Access Tokens (simpler to set up), used on command lines, scripts etc, created in GitHub web UI
