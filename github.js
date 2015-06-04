@@ -48,7 +48,14 @@
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
-        return url + ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
+        url += ((/\?/).test(url) ? '&' : '?');
+        // Fix #195 about XMLHttpRequest.send method and GET/HEAD request
+        if (_.isObject(data) && _.indexOf(['GET', 'HEAD'], method) > -1) {
+          url += '&' + _.map(data, function (v, k) {
+            return k + '=' + v;
+          }).join('&');
+        }
+        return url + '&' + (new Date()).getTime();
       }
 
       var xhr = new XMLHttpRequest();
