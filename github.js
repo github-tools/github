@@ -16,7 +16,7 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest,  _;
+  var XMLHttpRequest, _, atob = window.atob;
   /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
