@@ -16,13 +16,13 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest, _, atob = window.atob;
+  var XMLHttpRequest, _;
   /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
       _ = require('underscore');
       if (typeof btoa === 'undefined') {
-        var btoa = require('btoa'); //jshint ignore:line
+        btoa = require('btoa'); //jshint ignore:line
       }
       
   } else { 
