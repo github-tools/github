@@ -4,8 +4,7 @@
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
   "dependencies": {
-    "atob": "^1.1.2",
-    "btoa": "^1.1.2",
+    "js-base64": "^2.1.8",
     "underscore": "~1.8.3",
     "xmlhttprequest": "~1.7.0"
   },
@@ -41,7 +40,8 @@
     "url": "https://github.com/michael/github/issues"
   },
   "browser": {
-    "xmlhttprequest": false
+    "xmlhttprequest": false,
+    "base64": false
   },
   "testling": {
     "files": "test/test.*.js",
