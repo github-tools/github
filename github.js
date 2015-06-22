@@ -383,7 +383,7 @@
 
       this.getSha = function(branch, path, cb) {
         if (!path || path === "") return that.getRef("heads/"+branch, cb);
-        _request("GET", repoPath + "/contents/"+path, {ref: branch}, function(err, pathContent) {
+        _request("GET", repoPath + "/contents/" + path + (branch ? "?ref=" + branch : ""), null, function(err, pathContent) {
           if (err) return cb(err);
           cb(null, pathContent.sha);
         });
@@ -596,7 +596,7 @@
       // -------
 
       this.read = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents/"+encodeURI(path), {ref: branch}, function(err, obj) {
+        _request("GET", repoPath + "/contents/"+encodeURI(path) + (branch ? "?ref=" + branch : ""), null, function(err, obj) {
           if (err && err.error === 404) return cb("not found", null, null);
 
           if (err) return cb(err);
