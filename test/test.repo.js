@@ -72,6 +72,14 @@ test("Repo API", function(t) {
         });
     });
 
+    t.test('repo.getSha', function(q) {
+        repo.getSha('master', '.gitignore', function(err, sha) {
+            q.error(err, 'get sha error: ' + err);
+            q.ok(sha, '153216eb946aedc51f4fe88a51008b4abcac5308', 'Returned sha message.');
+            q.end();
+        });
+    });
+
     clearTimeout(timeout);
     t.end();
 
