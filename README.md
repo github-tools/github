@@ -147,13 +147,13 @@ Remove a file.
 repo.remove('master', 'path/to/file', function(err) {});
 ```
 
-Exploring files of a repository is easy too by accessing the top level tree object.
+Get information about a particular commit.
 
 ```js
 repo.getCommit('master', sha, function(err, commit) {});
 ```
 
-Get information about a particular commit.
+Exploring files of a repository is easy too by accessing the top level tree object.
 
 ```js
 repo.getTree('master', function(err, tree) {});
