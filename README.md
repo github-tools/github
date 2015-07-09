@@ -199,6 +199,24 @@ Get contributors list with additions, deletions, and commit counts.
 repo.contributors(function(err, data) {});
 ```
 
+Check if repositore stared by user. Returns res equal true or false.
+
+```js
+repo.isStarred(username, reponame, function(err, res) {});
+```
+
+Star repository.
+
+```js
+repo.star(username, reponame, function(err, res) {});
+```
+
+Unstar repository.
+
+```js
+repo.unstar(username, reponame, function(err, res) {});
+```
+
 ## User API
 
 

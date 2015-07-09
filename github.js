@@ -724,6 +724,24 @@
           }
           _request("GET", url, null, cb);
       };
+
+      // starring
+      this.isStarred = function(owner, repo, cb) {
+        _request("GET", "/user/starred/" + owner + '/' + repo, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+      this.star = function(owner, repo, cb) {
+        _request("PUT", "/user/starred/" + owner + '/' + repo, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+      this.unstar = function(owner, repo, cb) {
+        _request("DELETE", "/user/starred/" + owner + '/' + repo, null, function(err,res) {
+          cb(err,res);
+        });
+      };
+
     };
 
     // Gists API
