@@ -170,3 +170,43 @@ test('Repo Returns commit errors correctly', function(t) {
     t.end();
   });
 });
+
+test('Repo starring works correctly', function(t) {
+  var timeout = setTimeout(function () {
+      t.fail();
+  }, 10000);
+  var github = new Github({
+      username: test_user.USERNAME,
+      password: test_user.PASSWORD,
+      auth: "basic"
+  });
+  var repo = github.getRepo(test_user.USERNAME, test_user.REPO);
+
+  repo.isStarred(test_user.USERNAME, test_user.REPO, function(err, res) {
+    t.error(err);
+    t.equals(res, true, 'Repo stared');
+    t.equals(res, false, 'Repo doesn`t stared');
+    clearTimeout(timeout);
+      t.end();
+  });
+
+  repo.star(test_user.USERNAME, test_user.REPO, function(err, res) {
+    t.error(err);
+    repo.isStarred(test_user.USERNAME, test_user.REPO, function(err, res) {
+      t.error(err);
+      t.equals(res, false, 'Staring doesn`t work');
+    })
+    clearTimeout(timeout);
+    t.end();
+  });
+
+  repo.unstar(test_user.USERNAME, test_user.REPO, function(err, res) {
+    t.error(err);
+    repo.isStarred(test_user.USERNAME, test_user.REPO, function(err, res) {
+      t.error(err);
+      t.equals(res, true, 'Unstaring doesn`t work');
+    })
+    clearTimeout(timeout);
+    t.end();
+  });
+});
