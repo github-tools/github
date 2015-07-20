@@ -315,17 +315,10 @@ issues.list(options, function(err, issues) {});
 
 ##Setup
 
-Github.js has the following dependencies:
+Github.js has the following dependency:
 
-- Underscore
 - btoa (included in modern browsers, an npm module is included in package.json for node)
 
-Include these before github.js :
-
-```
-<script src="lib/underscore-min.js">
-<script src="github.js">
-```
 
 ## Compatibility
 

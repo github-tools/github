@@ -16,16 +16,14 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest, _, btoa;
+  var XMLHttpRequest, btoa;
   /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
       XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-      _ = require('underscore');
       if (typeof btoa === 'undefined') {
         btoa = require('btoa'); //jshint ignore:line
       }
   } else { 
-      _ = window._;
       btoa = window.btoa;
   }
   
@@ -50,9 +48,9 @@
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         url += ((/\?/).test(url) ? '&' : '?');
         // Fix #195 about XMLHttpRequest.send method and GET/HEAD request
-        if (_.isObject(data) && _.indexOf(['GET', 'HEAD'], method) > -1) {
-          url += '&' + _.map(data, function (v, k) {
-            return k + '=' + v;
+        if (data && typeof data === "object" && ['GET', 'HEAD'].indexOf(method) > -1) {
+          url += '&' + Object.keys(data).map(function (k) {
+            return k + '=' + data[k];
           }).join('&');
         }
         return url + '&' + (new Date()).getTime();
@@ -107,7 +105,10 @@
           results.push.apply(results, res);
 
           var links = (xhr.getResponseHeader('link') || '').split(/\s*,\s*/g),
-              next = _.find(links, function(link) { return /rel="next"/.test(link); });
+              next = null;
+          links.forEach(function(link) { 
+            next = /rel="next"/.test(link) ? link : next;
+          });
 
           if (next) {
             next = (/<(.*)>/.exec(next) || [])[1];
@@ -364,7 +365,10 @@
       this.listBranches = function(cb) {
         _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
           if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+          cb(null, heads.map(function(head) {
+              var headParts = head.ref.split('/'); 
+              return headParts[headParts.length - 1];
+          }));
         });
       };
 
@@ -651,7 +655,7 @@
         updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
-            _.each(tree, function(ref) {
+            tree.forEach(function(ref) {
               if (ref.path === path) ref.path = newPath;
               if (ref.type === "tree") delete ref.sha;
             });
