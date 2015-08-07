@@ -322,6 +322,12 @@ To read all the issues of a given repository
 issues.list(options, function(err, issues) {});
 ```
 
+To comment in a issue
+
+```js
+issues.comment(issue, comment,function(err, comment) {});
+```
+
 ## Change Log
 
 ### 0.10.X
