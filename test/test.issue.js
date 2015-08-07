@@ -15,21 +15,22 @@ test("Issues API", function(t) {
 
     t.test('issues.list', function(q) {
         issues.list({},function(err, issues) {
-			t.error(err);
-			t.equals(issues.length > 0, true, 'Issues not found');
-			t.end();
+			q.error(err);
+			t.equals(issues.length > 0, true, 'Issues!');
+			q.end();
         });
+        t.end();
     });
 
     t.test('issues.comment', function(q) {
-    	var issueToComment;
-        issues.list({},function(err, issues) {
-			issueToComment = issues[0]
-        });
-
-        issues.comment(issueToComment, 'Comment test', function(err,res){
-        	t.error(err);
-        	console.log(res);
+        issues.list({},function(err, issuesList) {
+			issues.comment(issuesList[0], 'Comment test', function(err, res){
+				q.error(err);
+				t.equals(res.body, 'Comment test', 'Comments!');
+				q.end();
+	        });  
         });
     });
+
+
 });
