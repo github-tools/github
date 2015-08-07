@@ -20,4 +20,16 @@ test("Issues API", function(t) {
 			t.end();
         });
     });
+
+    t.test('issues.comment', function(q) {
+    	var issueToComment;
+        issues.list({},function(err, issues) {
+			issueToComment = issues[0]
+        });
+
+        issues.comment(issueToComment, 'Comment test', function(err,res){
+        	t.error(err);
+        	console.log(res);
+        });
+    });
 });
