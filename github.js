@@ -46,14 +46,14 @@
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
-        url += ((/\?/).test(url) ? '&' : '?');
-        // Fix #195 about XMLHttpRequest.send method and GET/HEAD request
-        if (data && typeof data === "object" && ['GET', 'HEAD'].indexOf(method) > -1) {
-          url += '&' + Object.keys(data).map(function (k) {
-            return k + '=' + data[k];
-          }).join('&');
+        url = url + ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
+        if (method === 'GET') {
+          for(var param in data) {
+            if (data.hasOwnProperty(param))
+              url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
+          }
         }
-        return url + '&' + (new Date()).getTime();
+        return url;
       }
 
       var xhr = new XMLHttpRequest();
@@ -84,7 +84,7 @@
         var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
         xhr.setRequestHeader('Authorization', authorization);
       }
-      if (data) {
+      if (method !== 'GET' && data) {
         xhr.send(JSON.stringify(data));
       } else {
         xhr.send();
