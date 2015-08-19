@@ -535,6 +535,13 @@
         path = encodeURI(path);
         _request("GET", repoPath + "/contents" + (path ? "/" + path : ""), { ref: ref }, cb);
       };
+      
+      // Get README
+      // --------
+
+      this.readme = function(ref, cb) {
+        _request("GET", repoPath + "/readme", { ref: ref }, cb);
+      };      
 
       // Fork repository
       // -------
