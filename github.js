@@ -46,8 +46,9 @@
     function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
-        url = url + ((/\?/).test(url) ? '&' : '?') + (new Date()).getTime();
-        if (method === 'GET') {
+        url += ((/\?/).test(url) ? '&' : '?');
+        url += (new Date()).getTime();
+        if (data && typeof data === 'object' && ['GET', 'HEAD'].indexOf(method) > -1) {
           for(var param in data) {
             if (data.hasOwnProperty(param))
               url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
@@ -84,7 +85,7 @@
         var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
         xhr.setRequestHeader('Authorization', authorization);
       }
-      if (method !== 'GET' && data) {
+      if (data) {
         xhr.send(JSON.stringify(data));
       } else {
         xhr.send();
