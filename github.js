@@ -131,36 +131,28 @@
     Github.User = function() {
       this.repos = function(cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages('/user/repos?type=all&per_page=1000&sort=updated', function(err, res) {
-          cb(err, res);
-        });
+        _requestAllPages('/user/repos?type=all&per_page=1000&sort=updated', cb);
       };
 
       // List user organizations
       // -------
 
       this.orgs = function(cb) {
-        _request("GET", '/user/orgs', null, function(err, res) {
-          cb(err, res);
-        });
+        _request("GET", '/user/orgs', null, cb);
       };
 
       // List authenticated user's gists
       // -------
 
       this.gists = function(cb) {
-        _request("GET", '/gists', null, function(err, res) {
-          cb(err,res);
-        });
+        _request("GET", '/gists', null, cb);
       };
 
       // List authenticated user's unread notifications
       // -------
 
       this.notifications = function(cb) {
-        _request("GET", '/notifications', null, function(err, res) {
-          cb(err,res);
-        });
+        _request("GET", '/notifications', null, cb);
       };
 
       // Show user information
@@ -169,9 +161,7 @@
       this.show = function(username, cb) {
         var command = username ? '/users/' + username : '/user';
 
-        _request('GET', command, null, function(err, res) {
-          cb(err, res);
-        });
+        _request('GET', command, null, cb);
       };
 
       // List user repositories
@@ -179,18 +169,14 @@
 
       this.userRepos = function(username, cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages('/users/' + username + '/repos?type=all&per_page=1000&sort=updated', function(err, res) {
-          cb(err, res);
-        });
+        _requestAllPages('/users/' + username + '/repos?type=all&per_page=1000&sort=updated', cb);
       };
 
       // List a user's gists
       // -------
 
       this.userGists = function(username, cb) {
-        _request('GET', '/users/' + username + '/gists', null, function(err, res) {
-          cb(err,res);
-        });
+        _request('GET', '/users/' + username + '/gists', null, cb);
       };
 
       // List organization repositories
@@ -198,27 +184,21 @@
 
       this.orgRepos = function(orgname, cb) {
         // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages('/orgs/' + orgname + '/repos?type=all&&page_num=1000&sort=updated&direction=desc', function(err, res) {
-          cb(err, res);
-        });
+        _requestAllPages('/orgs/' + orgname + '/repos?type=all&&page_num=1000&sort=updated&direction=desc', cb);
       };
 
       // Follow user
       // -------
 
       this.follow = function(username, cb) {
-        _request('PUT', '/user/following/' + username, null, function(err, res) {
-          cb(err, res);
-        });
+        _request('PUT', '/user/following/' + username, null, cb);
       };
 
       // Unfollow user
       // -------
 
       this.unfollow = function(username, cb) {
-        _request('DELETE', '/user/following/' + username, null, function(err, res) {
-          cb(err, res);
-        });
+        _request('DELETE', '/user/following/' + username, null, cb);
       };
 
       // Create a repo
@@ -741,9 +721,7 @@
       // --------
 
       this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
+        _request("GET", gistPath, null, cb);
       };
 
       // Create the gist
@@ -758,7 +736,7 @@
       //    }
       // }
 
-      this.create = function(options, cb){
+      this.create = function(options, cb) {
         _request("POST","/gists", options, cb);
       };
 
@@ -766,54 +744,42 @@
       // --------
 
       this.delete = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
+        _request("DELETE", gistPath, null, cb);
       };
 
       // Fork a gist
       // --------
 
       this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
+        _request("POST", gistPath+"/fork", null, cb);
       };
 
       // Update a gist with the new stuff
       // --------
 
       this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
+        _request("PATCH", gistPath, options, cb);
       };
 
       // Star a gist
       // --------
 
       this.star = function(cb) {
-        _request("PUT", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
+        _request("PUT", gistPath+"/star", null, cb);
       };
 
       // Untar a gist
       // --------
 
       this.unstar = function(cb) {
-        _request("DELETE", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
+        _request("DELETE", gistPath+"/star", null, cb);
       };
 
       // Check if a gist is starred
       // --------
 
       this.isStarred = function(cb) {
-        _request("GET", gistPath+"/star", null, function(err,res) {
-          cb(err,res);
-        });
+        _request("GET", gistPath+"/star", null, cb);
       };
     };
 
