@@ -83,7 +83,7 @@ test("User API", function(t) {
   });
 
   t.test('user.userStarred', function(q) {
-    user.userStarred(test_user.USERNAME, function(err, res) {
+    user.userStarred(test_user.USERNAME, function(err) {
       q.error(err, 'alt user starred');
       q.end();
     });
