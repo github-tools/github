@@ -58,7 +58,7 @@ test("Repo API", function(t) {
 
     t.test('repo.read', function(q) {
         repo.read('master', 'README.md', function(err, res) {
-            q.ok(res.indexOf('##Setup') !== -1, true, 'Returned REAMDE');
+            q.notEquals(res.indexOf('##Setup'), -1, 'Returned REAMDE');
             q.end();
         });
     });
@@ -66,8 +66,8 @@ test("Repo API", function(t) {
     t.test('repo.getCommit', function(q) {
         repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
             q.error(err, 'get commit' + err);
-            q.ok(commit.message, 'v0.10.4', 'Returned commit message.');
-            q.ok(commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
+            q.equals(commit.message, 'v0.10.4', 'Returned commit message.');
+            q.equals(commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
             q.end();
         });
     });
@@ -75,7 +75,7 @@ test("Repo API", function(t) {
     t.test('repo.getSha', function(q) {
         repo.getSha('master', '.gitignore', function(err, sha) {
             q.error(err, 'get sha error: ' + err);
-            q.ok(sha, '153216eb946aedc51f4fe88a51008b4abcac5308', 'Returned sha message.');
+            q.equals(sha, '153216eb946aedc51f4fe88a51008b4abcac5308', 'Returned sha message.');
             q.end();
         });
     });
@@ -122,6 +122,24 @@ test('Create Repo', function(t) {
           q.error(err);
           q.end();
         });
+      });
+    });
+  });
+
+  t.test('repo.writeAuthorAndCommitter', function(q) {
+    var options = {
+      author: {name: 'Author Name', email: 'author@example.com'},
+      committer: {name: 'Committer Name', email: 'committer@example.com'}
+    };
+    repo.write('dev', 'TEST.md', 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
+      q.error(err);
+      repo.getCommit('dev', res.commit.sha, function(err, commit) {
+        q.error(err);
+        q.equals(commit.author.name, 'Author Name', 'Got correct author name.');
+        q.equals(commit.author.email, 'author@example.com', 'Got correct author email.');
+        q.equals(commit.committer.name, 'Committer Name', 'Got correct committer name.');
+        q.equals(commit.committer.email, 'committer@example.com', 'Got correct committer email.');
+        q.end();
       });
     });
   });

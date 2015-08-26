@@ -126,7 +126,11 @@ repo.listBranches(function(err, branches) {});
 Store contents at a certain path, where files that don't yet exist are created on the fly.
 
 ```js
-repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', function(err) {});
+var options = {
+  author: {name: 'Author Name', email: 'author@example.com'},
+  committer: {name: 'Committer Name', email: 'committer@example.com'}
+}
+repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', options, function(err) {});
 ```
 
 Not only can you can write files, you can of course read them.
