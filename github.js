@@ -655,9 +655,9 @@
         updateTree(branch, function(err, latestCommit) {
           that.getTree(latestCommit+"?recursive=true", function(err, tree) {
             // Update Tree
-            tree.forEach(function(ref) {
+            tree = tree.filter(function(ref) {
               if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
+              return ref.type !== "tree";
             });
 
             that.postTree(tree, function(err, rootTree) {
