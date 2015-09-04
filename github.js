@@ -682,6 +682,13 @@
             _request('POST', repoPath + '/forks', null, cb);
          };
 
+         // List forks
+         // --------
+
+         this.listForks = function(cb) {
+            _request('GET', repoPath + '/forks', null, cb);
+         };
+
          // Branch repository
          // --------
 

@@ -83,6 +83,15 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should list forks of repo', function(done) {
+      repo.listForks(function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion.
+         done();
+      });
+   });
+
    it('should show repo contributors', function(done) {
       repo.contributors(function(err, res) {
          should.not.exist(err);

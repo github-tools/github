@@ -93,6 +93,12 @@ Fork repository. This operation runs asynchronously. You may want to poll for `r
 repo.fork(function(err) {});
 ```
 
+List forks.
+
+```js
+repo.listForks(function(err, forks) {});
+```
+
 Create new branch for repo. You can omit oldBranchName to default to "master".
 
 ```js
