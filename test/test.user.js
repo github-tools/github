@@ -34,6 +34,19 @@ test("User API", function(t) {
     });
   });
 
+  t.test('user.notifications with options', function(q) {
+    var options = {
+      all: true,
+      participating: true,
+      since: '2015-01-01T00:00:00Z',
+      before: '2015-02-01T00:00:00Z'
+    };
+    user.notifications(options, function(err) {
+      q.error(err, 'user notifications');
+      q.end();
+    });
+  });
+
   t.test('user.show', function(q) {
     user.show('ingalls', function(err) {
       q.error(err, 'user show');

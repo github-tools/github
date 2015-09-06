@@ -157,8 +157,41 @@
       // List authenticated user's unread notifications
       // -------
 
-      this.notifications = function(cb) {
-        _request("GET", '/notifications', null, function(err, res) {
+      this.notifications = function(options, cb) {
+        if (arguments.length === 1 && typeof arguments[0] === 'function') {
+          cb = options;
+          options = {};
+        }
+        options = options || {};
+        var url = '/notifications';
+        var params = [];
+        if (options.all) {
+          params.push('all=true');
+        }
+        if (options.participating) {
+          params.push('participating=true');
+        }
+        if (options.since) {
+          var since = options.since;
+          if (since.constructor === Date) {
+            since = since.toISOString();
+          }
+          params.push('since=' + encodeURIComponent(since));
+        }
+        if (options.before) {
+          var before = options.before;
+          if (before.constructor === Date) {
+            before = before.toISOString();
+          }
+          params.push('before=' + encodeURIComponent(before));
+        }
+        if (options.page) {
+          params.push('page=' + encodeURIComponent(options.page));
+        }
+        if (params.length > 0) {
+          url += '?' + params.join('&');
+        }
+        _request("GET", url, null, function(err, res) {
           cb(err,res);
         });
       };

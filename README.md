@@ -227,7 +227,7 @@ user.gists(function(err, gists) {});
 List unread notifications for the authenticated user.
 
 ```js
-user.notifications(function(err, notifications) {});
+user.notifications(options, function(err, notifications) {});
 ```
 
 Show user information for a particular username. Also works for organizations.
