@@ -64,7 +64,7 @@
         xhr.onreadystatechange = function () {
           if (this.readyState === 4) {
             if (this.status >= 200 && this.status < 300 || this.status === 304) {
-              cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
+              cb(null, (raw === true) ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
             } else {
               cb({path: path, request: this, error: this.status});
             }
@@ -76,7 +76,25 @@
         xhr.dataType = 'json';
         xhr.setRequestHeader('Accept','application/vnd.github.v3+json');
       } else {
-        xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+        if (typeof(raw) === 'object') {
+          switch (raw.contentType) {
+            case 'diff':
+              xhr.setRequestHeader('Accept','application/vnd.github.v3.diff');
+              break;
+            case 'patch':
+              xhr.setRequestHeader('Accept','application/vnd.github.v3.patch');
+              break;
+            case 'base64':
+              xhr.setRequestHeader('Accept','application/vnd.github.v3.base64');
+              break;
+            default:
+              xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+              raw = true;
+              break;
+          }
+        } else {
+          xhr.setRequestHeader('Accept','application/vnd.github.v3.raw+json');
+        }
       }
 
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
@@ -606,15 +624,23 @@
       // Read file at given path
       // -------
 
-      this.read = function(branch, path, cb) {
+      this.read = function(branch, path, options, cb) {
+        if (typeof(options) === 'function') {
+          cb = options;
+          options = null;
+        }
+        
+        if (!options || typeof(options) !== 'object') {
+          options = true;
+        }
+        
         _request("GET", repoPath + "/contents/"+encodeURI(path) + (branch ? "?ref=" + branch : ""), null, function(err, obj) {
           if (err && err.error === 404) return cb("not found", null, null);
 
           if (err) return cb(err);
           cb(null, obj);
-        }, true);
+        }, options);
       };
-
 
       // Remove a file
       // -------
