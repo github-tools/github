@@ -230,7 +230,7 @@ List unread notifications for the authenticated user.
 user.notifications(function(err, notifications) {});
 ```
 
-Show user information for a particular username. Also works for organizations.
+Show user information for a particular username. Also works for organizations. Pass in a falsy value (null, '', etc) for 'username' to retrieve user information for the currently authorized user.
 
 ```js
 user.show(username, function(err, user) {});
