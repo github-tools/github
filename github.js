@@ -43,7 +43,7 @@
     //
     // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-    function _request(method, path, data, cb, raw, sync) {
+    var _request = Github._request = function _request(method, path, data, cb, raw, sync) {
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         url += ((/\?/).test(url) ? '&' : '?');
@@ -92,9 +92,9 @@
       if (sync) {
         return xhr.response;
       }
-    }
+    };
 
-    function _requestAllPages(path, cb) {
+    var _requestAllPages = Github._requestAllPages = function _requestAllPages(path, cb) {
       var results = [];
       (function iterate() {
         _request('GET', path, null, function(err, res, xhr) {
@@ -122,7 +122,7 @@
           }
         });
       })();
-    }
+    };
 
 
     // User API
