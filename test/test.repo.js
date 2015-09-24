@@ -80,6 +80,15 @@ test("Repo API", function(t) {
         });
     });
 
+    t.test('getRepo(fullname)', function(q) {
+        var repo2 = github.getRepo('michael/github');
+        repo2.show(function(err, res) {
+            q.error(err, 'show repo');
+            q.equals(res.full_name, 'michael/github', 'repo name');
+            q.end();
+        });
+    });
+
     clearTimeout(timeout);
     t.end();
 
