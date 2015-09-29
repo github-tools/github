@@ -732,15 +732,16 @@
           options = {};
         }
         that.getSha(branch, encodeURI(path), function(err, sha) {
-          if (err && err.error !== 404) return cb(err);
-          _request("PUT", repoPath + "/contents/" + encodeURI(path), {
-            message: message,
-            content: b64encode(content),
-            branch: branch,
-            committer: options.committer,
-            author: options.author,
-            sha: sha
-          }, cb);
+          var options = {
+              message: message,
+              content: btoa(content),
+              branch: branch,
+              committer: options.committer,
+              author: options.author
+          };
+          // if no error, we set the sha to overwrite an existing file
+          if (!(err && err.error !== 404)) options.sha = sha;
+          _request("PUT", repoPath + "/contents/" + encodeURI(path), options, cb);
         });
       };
 
