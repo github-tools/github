@@ -822,6 +822,10 @@
 
     Github.Issue = function(options) {
       var path = "/repos/" + options.user + "/" + options.repo + "/issues";
+      
+      this.create = function(options, cb) {
+        _request('POST', path, options, cb);
+      };
 
       this.list = function(options, cb) {
         var query = [];
