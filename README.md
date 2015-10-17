@@ -8,10 +8,16 @@ This repo is now officially maintained by [DevelopmentSeed](https://github.com/d
 
 ## Installation
 
-Either grab `github.js` from this repo or install via npm:
+Either grab `github.js` from this repo or install Github.js via npm:
 
 ```
 npm install github-api
+```
+
+Alternatively, you can install the library using Bower:
+
+```
+bower install github-api
 ```
 
 ## Usage
