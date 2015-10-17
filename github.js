@@ -235,9 +235,16 @@
     Github.Repository = function(options) {
       var repo = options.name;
       var user = options.user;
+      var fullname = options.fullname;
 
       var that = this;
-      var repoPath = '/repos/' + user + '/' + repo;
+      var repoPath;
+
+      if (fullname) {
+        repoPath = '/repos/' + fullname;
+      } else {
+        repoPath = '/repos/' + user + '/' + repo;
+      }
 
       var currentTree = {
         'branch': null,
@@ -841,7 +848,12 @@
     };
 
     this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
+      if (!repo) {
+        var fullname = user;
+        return new Github.Repository({fullname: fullname});
+      } else {
+        return new Github.Repository({user: user, name: repo});
+      }
     };
 
     this.getUser = function() {
