@@ -1,10 +1,8 @@
 # Github.js
 
-[![Stories in Ready](https://badge.waffle.io/michael/github.png?label=ready&title=Ready)](https://waffle.io/michael/github)[![Build Status](https://travis-ci.org/darvin/github.svg?branch=master)](https://travis-ci.org/darvin/github)[![Coverage Status](https://img.shields.io/coveralls/michael/github.svg)](https://coveralls.io/r/michael/github)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/michael/github?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)[![Stories in Ready](https://badge.waffle.io/michael/github.png?label=ready&title=Ready)](https://waffle.io/michael/github)[![Build Status](https://travis-ci.org/darvin/github.svg?branch=master)](https://travis-ci.org/darvin/github)[![Coverage Status](https://img.shields.io/coveralls/michael/github.svg)](https://coveralls.io/r/michael/github)
 
-Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It is being developed in the context of [Prose](http://prose.io), a content editor for GitHub.
-
-This repo is now officially maintained by [DevelopmentSeed](https://github.com/developmentseed), the people behind [Prose.io](http://prose.io).
+Github.js provides a minimal higher-level wrapper around git's [plumbing commands](http://git-scm.com/book/en/Git-Internals-Plumbing-and-Porcelain), exposing an API for manipulating GitHub repositories on the file level. It was formerly developed in the context of [Prose](http://prose.io), a content editor for GitHub.
 
 ## Installation
 
