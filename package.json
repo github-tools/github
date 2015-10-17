@@ -9,7 +9,6 @@
     "xmlhttprequest": "~1.7.0"
   },
   "devDependencies": {
-    "argg": "0.0.1",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "plato": "^1.4.0",
