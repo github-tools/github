@@ -9,7 +9,6 @@
     "xmlhttprequest": "~1.7.0"
   },
   "devDependencies": {
-    "argg": "0.0.1",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "plato": "^1.4.0",
@@ -17,8 +16,8 @@
     "testling": "^1.7.1"
   },
   "scripts": {
-    "test": "node node_modules/argg test/*.js && node node_modules/jshint/bin/jshint github.js test/*.js",
-    "jshint": "node node_modules/jshint/bin/jshint github.js test/*.js"
+    "test": "tape test/*.js && npm run-script jshint",
+    "jshint": "jshint github.js test/"
   },
   "repository": {
     "type": "git",
