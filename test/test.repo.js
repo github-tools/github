@@ -141,6 +141,20 @@ test('Create Repo', function(t) {
       q.end();
     });
   });
+
+  t.test('repo.writeUnicodeContent', function(q) {
+    repo.write('master', 'TEST.md', '\u2014', 'Long dash unicode', function(err) {
+      q.error(err);
+      repo.read('master', 'TEST.md', function(err, obj) {
+        q.error(err);
+        t.equals('\u2014', obj);
+      });
+      q.end();
+    });
+  });
+
+
+
   clearTimeout(timeout);
   t.end();
 });

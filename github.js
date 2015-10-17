@@ -16,21 +16,23 @@
   // Initial Setup
   // -------------
 
-  var XMLHttpRequest, btoa;
+  var XMLHttpRequest, b64encode;
   /* istanbul ignore else  */
   if (typeof exports !== 'undefined') {
-      XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-      if (typeof btoa === 'undefined') {
-        btoa = require('btoa'); //jshint ignore:line
-      }
-  } else {
-      btoa = window.btoa;
+    XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+    b64encode = require('js-base64').Base64.encode;
+  } else { 
+    b64encode = function(str) {
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      }));
+    };
   }
 
   //prefer native XMLHttpRequest always
   /* istanbul ignore if  */
   if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
-      XMLHttpRequest = window.XMLHttpRequest;
+    XMLHttpRequest = window.XMLHttpRequest;
   }
 
 
@@ -81,7 +83,7 @@
 
       xhr.setRequestHeader('Content-Type','application/json;charset=UTF-8');
       if ((options.token) || (options.username && options.password)) {
-        var authorization = options.token ? 'token ' + options.token : 'Basic ' + btoa(options.username + ':' + options.password);
+        var authorization = options.token ? 'token ' + options.token : 'Basic ' + b64encode(options.username + ':' + options.password);
         xhr.setRequestHeader('Authorization', authorization);
       }
       if (data) {
@@ -460,7 +462,7 @@
           };
         } else {
           	content = {
-              "content": btoa(String.fromCharCode.apply(null, new Uint8Array(content))),
+              "content": b64encode(String.fromCharCode.apply(null, new Uint8Array(content))),
               "encoding": "base64"
             };
           }
@@ -718,7 +720,7 @@
           if (err && err.error !== 404) return cb(err);
           _request("PUT", repoPath + "/contents/" + encodeURI(path), {
             message: message,
-            content: btoa(content),
+            content: b64encode(content),
             branch: branch,
             sha: sha
           }, cb);
