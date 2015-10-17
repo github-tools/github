@@ -33,7 +33,7 @@
     "Michael Aufreiter (http://substance.io)",
     "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)"
   ],
-  "license": "BSD",
+  "license": "BSD-3-Clause-Clear",
   "readmeFilename": "README.md",
   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
   "bugs": {
