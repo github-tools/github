@@ -8,7 +8,7 @@ This repo is now officially maintained by [DevelopmentSeed](https://github.com/d
 
 ## Installation
 
-Either grab `github.js` from this repo or install via NPM:
+Either grab `github.js` from this repo or install via npm:
 
 ```
 npm install github-api
