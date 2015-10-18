@@ -873,6 +873,14 @@
         }
         _requestAllPages(path + '?' + query.join("&"), cb);
       };
+
+      this.comment = function(issue, comment, cb) {
+        _request("POST", issue.comments_url, {body:comment}, function(err,res) {
+          cb(err,res);
+        });
+      };
+
+
     };
 
     // Top Level API
