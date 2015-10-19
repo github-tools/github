@@ -10,32 +10,33 @@
  *            http://substance.io/michael/github
  */
 
-(function() {
+(function (root, factory) {
+  // UMD boilerplate from https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+  'use strict';
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
+      return (root.returnExportsGlobal = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
+    });
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like enviroments that support module.exports,
+    // like Node.
+    module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
+  } else {
+    // Browser globals
+    var b64encode = function(str) {
+      return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      }));
+    };
+    root.returnExportsGlobal = factory(root.XMLHttpRequest, b64encode);
+  }
+}(this, function (XMLHttpRequest, b64encode) {
   'use strict';
 
   // Initial Setup
   // -------------
-
-  var XMLHttpRequest, b64encode;
-  /* istanbul ignore else  */
-  if (typeof exports !== 'undefined') {
-    XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-    b64encode = require('js-base64').Base64.encode;
-  } else { 
-    b64encode = function(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-      }));
-    };
-  }
-
-  //prefer native XMLHttpRequest always
-  /* istanbul ignore if  */
-  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined'){
-    XMLHttpRequest = window.XMLHttpRequest;
-  }
-
-
 
   var Github = function(options) {
     var API_URL = options.apiUrl || 'https://api.github.com';
@@ -461,7 +462,7 @@
             "encoding": "utf-8"
           };
         } else {
-          	content = {
+           content = {
               "content": b64encode(String.fromCharCode.apply(null, new Uint8Array(content))),
               "encoding": "base64"
             };
@@ -900,10 +901,5 @@
     };
   };
 
-  /* istanbul ignore else  */
-  if (typeof exports !== 'undefined') {
-    module.exports = Github;
-  } else {
-    window.Github = Github;
-  }
-}).call(this);
+  return Github;
+}));
