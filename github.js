@@ -13,6 +13,8 @@
 (function (root, factory) {
   // UMD boilerplate from https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
   'use strict';
+
+  /* istanbul ignore next */
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
@@ -56,7 +58,7 @@
             return k + '=' + data[k];
           }).join('&');
         }
-        return url + '&' + (new Date()).getTime();
+        return url;
       }
 
       var xhr = new XMLHttpRequest();
