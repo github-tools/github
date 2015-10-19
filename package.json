@@ -11,8 +11,7 @@
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "plato": "^1.4.0",
-    "tape": "^3.0.3",
-    "testling": "^1.7.1"
+    "tape": "^3.0.3"
   },
   "scripts": {
     "test": "tape test/*.js && npm run-script jshint",
@@ -40,18 +39,5 @@
   "browser": {
     "xmlhttprequest": false,
     "base64": false
-  },
-  "testling": {
-    "files": "test/test.*.js",
-    "browsers": [
-      "iexplore/9.0..latest",
-      "chrome/18.0..latest",
-      "firefox/15.0..latest",
-      "opera/11.0..latest",
-      "safari/5.0.5..latest",
-      "iphone/6.0..latest",
-      "ipad/6.0..latest",
-      "android-browser/4.2..latest"
-    ]
   }
 }

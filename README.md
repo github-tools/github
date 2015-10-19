@@ -317,10 +317,6 @@ To read all the issues of a given repository
 issues.list(options, function(err, issues) {});
 ```
 
-## Compatibility
-
-[![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
-
 ## Change Log
 
 ### 0.10.X
