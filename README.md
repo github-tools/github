@@ -317,13 +317,6 @@ To read all the issues of a given repository
 issues.list(options, function(err, issues) {});
 ```
 
-##Setup
-
-Github.js has the following dependency:
-
-- btoa (included in modern browsers, an npm module is included in package.json for node)
-
-
 ## Compatibility
 
 [![browser support](https://ci.testling.com/darvin/github.png)](https://ci.testling.com/darvin/github)
