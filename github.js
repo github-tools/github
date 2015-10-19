@@ -52,11 +52,12 @@
       function getURL() {
         var url = path.indexOf('//') >= 0 ? path : API_URL + path;
         url += ((/\?/).test(url) ? '&' : '?');
-        // Fix #195 about XMLHttpRequest.send method and GET/HEAD request
-        if (data && typeof data === "object" && ['GET', 'HEAD'].indexOf(method) > -1) {
-          url += '&' + Object.keys(data).map(function (k) {
-            return k + '=' + data[k];
-          }).join('&');
+        url += (new Date()).getTime();
+        if (data && typeof data === 'object' && ['GET', 'HEAD'].indexOf(method) > -1) {
+          for(var param in data) {
+            if (data.hasOwnProperty(param))
+              url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
+          }
         }
         return url;
       }
