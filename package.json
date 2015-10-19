@@ -8,6 +8,7 @@
     "xmlhttprequest": "~1.7.0"
   },
   "devDependencies": {
+    "codecov": "^1.0.1",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "plato": "^1.4.0",
@@ -15,7 +16,8 @@
   },
   "scripts": {
     "test": "tape test/*.js && npm run-script jshint",
-    "jshint": "jshint github.js test/"
+    "jshint": "jshint github.js test/",
+    "codecov": "istanbul cover tape test/*.js && cat ./coverage/coverage.json | ./node_modules/.bin/codecov"
   },
   "repository": {
     "type": "git",
@@ -26,9 +28,9 @@
     "api"
   ],
   "contributors": [
-    "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)",
-    "Michael Aufreiter (http://substance.io)",
-    "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)"
+    "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
+    "Aurelio De Rosa (http://www.audero.it/)",
+    "Michael Aufreiter (http://substance.io)"
   ],
   "license": "BSD-3-Clause-Clear",
   "readmeFilename": "README.md",
