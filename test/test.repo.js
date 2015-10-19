@@ -135,6 +135,62 @@ test('Create Repo', function(t) {
     });
   });
 
+  t.test('repo.getRef', function(q) {
+    repo.getRef('heads/master', function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
+  t.test('repo.createRef', function(q) {
+    repo.getRef('heads/master', function(err, sha) {
+      var refSpec = {
+        ref: 'refs/heads/new-test-branch',
+        sha: sha
+      };
+      repo.createRef(refSpec, function(err) {
+        q.error(err);
+        q.end();
+      });
+    });
+  });
+
+  t.test('repo.deleteRef', function(q) {
+    repo.deleteRef('heads/new-test-branch', function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
+  t.test('repo.listTags', function(q) {
+    repo.listTags(function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
+  t.test('repo.listPulls', function(q) {
+    repo.listPulls('open', function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
+  t.test('repo.getPull', function(q) {
+    var repo = github.getRepo('michael', 'github');
+    repo.getPull(153, function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
+  t.test('repo.listPulls', function(q) {
+    repo.listPulls('open', function(err) {
+      q.error(err);
+      q.end();
+    });
+  });
+
   t.test('repo.writeChinese', function(q) {
     repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err) {
       q.error(err);
