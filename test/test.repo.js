@@ -58,7 +58,7 @@ test("Repo API", function(t) {
 
     t.test('repo.read', function(q) {
         repo.read('master', 'README.md', function(err, res) {
-            q.ok(res.indexOf('##Setup') !== -1, true, 'Returned REAMDE');
+            q.ok(res.indexOf('# Github.js') !== -1, true, 'Returned README');
             q.end();
         });
     });
@@ -167,7 +167,7 @@ test('delete Repo', function(t) {
     auth: "basic"
   });
   var repo = github.getRepo(test_user.USERNAME, repoTest);
-  
+
   repo.deleteRepo(function(err, res) {
     t.error(err);
     t.equals(res, true, 'Repo Deleted');
