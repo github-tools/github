@@ -75,7 +75,7 @@ test("Repo API", function(t) {
     t.test('repo.getSha', function(q) {
         repo.getSha('master', '.gitignore', function(err, sha) {
             q.error(err, 'get sha error: ' + err);
-            q.equals(sha, '153216eb946aedc51f4fe88a51008b4abcac5308', 'Returned sha message.');
+            q.equals(sha, '8293a5658aed839ed52fb0e5bd9e6c467c992d3d', 'Returned sha message.');
             q.end();
         });
     });
