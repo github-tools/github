@@ -128,6 +128,7 @@ repo.listBranches(function(err, branches) {});
 ```
 
 Store contents at a certain path, where files that don't yet exist are created on the fly.
+You can also provide an optional object literal, (`options` in the example below) containing information about the author and the committer.
 
 ```js
 var options = {
