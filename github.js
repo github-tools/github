@@ -134,9 +134,25 @@
     // =======
 
     Github.User = function() {
-      this.repos = function(cb) {
-        // Github does not always honor the 1000 limit so we want to iterate over the data set.
-        _requestAllPages('/user/repos?type=all&per_page=1000&sort=updated', function(err, res) {
+      this.repos = function(options, cb) {
+        if (arguments.length === 1 && typeof arguments[0] === 'function') {
+          cb = options;
+          options = {};
+        }
+        options = options || {};
+
+        var url = '/user/repos';
+        var params = [];
+
+        params.push("type=" + encodeURIComponent(options.type || 'all'));
+        params.push("sort=" + encodeURIComponent(options.sort || 'updated'));
+        params.push("per_page=" + encodeURIComponent(options.per_page || '1000'));
+        if(options.page) {
+          params.push("page=" + encodeURIComponent(options.page));
+        }
+        url += '?' + params.join('&');
+
+        _request("GET", url, null, function(err, res) {
           cb(err, res);
         });
       };

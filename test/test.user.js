@@ -20,6 +20,20 @@ test("User API", function(t) {
     });
   });
 
+  t.test('user.repos with options', function(q) {
+    var options = {
+      type: 'owner',
+      sort: 'updated',
+      per_page: 10,
+      page: 1
+    };
+    user.repos(options, function(err, repos) {
+      q.equals(repos.length, 10);
+      q.error(err, 'user repos');
+      q.end();
+    });
+  });
+
   t.test('user.orgs', function(q) {
     user.orgs(function(err) {
       q.error(err, 'user orgs');
