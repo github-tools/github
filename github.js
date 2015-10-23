@@ -917,6 +917,40 @@
     this.getGist = function(id) {
       return new Github.Gist({id: id});
     };
+    
+    // Issues API
+    // =========
+    Github.Issue = function(user, repo, number) {
+    	var issuePath = "/repos/" + user + "/" + repo + "/issues/" + number;
+    	this.comments = function(cb) {
+    		_request("GET", issuePath + "/comments", null, function(err,res) {
+    			cb(err,res);
+            });
+    	};
+    };
+    
+    Github.Issues = function(user, repo, cb) {
+    	var issuesPath = "/repos/" + user + "/" + repo + "/issues";
+    	this.open = function(cb) {
+    		_request("GET", issuesPath + "?state=open", null, function(err,res) {
+    			cb(err,res);
+            });
+    	};
+    	this.closed = function(cb) {
+    		_request("GET", issuesPath + "?state=closed", null, function(err,res) {
+    			cb(err,res);
+            });
+    	};
+    };
+    
+    this.getIssues = function(user, repo) {
+    	return new Github.Issues(user, repo);
+    }
+    
+    this.getIssue = function(user, repo, number) {
+    	return new Github.Issue(user, repo, number);
+    };
+    
   };
 
   return Github;
