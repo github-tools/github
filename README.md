@@ -215,10 +215,10 @@ repo.contributors(function(err, data) {});
 var user = github.getUser();
 ```
 
-List all repositories of the authenticated user, including private repositories and repositories in which the user is a collaborator and not an owner.
+List repositories of the authenticated user, including private repositories and repositories in which the user is a collaborator and not an owner.
 
 ```js
-user.repos(function(err, repos) {});
+user.repos(options, function(err, repos) {});
 ```
 
 List organizations the autenticated user belongs to.
