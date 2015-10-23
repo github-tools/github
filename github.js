@@ -152,7 +152,7 @@
         }
         url += '?' + params.join('&');
 
-        _requestAllPages(url, function(err, res) {
+        _request("GET", url, null, function(err, res) {
           cb(err, res);
         });
       };
