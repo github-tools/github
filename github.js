@@ -58,7 +58,7 @@
               url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
           }
         }
-        return url;
+        return url + (typeof window !== 'undefined' ? '&' + new Date().getTime() : '');
       }
 
       var xhr = new XMLHttpRequest();
@@ -344,7 +344,9 @@
       // repo.deleteRef('tags/v1.0')
 
       this.deleteRef = function(ref, cb) {
-        _request('DELETE', repoPath + '/git/refs/' + ref, options, cb);
+        _request('DELETE', repoPath + '/git/refs/' + ref, options, function(err, res, xhr){
+          cb(err, res, xhr);
+        });
       };
 
       // Create a repo

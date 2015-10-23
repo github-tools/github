@@ -227,7 +227,29 @@ test('Create Repo', function(t) {
     });
   });
 
+  t.test('Regression test for _request (#14)', function(q){
+    repo.getRef('heads/master', function(err, sha) {
+      var refSpec = {
+        ref: 'refs/heads/testing-14',
+        sha: sha
+      };
+      repo.createRef(refSpec, function(err) {
+        q.error(err, 'Test branch created');
 
+        // Triggers GET: https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
+        repo.getRef('heads/master', function(err) {
+          q.error(err, 'Regression test ready');
+
+          // Triggers DELETE: https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
+          repo.deleteRef('heads/testing-14', function(err, res, xhr) {
+            q.error(err);
+            q.equals(xhr.status, 204, 'Returns 204');
+            q.end();
+          });
+        });
+      });
+    });
+  });
 
   clearTimeout(timeout);
   t.end();
