@@ -1,41 +1,45 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
+// module dependencies
+var chai = require('chai'),
+    sinonChai = require('sinon-chai');
+
+var Github = require('../');
 var test_user = require('./user.json');
 
-test("Basic Auth - Pass", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
+// Use should flavour for Mocha
+var should = chai.should();
+chai.use(sinonChai);
+
+describe('Github constructor', function() {
   var github = new Github({
     username: test_user.USERNAME,
     password: test_user.PASSWORD,
-    auth: "basic"
+    auth: 'basic'
   });
   var user = github.getUser();
-  
-  user.notifications(function(err) {
-    t.error(err, 'user is authd');
+
+  it('should authenticate and return no errors', function(done){
+    user.notifications(function(err){
+      should.not.exist(err);
+      done();
+    });
   });
-  
-  clearTimeout(timeout);
-  t.end(); 
 });
 
-test("Basic Auth - Fail", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
+describe('Github constructor (failing case)', function() {
   var github = new Github({
     username: test_user.USERNAME,
     password: 'fake124',
-    auth: "basic"
+    auth: 'basic'
   });
   var user = github.getUser();
 
-  user.notifications(function(err) {
-      t.ok(err, 'user is not authd');
-      t.equals(JSON.parse(err.request.responseText).message, 'Bad credentials', 'confirm error');
+  it('should fail authentication and return err', function(done){
+    user.notifications(function(err){
+      err.request.status.should.equal(401, 'Return 401 status for bad auth');
+      JSON.parse(err.request.responseText).message.should.equal('Bad credentials');
+      done();
+    });
   });
-
-  clearTimeout(timeout);
-  t.end();
-
 });

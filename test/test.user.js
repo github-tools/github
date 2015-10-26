@@ -1,26 +1,31 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
+// module dependencies
+var chai = require('chai'), sinonChai = require('sinon-chai');
+
+var Github = require('../');
 var test_user = require('./user.json');
 
-test("User API", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 100000);
+// Use should flavour for Mocha
+var should = chai.should();
+chai.use(sinonChai);
+
+describe('Github.User', function() {
   var github = new Github({
     username: test_user.USERNAME,
     password: test_user.PASSWORD,
-    auth: "basic"
+    auth: 'basic'
   });
   var user = github.getUser();
 
-  t.test('user.repos', function(q) {
+  it('should get user.repos', function(done) {
     user.repos(function(err) {
-      q.error(err, 'user orgs');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.repos with options', function(q) {
+  it('should get user.repos with options', function(done) {
     var options = {
       type: 'owner',
       sort: 'updated',
@@ -28,34 +33,35 @@ test("User API", function(t) {
       page: 1
     };
     user.repos(options, function(err, repos) {
-      q.equals(repos.length, 10);
-      q.error(err, 'user repos');
-      q.end();
+      repos.should.have.length(10);
+      should.not.exist(err);
+
+      done();
     });
   });
 
-  t.test('user.orgs', function(q) {
+  it('should get user.orgs', function(done) {
     user.orgs(function(err) {
-      q.error(err, 'user orgs');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.gists', function(q) {
+  it('should get user.gists', function(done) {
     user.gists(function(err) {
-      q.error(err, 'user gists');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.notifications', function(q) {
+  it('should get user.notifications', function(done) {
     user.notifications(function(err) {
-      q.error(err, 'user notifications');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.notifications with options', function(q) {
+  it('should get user.notifications with options', function(done) {
     var options = {
       all: true,
       participating: true,
@@ -63,77 +69,76 @@ test("User API", function(t) {
       before: '2015-02-01T00:00:00Z'
     };
     user.notifications(options, function(err) {
-      q.error(err, 'user notifications');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.show', function(q) {
+  it('should show user', function(done) {
     user.show('ingalls', function(err) {
-      q.error(err, 'user show');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.userRepos', function(q) {
+  it('should show user\'s repos', function(done) {
+    this.timeout(8000); // Bit of a longer timeout
+
     user.userRepos(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user repos');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.userStarred', function(q) {
+  it('should show user\'s starred repos', function(done) {
     user.userStarred(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user starred');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.userGists', function(q) {
+  it('should show user\'s gists', function(done) {
     user.userGists(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user gists');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.orgRepos', function(q) {
+  it('should show user\'s organisation repos', function(done) {
     user.orgRepos('openaddresses', function(err) {
-      q.error(err, 'org users');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.follow', function(q) {
+  it('should follow user', function(done) {
     user.follow('ingalls', function(err) {
-      q.error(err, 'follow ingalls');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.unfollow', function(q) {
+  it('should unfollow user', function(done) {
     user.unfollow('ingalls', function(err) {
-      q.error(err, 'unfollow ingalls');
-      q.end();
+      should.not.exist(err);
+      done();
     });
   });
 
-  t.test('user.createRepo', function(q) {
-    var test_user = require('./user.json');
+  it('should create a repo', function(done) {
+    this.timeout(8000); // Bit of a longer timeout
     var repoTest = Date.now();
     var github = new Github({
       username: test_user.USERNAME,
       password: test_user.PASSWORD,
-      auth: "basic"
+      auth: 'basic'
     });
     var user = github.getUser();
 
-    user.createRepo({ "name": repoTest }, function (err, res) {
-      q.error(err);
-      q.equals(res.name, repoTest.toString(), 'Repo created');
-      q.end();
+    user.createRepo({ 'name': repoTest }, function (err, res) {
+      should.not.exist(err);
+      res.name.should.equal(repoTest.toString());
+      done();
     });
   });
-
-  clearTimeout(timeout);
-  t.end();
 });
