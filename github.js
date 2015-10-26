@@ -18,7 +18,7 @@
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
-      return (root.returnExportsGlobal = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
+      return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
     });
   } else if (typeof module === 'object' && module.exports) {
     // Node. Does not work with strict CommonJS, but
@@ -32,7 +32,7 @@
         return String.fromCharCode('0x' + p1);
       }));
     };
-    root.returnExportsGlobal = factory(root.XMLHttpRequest, b64encode);
+    root.Github = factory(root.XMLHttpRequest, b64encode);
   }
 }(this, function (XMLHttpRequest, b64encode) {
   'use strict';
@@ -732,16 +732,16 @@
           options = {};
         }
         that.getSha(branch, encodeURI(path), function(err, sha) {
-          var options = {
+          var writeOptions = {
               message: message,
-              content: btoa(content),
+              content: b64encode(content),
               branch: branch,
-              committer: options.committer,
-              author: options.author
+              committer: options && options.committer ? options.committer : undefined,
+              author: options && options.author ? options.author : undefined
           };
           // if no error, we set the sha to overwrite an existing file
-          if (!(err && err.error !== 404)) options.sha = sha;
-          _request("PUT", repoPath + "/contents/" + encodeURI(path), options, cb);
+          if (!(err && err.error !== 404)) writeOptions.sha = sha;
+          _request("PUT", repoPath + "/contents/" + encodeURI(path), writeOptions, cb);
         });
       };
 
@@ -883,33 +883,33 @@
           cb(err,res);
         });
       };
-
-
     };
 
-    // Top Level API
-    // -------
+    return Github;
+  };
 
-    this.getIssues = function(user, repo) {
-      return new Github.Issue({user: user, repo: repo});
-    };
+  // Top Level API
+  // -------
 
-    this.getRepo = function(user, repo) {
-      if (!repo) {
-        var fullname = user;
-        return new Github.Repository({fullname: fullname});
-      } else {
-        return new Github.Repository({user: user, name: repo});
-      }
-    };
+  Github.getIssues = function(user, repo) {
+    return new Github.Issue({user: user, repo: repo});
+  };
 
-    this.getUser = function() {
-      return new Github.User();
-    };
+  Github.getRepo = function(user, repo) {
+    if (!repo) {
+      var fullname = user;
+      return new Github.Repository({fullname: fullname});
+    } else {
+      return new Github.Repository({user: user, name: repo});
+    }
+  };
 
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
-    };
+  Github.getUser = function() {
+    return new Github.User();
+  };
+
+  Github.getGist = function(id) {
+    return new Github.Gist({id: id});
   };
 
   return Github;
