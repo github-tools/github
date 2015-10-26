@@ -97,7 +97,7 @@ describe('Github.Repository', function() {
   });
 });
 
-var repoTest = Date.now();
+var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
 
 describe('Creating new Github.Repository', function() {
   var github = new Github({
@@ -228,10 +228,10 @@ describe('Creating new Github.Repository', function() {
   });
 
   it('should be able to write unicode to repo', function(done) {
-    repo.write('master', 'TEST.md', '\u2014', 'Long dash unicode', function(err) {
+    repo.write('master', 'TEST_unicode.md', '\u2014', 'Long dash unicode', function(err) {
       should.not.exist(err);
 
-      repo.read('master', 'TEST.md', function(err, obj) {
+      repo.read('master', 'TEST_unicode.md', function(err, obj) {
         should.not.exist(err);
         obj.should.equal('\u2014');
 

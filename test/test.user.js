@@ -11,6 +11,8 @@ var should = chai.should();
 chai.use(sinonChai);
 
 describe('Github.User', function() {
+  this.timeout(8000); // Bit of a longer timeout
+
   var github = new Github({
     username: test_user.USERNAME,
     password: test_user.PASSWORD,
@@ -82,8 +84,6 @@ describe('Github.User', function() {
   });
 
   it('should show user\'s repos', function(done) {
-    this.timeout(8000); // Bit of a longer timeout
-
     user.userRepos(test_user.USERNAME, function(err) {
       should.not.exist(err);
       done();
@@ -126,8 +126,7 @@ describe('Github.User', function() {
   });
 
   it('should create a repo', function(done) {
-    this.timeout(8000); // Bit of a longer timeout
-    var repoTest = Date.now();
+    var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
     var github = new Github({
       username: test_user.USERNAME,
       password: test_user.PASSWORD,
