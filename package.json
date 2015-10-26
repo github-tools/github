@@ -1,5 +1,5 @@
 {
-  "name": "github-api",
+  "name": "github",
   "version": "0.10.6",
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
