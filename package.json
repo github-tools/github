@@ -9,8 +9,14 @@
   },
   "devDependencies": {
     "codecov": "^1.0.1",
+    "gulp": "^3.9.0",
+    "gulp-jscs": "^3.0.1",
+    "gulp-jshint": "^1.11.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.4.2",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
+    "jshint-stylish": "^2.0.1",
     "plato": "^1.4.0",
     "tape": "^3.0.3"
   },
