@@ -1,61 +1,59 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
+// module dependencies
+var chai = require('chai'), sinonChai = require('sinon-chai');
+
+var Github = require('../');
 var test_user = require('./user.json');
 
-test("User API", function(t) {
-    var timeout = setTimeout(function () { t.fail(); }, 100000);
-    var github = new Github({
-        username: test_user.USERNAME,
-        password: test_user.PASSWORD,
-        auth: "basic"
+// Use should flavour for Mocha
+var should = chai.should();
+chai.use(sinonChai);
+
+describe('Github.Search', function() {
+  var github = new Github({
+    username: test_user.USERNAME,
+    password: test_user.PASSWORD,
+    auth: "basic"
+  });
+
+  it('should search.repositories', function(done) {
+    var search = github.getSearch('tetris+language:assembly&sort=stars&order=desc');
+    var options = null;
+
+    search.repositories(options, function (err) {
+      should.not.exist(err);
+      done();
     });
-    // var user = github.getUser();
+  });
 
+  it('should search.code', function(done) {
+    var search = github.getSearch('addClass+in:file+language:js+repo:jquery/jquery');
+    var options = null;
 
-    t.test('Search.repositories', function(q) {
-        var search = github.getSearch("tetris+language:assembly&sort=stars&order=desc");
-        var options = null;
-
-        search.repositories(options, function (err) {
-            q.error(err, 'search repositories');
-            q.end();
-        });
+    search.code(options, function (err) {
+      should.not.exist(err);
+      done();
     });
+  });
 
-    t.test('Search.code', function(q) {
-        var search = github.getSearch("addClass+in:file+language:js+repo:jquery/jquery");
-        var options = null;
+  it('should search.issues', function(done) {
+    var search = github.getSearch('windows+label:bug+language:python+state:open&sort=created&order=asc');
+    var options = null;
 
-        search.code(options, function (err) {
-            q.error(err, 'search code');
-            q.end();
-        });
+    search.issues(options, function (err) {
+      should.not.exist(err);
+      done();
     });
+  });
 
-    t.test('Search.issues', function(q) {
-        var search = github.getSearch("windows+label:bug+language:python+state:open&sort=created&order=asc");
-        var options = null;
+  it('should search.users', function(done) {
+    var search = github.getSearch('tom+repos:%3E42+followers:%3E1000');
+    var options = null;
 
-        search.issues(options, function (err) {
-            q.error(err, 'search issues');
-            q.end();
-        });
+    search.users(options, function (err) {
+      should.not.exist(err);
+      done();
     });
-
-    t.test('Search.users', function(q) {
-        var search = github.getSearch("tom+repos:%3E42+followers:%3E1000");
-        var options = null;
-
-        search.users(options, function (err) {
-            q.error(err, 'search users');
-            q.end();
-        });
-    });
-
-
-
-    clearTimeout(timeout);
-    t.end();
- });
+  });
+});
