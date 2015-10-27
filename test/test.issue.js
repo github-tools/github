@@ -1,40 +1,46 @@
 'use strict';
 
-// module dependencies
-var chai = require('chai'), sinonChai = require('sinon-chai');
+var testUser, github, issues;
 
-// GitHub data
-var Github = require('../');
-var test_user = require('./user.json');
+if (typeof window === 'undefined') {
+   // Module dependencies
+   var chai = require('chai');
+   var Github = require('../');
 
-// Use should flavour for Mocha
-var should = chai.should();
-chai.use(sinonChai);
+   testUser = require('./user.json');
+
+   // Use should flavour for Mocha
+   var should = chai.should();
+}
 
 describe('Github.Issue', function() {
-  var github = new Github({
-    username : test_user.USERNAME,
-    password : test_user.PASSWORD,
-    auth : 'basic'
-  });
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
-  var issues = github.getIssues('mikedeboertest', 'TestRepo');
-
-  it('should list issues', function(done) {
-    issues.list({}, function(err, issues) {
-      should.not.exist(err);
-			issues.should.have.length.above(0);
-			done();
-    });
-  });
-
-  it('should post issue comment', function(done) {
-    issues.list({}, function(err, issuesList) {
-      issues.comment(issuesList[0], 'Comment test', function(err, res) {
-        should.not.exist(err);
-        res.body.should.equal('Comment test');
-        done();
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
       });
-    });
-  });
+
+      issues = github.getIssues('mikedeboertest', 'TestRepo');
+   });
+
+   it('should list issues', function(done) {
+      issues.list({}, function(err, issues) {
+         should.not.exist(err);
+         issues.should.have.length.above(0);
+         done();
+      });
+   });
+
+   it('should post issue comment', function(done) {
+      issues.list({}, function(err, issuesList) {
+         issues.comment(issuesList[0], 'Comment test', function(err, res) {
+            should.not.exist(err);
+            res.body.should.equal('Comment test');
+            done();
+         });
+      });
+   });
 });

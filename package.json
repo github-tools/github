@@ -1,6 +1,6 @@
 {
   "name": "github-api",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "A higher-level wrapper around the Github API.",
   "main": "github.js",
   "dependencies": {
@@ -12,24 +12,27 @@
     "codecov": "^1.0.1",
     "gulp": "^3.9.0",
     "gulp-jscs": "^3.0.1",
+    "gulp-jscs-stylish": "^1.2.1",
     "gulp-jshint": "^1.11.2",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.4.2",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "jshint-stylish": "^2.0.1",
-    "plato": "^1.4.0",
     "karma": "^0.13.14",
+    "karma-chai": "^0.1.0",
     "karma-coverage": "^0.5.3",
+    "karma-json-fixtures-preprocessor": "0.0.5",
     "karma-mocha": "^0.2.0",
+    "karma-mocha-reporter": "^1.1.1",
+    "karma-phantomjs-launcher": "^0.2.1",
     "mocha": "^2.3.3",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "phantomjs": "^1.9.18"
   },
   "scripts": {
-    "test": "mocha test/*.js && npm run-script jshint",
-    "jshint": "jshint github.js test/",
-    "codecov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
+    "test": "gulp test && gulp lint",
+    "lint": "gulp lint",
+    "codecov": "cat coverage/*/lcov.info | codecov"
   },
   "repository": {
     "type": "git",
