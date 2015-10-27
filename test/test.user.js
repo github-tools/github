@@ -1,26 +1,36 @@
 'use strict';
 
-// module dependencies
-var chai = require('chai'), sinonChai = require('sinon-chai');
+var test_user, user, github;
 
-var Github = require('../');
-var test_user = require('./user.json');
+if (typeof window === 'undefined') {
+  // module dependencies
+  var chai = require('chai'),
+      sinonChai = require('sinon-chai');
 
-// Use should flavour for Mocha
-var should = chai.should();
-chai.use(sinonChai);
+  var Github = require('../');
+  test_user = require('./user.json');
+
+  // Use should flavour for Mocha
+  var should = chai.should();
+  chai.use(sinonChai);
+}
 
 describe('Github.User', function() {
-  this.timeout(8000); // Bit of a longer timeout
+  before(function(){
+    if (typeof window !== 'undefined') test_user = window.__fixtures__['test/user'];
+    github = new Github({
+      username: test_user.USERNAME,
+      password: test_user.PASSWORD,
+      auth: 'basic'
+    });
+    user = github.getUser();
 
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: 'basic'
+    this.timeout(8000); // Bit of a longer timeout
   });
-  var user = github.getUser();
 
   it('should get user.repos', function(done) {
+    this.timeout(8000); // Bit of a longer timeout
+    
     user.repos(function(err) {
       should.not.exist(err);
       done();

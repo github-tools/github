@@ -1,22 +1,32 @@
 'use strict';
 
-// module dependencies
-var chai = require('chai'), sinonChai = require('sinon-chai');
+var github, repo, user, test_user;
 
-var Github = require('../');
-var test_user = require('./user.json');
+if (typeof window === 'undefined') {
+  // module dependencies
+  var chai = require('chai'),
+      sinonChai = require('sinon-chai');
 
-// Use should flavour for Mocha
-var should = chai.should();
-chai.use(sinonChai);
+  var Github = require('../');
+  test_user = require('./user.json');
+
+  // Use should flavour for Mocha
+  var should = chai.should();
+  chai.use(sinonChai);
+}
 
 describe('Github.Repository', function() {
-  var github = new Github({
-    username : test_user.USERNAME,
-    password : test_user.PASSWORD,
-    auth : 'basic'
+  before(function(){
+    if (typeof window !== 'undefined') test_user = window.__fixtures__['test/user'];
+
+    github = new Github({
+      username : test_user.USERNAME,
+      password : test_user.PASSWORD,
+      auth : 'basic'
+    });
+
+    repo = github.getRepo('michael', 'github');
   });
-  var repo = github.getRepo('michael', 'github');
 
   it('should show repo', function(done) {
     repo.show(function(err, res) {
@@ -82,7 +92,7 @@ describe('Github.Repository', function() {
   it('should get a SHA from a repo', function(done) {
     repo.getSha('master', '.gitignore', function(err, sha) {
       should.not.exist(err);
-      sha.should.equal('8293a5658aed839ed52fb0e5bd9e6c467c992d3d');
+      sha.should.equal('743f72052be92b3e7f42b8318f2663a9011ef5be');
       done();
     });
   });
@@ -100,12 +110,18 @@ describe('Github.Repository', function() {
 var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
 
 describe('Creating new Github.Repository', function() {
-  var github = new Github({
-    username : test_user.USERNAME,
-    password : test_user.PASSWORD,
-    auth : 'basic'
+  before(function(){
+    if (typeof window !== 'undefined') test_user = window.__fixtures__['test/user'];
+
+    github = new Github({
+      username : test_user.USERNAME,
+      password : test_user.PASSWORD,
+      auth : 'basic'
+    });
+
+    user = github.getUser();
+    repo = github.getRepo(test_user.USERNAME, repoTest);
   });
-  var user = github.getUser();
 
   it('should create repo', function(done) {
     user.createRepo({'name' : repoTest}, function(err, res) {
@@ -114,8 +130,6 @@ describe('Creating new Github.Repository', function() {
       done();
     });
   });
-
-  var repo = github.getRepo(test_user.USERNAME, repoTest);
 
   it('should write to repo', function(done) {
     repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
@@ -267,12 +281,15 @@ describe('Creating new Github.Repository', function() {
 });
 
 describe('deleting a Github.Repository', function() {
-  var github = new Github({
-    username : test_user.USERNAME,
-    password : test_user.PASSWORD,
-    auth : 'basic'
+  before(function(){
+    if (typeof window !== 'undefined') test_user = window.__fixtures__['test/user'];
+    github = new Github({
+      username : test_user.USERNAME,
+      password : test_user.PASSWORD,
+      auth : 'basic'
+    });
+    repo = github.getRepo(test_user.USERNAME, repoTest);
   });
-  var repo = github.getRepo(test_user.USERNAME, repoTest);
 
   it('should delete the repo', function(done){
     repo.deleteRepo(function(err, res) {
@@ -284,12 +301,15 @@ describe('deleting a Github.Repository', function() {
 });
 
 describe('Repo returns commit errors correctly', function() {
-  var github = new Github({
-    username : test_user.USERNAME,
-    password : test_user.PASSWORD,
-    auth : 'basic'
+  before(function(){
+    if (typeof window !== 'undefined') test_user = window.__fixtures__['test/user'];
+    github = new Github({
+      username : test_user.USERNAME,
+      password : test_user.PASSWORD,
+      auth : 'basic'
+    });
+    repo = github.getRepo(test_user.USERNAME, test_user.REPO);
   });
-  var repo = github.getRepo(test_user.USERNAME, test_user.REPO);
 
   it('should fail on broken commit', function(done){
     repo.commit('broken-parent-hash', 'broken-tree-hash', 'commit message', function(err) {
