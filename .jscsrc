@@ -1,5 +1,5 @@
 {
-   "disallowDanglingUnderscores": true,
+   "disallowDanglingUnderscores": false,
    "disallowIdentifierNames": [],
    "disallowImplicitTypeConversion": [],
    "disallowKeywordsOnNewLine": [
@@ -53,7 +53,6 @@
       "do",
       "else",
       "for",
-      "if",
       "try",
       "while"
    ],
