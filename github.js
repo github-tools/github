@@ -24,7 +24,7 @@
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like enviroments that support module.exports,
     // like Node.
-    module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
+    module.exports = factory(XMLHttpRequest || require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
   } else {
     // Browser globals
     var b64encode = function(str) {
