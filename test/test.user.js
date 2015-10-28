@@ -1,139 +1,155 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
-var test_user = require('./user.json');
+var testUser, user, github;
 
-test("User API", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 100000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: "basic"
-  });
-  var user = github.getUser();
+if (typeof window === 'undefined') {
+   // Module dependencies
+   var chai = require('chai');
+   var Github = require('../');
 
-  t.test('user.repos', function(q) {
-    user.repos(function(err) {
-      q.error(err, 'user orgs');
-      q.end();
-    });
-  });
+   testUser = require('./user.json');
 
-  t.test('user.repos with options', function(q) {
-    var options = {
-      type: 'owner',
-      sort: 'updated',
-      per_page: 10,
-      page: 1
-    };
-    user.repos(options, function(err, repos) {
-      q.equals(repos.length, 10);
-      q.error(err, 'user repos');
-      q.end();
-    });
-  });
+   // Use should flavour for Mocha
+   var should = chai.should();
+}
 
-  t.test('user.orgs', function(q) {
-    user.orgs(function(err) {
-      q.error(err, 'user orgs');
-      q.end();
-    });
-  });
+describe('Github.User', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+      user = github.getUser();
 
-  t.test('user.gists', function(q) {
-    user.gists(function(err) {
-      q.error(err, 'user gists');
-      q.end();
-    });
-  });
+      this.timeout(8000); // Bit of a longer timeout
+   });
 
-  t.test('user.notifications', function(q) {
-    user.notifications(function(err) {
-      q.error(err, 'user notifications');
-      q.end();
-    });
-  });
+   it('should get user.repos', function(done) {
+      this.timeout(8000); // Bit of a longer timeout
 
-  t.test('user.notifications with options', function(q) {
-    var options = {
-      all: true,
-      participating: true,
-      since: '2015-01-01T00:00:00Z',
-      before: '2015-02-01T00:00:00Z'
-    };
-    user.notifications(options, function(err) {
-      q.error(err, 'user notifications');
-      q.end();
-    });
-  });
+      user.repos(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-  t.test('user.show', function(q) {
-    user.show('ingalls', function(err) {
-      q.error(err, 'user show');
-      q.end();
-    });
-  });
+   it('should get user.repos with options', function(done) {
+      var options = {
+         type: 'owner',
+         sort: 'updated',
+         per_page: 10, // jscs:ignore
+         page: 1
+      };
 
-  t.test('user.userRepos', function(q) {
-    user.userRepos(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user repos');
-      q.end();
-    });
-  });
+      user.repos(options, function(err, repos) {
+         repos.should.have.length(10);
+         should.not.exist(err);
 
-  t.test('user.userStarred', function(q) {
-    user.userStarred(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user starred');
-      q.end();
-    });
-  });
+         done();
+      });
+   });
 
-  t.test('user.userGists', function(q) {
-    user.userGists(test_user.USERNAME, function(err) {
-      q.error(err, 'alt user gists');
-      q.end();
-    });
-  });
+   it('should get user.orgs', function(done) {
+      user.orgs(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-  t.test('user.orgRepos', function(q) {
-    user.orgRepos('openaddresses', function(err) {
-      q.error(err, 'org users');
-      q.end();
-    });
-  });
+   it('should get user.gists', function(done) {
+      user.gists(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-  t.test('user.follow', function(q) {
-    user.follow('ingalls', function(err) {
-      q.error(err, 'follow ingalls');
-      q.end();
-    });
-  });
+   it('should get user.notifications', function(done) {
+      user.notifications(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-  t.test('user.unfollow', function(q) {
-    user.unfollow('ingalls', function(err) {
-      q.error(err, 'unfollow ingalls');
-      q.end();
-    });
-  });
+   it('should get user.notifications with options', function(done) {
+      var options = {
+         all: true,
+         participating: true,
+         since: '2015-01-01T00:00:00Z',
+         before: '2015-02-01T00:00:00Z'
+      };
 
-  t.test('user.createRepo', function(q) {
-    var test_user = require('./user.json');
-    var repoTest = Date.now();
-    var github = new Github({
-      username: test_user.USERNAME,
-      password: test_user.PASSWORD,
-      auth: "basic"
-    });
-    var user = github.getUser();
+      user.notifications(options, function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-    user.createRepo({ "name": repoTest }, function (err, res) {
-      q.error(err);
-      q.equals(res.name, repoTest.toString(), 'Repo created');
-      q.end();
-    });
-  });
+   it('should show user', function(done) {
+      user.show('ingalls', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-  clearTimeout(timeout);
-  t.end();
+   it('should show user\'s repos', function(done) {
+      user.userRepos(testUser.USERNAME, function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should show user\'s starred repos', function(done) {
+      user.userStarred(testUser.USERNAME, function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should show user\'s gists', function(done) {
+      user.userGists(testUser.USERNAME, function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should show user\'s organisation repos', function(done) {
+      user.orgRepos('openaddresses', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should follow user', function(done) {
+      user.follow('ingalls', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should unfollow user', function(done) {
+      user.unfollow('ingalls', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should create a repo', function(done) {
+      var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
+      var github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+      var user = github.getUser();
+
+      user.createRepo({
+         name: repoTest
+      }, function (err, res) {
+         should.not.exist(err);
+         res.name.should.equal(repoTest.toString());
+         done();
+      });
+   });
 });

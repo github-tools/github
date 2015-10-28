@@ -1,36 +1,46 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
-var test_user = require('./user.json');
+var testUser, github, issues;
 
-test("Issues API", function(t) {
-	var github = new Github({
-      username: test_user.USERNAME,
-      password: test_user.PASSWORD,
-      auth: "basic"
-    });
+if (typeof window === 'undefined') {
+   // Module dependencies
+   var chai = require('chai');
+   var Github = require('../');
 
-    var issues = github.getIssues('mikedeboertest', 'TestRepo');
+   testUser = require('./user.json');
 
-    t.test('issues.list', function(q) {
-        issues.list({},function(err, issues) {
-			q.error(err);
-			t.equals(issues.length > 0, true, 'Issues!');
-			q.end();
-        });
-        t.end();
-    });
+   // Use should flavour for Mocha
+   var should = chai.should();
+}
 
-    t.test('issues.comment', function(q) {
-        issues.list({},function(err, issuesList) {
-			issues.comment(issuesList[0], 'Comment test', function(err, res){
-				q.error(err);
-				t.equals(res.body, 'Comment test', 'Comments!');
-				q.end();
-	        });  
-        });
-    });
+describe('Github.Issue', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
 
+      issues = github.getIssues('mikedeboertest', 'TestRepo');
+   });
+
+   it('should list issues', function(done) {
+      issues.list({}, function(err, issues) {
+         should.not.exist(err);
+         issues.should.have.length.above(0);
+         done();
+      });
+   });
+
+   it('should post issue comment', function(done) {
+      issues.list({}, function(err, issuesList) {
+         issues.comment(issuesList[0], 'Comment test', function(err, res) {
+            should.not.exist(err);
+            res.body.should.equal('Comment test');
+            done();
+         });
+      });
+   });
 });

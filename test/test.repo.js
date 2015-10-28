@@ -1,291 +1,345 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
-var test_user = require('./user.json');
+var github, repo, user, testUser;
 
-test("Repo API", function(t) {
-    var timeout = setTimeout(function () { t.fail(); }, 100000);
-    var github = new Github({
-      username: test_user.USERNAME,
-      password: test_user.PASSWORD,
-      auth: "basic"
-    });
-    var repo = github.getRepo('michael', 'github');
+if (typeof window === 'undefined') {
+   // Module dependencies
+   var chai = require('chai');
+   var Github = require('../');
 
-    t.test('repo.show', function(q) {
-        repo.show(function(err, res) {
-            q.error(err, 'show repo');
-            q.equals(res.full_name, 'michael/github', 'repo name');
-            q.end();
-        });
-    });
+   testUser = require('./user.json');
 
-    t.test('repo.contents', function(q) {
-        repo.contents('master', './', function(err) {
-            q.error(err, 'get repo contents');
-            q.end();
-        });
-    });
+   // Use should flavour for Mocha
+   var should = chai.should();
+}
 
-    t.test('repo.fork', function(q) {
-        repo.fork(function(err) {
-            q.error(err, 'test fork repo');
-            q.end();
-        });
-    });
+describe('Github.Repository', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
-    t.test('repo.contributors', function(q) {
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+
+      repo = github.getRepo('michael', 'github');
+   });
+
+   it('should show repo', function(done) {
+      repo.show(function(err, res) {
+         should.not.exist(err);
+         res.full_name.should.equal('michael/github'); // jscs:ignore
+         done();
+      });
+   });
+
+   it('should show repo contents', function(done) {
+      repo.contents('master', './', function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion.
+         done();
+      });
+   });
+
+   it('should fork repo', function(done) {
+      repo.fork(function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion.
+         done();
+      });
+   });
+
+   it('should show repo contributors', function(done) {
       repo.contributors(function(err, res) {
-        q.error(err, 'repo contributors');
-        q.ok(res instanceof Array, 'list of contributors');
-        q.ok(res.length, 'at least one contributor');
-        q.ok(res[0].author, 'contributor info');
-        q.ok(res[0].total, 'total number of commits');
-        q.ok(res[0].weeks, 'weekly hash');
-        q.end();
+         should.not.exist(err);
+         res.should.be.instanceof(Array);
+         res.should.have.length.above(1);
+         should.exist(res[0].author);
+         should.exist(res[0].total);
+         should.exist(res[0].weeks);
+         done();
       });
-    });
+   });
 
-    //@TODO repo.branch, repo.pull
+   // @TODO repo.branch, repo.pull
 
-    t.test('repo.listBranches', function(q) {
-        repo.listBranches(function(err) {
-            q.error(err, 'list branches');
-            q.end();
-        });
-    });
+   it('should list repo branches', function(done) {
+      repo.listBranches(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 
-    t.test('repo.read', function(q) {
-        repo.read('master', 'README.md', function(err, res) {
-            q.notEquals(res.indexOf('# Github.js'), -1, 'Returned README');
-            q.end();
-        });
-    });
+   it('should read repo', function(done) {
+      repo.read('master', 'README.md', function(err, res) {
+         res.indexOf('# Github.js').should.be.above(-1);
+         done();
+      });
+   });
 
-    t.test('repo.getCommit', function(q) {
-        repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
-            q.error(err, 'get commit' + err);
-            q.equals(commit.message, 'v0.10.4', 'Returned commit message.');
-            q.equals(commit.author.date, '2015-03-20T17:01:42Z', 'Got correct date.');
-            q.end();
-        });
-    });
+   it('should get commit from repo', function(done) {
+      repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
+         should.not.exist(err);
+         commit.message.should.equal('v0.10.4');
+         commit.author.date.should.equal('2015-03-20T17:01:42Z');
+         done();
+      });
+   });
 
-    t.test('repo.getSha', function(q) {
-        repo.getSha('master', '.gitignore', function(err, sha) {
-            q.error(err, 'get sha error: ' + err);
-            q.equals(sha, '8293a5658aed839ed52fb0e5bd9e6c467c992d3d', 'Returned sha message.');
-            q.end();
-        });
-    });
+   it('should get a SHA from a repo', function(done) {
+      repo.getSha('master', '.gitignore', function(err, sha) {
+         should.not.exist(err);
+         sha.should.equal('743f72052be92b3e7f42b8318f2663a9011ef5be');
+         done();
+      });
+   });
 
-    t.test('getRepo(fullname)', function(q) {
-        var repo2 = github.getRepo('michael/github');
-        repo2.show(function(err, res) {
-            q.error(err, 'show repo');
-            q.equals(res.full_name, 'michael/github', 'repo name');
-            q.end();
-        });
-    });
+   it('should get a repo by fullname', function(done) {
+      var repo2 = github.getRepo('michael/github');
 
-    clearTimeout(timeout);
-    t.end();
-
+      repo2.show(function(err, res) {
+         should.not.exist(err);
+         res.full_name.should.equal('michael/github'); // jscs:ignore
+         done();
+      });
+   });
 });
 
-var repoTest = Date.now();
+var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
 
-test('Create Repo', function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: "basic"
-  });
-  var user = github.getUser();
+describe('Creating new Github.Repository', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
-  t.test('user.createRepo', function(q) {
-    user.createRepo({ "name": repoTest }, function (err, res) {
-      q.error(err);
-      q.equals(res.name, repoTest.toString(), 'Repo created');
-      q.end();
-    });
-  });
-  var repo = github.getRepo(test_user.USERNAME, repoTest);
-
-  t.test('repo.write', function(q) {
-    repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
-
-  t.test('repo.writeBranch', function(q) {
-    repo.branch('master', 'dev', function(err) {
-      q.error(err);
-      repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
-        q.error(err);
-        repo.read('dev', 'TEST.md', function(err, obj) {
-          t.equals('THIS IS AN UPDATED TEST', obj);
-          q.error(err);
-          q.end();
-        });
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
       });
-    });
-  });
 
-  t.test('repo.getRef', function(q) {
-    repo.getRef('heads/master', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
+      user = github.getUser();
+      repo = github.getRepo(testUser.USERNAME, repoTest);
+   });
 
-  t.test('repo.createRef', function(q) {
-    repo.getRef('heads/master', function(err, sha) {
-      var refSpec = {
-        ref: 'refs/heads/new-test-branch',
-        sha: sha
+   it('should create repo', function(done) {
+      user.createRepo({
+         name: repoTest
+      }, function(err, res) {
+         should.not.exist(err);
+         res.name.should.equal(repoTest.toString());
+         done();
+      });
+   });
+
+   it('should write to repo', function(done) {
+      repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
+         should.not.exist(err);
+
+         // @TODO write a better assertion.
+         done();
+      });
+   });
+
+   it('should write to repo branch', function(done) {
+      this.timeout(8000); // Bit of a longer timeout
+
+      repo.branch('master', 'dev', function(err) {
+         should.not.exist(err);
+         repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
+            should.not.exist(err);
+            repo.read('dev', 'TEST.md', function(err, res) {
+               res.should.equal('THIS IS AN UPDATED TEST');
+               should.not.exist(err);
+               done();
+            });
+         });
+      });
+   });
+
+   it('should get ref from repo', function(done) {
+      repo.getRef('heads/master', function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
+   it('should create ref on repo', function(done) {
+      repo.getRef('heads/master', function(err, sha) {
+         var refSpec = {
+            ref: 'refs/heads/new-test-branch', sha: sha
+         };
+
+         repo.createRef(refSpec, function(err) {
+            should.not.exist(err);
+
+            // @TODO write better assertion
+            done();
+         });
+      });
+   });
+
+   it('should delete ref on repo', function(done) {
+      repo.deleteRef('heads/new-test-branch', function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
+   it('should list tags on repo', function(done) {
+      repo.listTags(function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
+   it('should list pulls on repo', function(done) {
+      repo.listPulls('open', function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
+   it('should get pull requests on repo', function(done) {
+      var repo = github.getRepo('michael', 'github');
+
+      repo.getPull(153, function(err) {
+         should.not.exist(err);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
+   it('should list pull requests on repo', function(done) {
+      repo.listPulls('open', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should write author and committer to repo', function(done) {
+      var options = {
+         author: {
+            name: 'Author Name', email: 'author@example.com'
+         },
+         committer: {
+            name: 'Committer Name', email: 'committer@example.com'
+         }
       };
-      repo.createRef(refSpec, function(err) {
-        q.error(err);
-        q.end();
+
+      repo.write('dev', 'TEST.md', 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
+         should.not.exist(err);
+         repo.getCommit('dev', res.commit.sha, function(err, commit) {
+            should.not.exist(err);
+            commit.author.name.should.equal('Author Name');
+            commit.author.email.should.equal('author@example.com');
+            commit.committer.name.should.equal('Committer Name');
+            commit.committer.email.should.equal('committer@example.com');
+
+            done();
+         });
       });
-    });
-  });
+   });
 
-  t.test('repo.deleteRef', function(q) {
-    repo.deleteRef('heads/new-test-branch', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
+   it('should be able to write CJK unicode to repo', function(done) {
+      repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err) {
+         should.not.exist(err);
 
-  t.test('repo.listTags', function(q) {
-    repo.listTags(function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
-
-  t.test('repo.listPulls', function(q) {
-    repo.listPulls('open', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
-
-  t.test('repo.getPull', function(q) {
-    var repo = github.getRepo('michael', 'github');
-    repo.getPull(153, function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
-
-  t.test('repo.listPulls', function(q) {
-    repo.listPulls('open', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
-
-  t.test('repo.writeAuthorAndCommitter', function(q) {
-    var options = {
-      author: {name: 'Author Name', email: 'author@example.com'},
-      committer: {name: 'Committer Name', email: 'committer@example.com'}
-    };
-    repo.write('dev', 'TEST.md', 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
-      q.error(err);
-      repo.getCommit('dev', res.commit.sha, function(err, commit) {
-        q.error(err);
-        q.equals(commit.author.name, 'Author Name', 'Got correct author name.');
-        q.equals(commit.author.email, 'author@example.com', 'Got correct author email.');
-        q.equals(commit.committer.name, 'Committer Name', 'Got correct committer name.');
-        q.equals(commit.committer.email, 'committer@example.com', 'Got correct committer email.');
-        q.end();
+         // @TODO write better assertion
+         done();
       });
-    });
-  });
+   });
 
-  t.test('repo.writeChinese', function(q) {
-    repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err) {
-      q.error(err);
-      q.end();
-    });
-  });
+   it('should be able to write unicode to repo', function(done) {
+      repo.write('master', 'TEST_unicode.md', '\u2014', 'Long dash unicode', function(err) {
+         should.not.exist(err);
 
-  t.test('repo.writeUnicodeContent', function(q) {
-    repo.write('master', 'TEST.md', '\u2014', 'Long dash unicode', function(err) {
-      q.error(err);
-      repo.read('master', 'TEST.md', function(err, obj) {
-        q.error(err);
-        t.equals('\u2014', obj);
+         repo.read('master', 'TEST_unicode.md', function(err, obj) {
+            should.not.exist(err);
+            obj.should.equal('\u2014');
+
+            done();
+         });
       });
-      q.end();
-    });
-  });
+   });
 
-  t.test('Regression test for _request (#14)', function(q){
-    repo.getRef('heads/master', function(err, sha) {
-      var refSpec = {
-        ref: 'refs/heads/testing-14',
-        sha: sha
-      };
-      repo.createRef(refSpec, function(err) {
-        q.error(err, 'Test branch created');
+   it('should pass a regression test for _request (#14)', function(done) {
+      this.timeout(8000); // Bit of a longer timeout
 
-        // Triggers GET: https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
-        repo.getRef('heads/master', function(err) {
-          q.error(err, 'Regression test ready');
+      repo.getRef('heads/master', function(err, sha) {
+         var refSpec = {
+            ref: 'refs/heads/testing-14', sha: sha
+         };
 
-          // Triggers DELETE: https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
-          repo.deleteRef('heads/testing-14', function(err, res, xhr) {
-            q.error(err);
-            q.equals(xhr.status, 204, 'Returns 204');
-            q.end();
-          });
-        });
+         repo.createRef(refSpec, function(err) {
+            should.not.exist(err);
+
+            // Triggers GET:
+            // https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
+            repo.getRef('heads/master', function(err) {
+               should.not.exist(err);
+
+               // Triggers DELETE:
+               // https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
+               repo.deleteRef('heads/testing-14', function(err, res, xhr) {
+                  should.not.exist(err);
+                  xhr.status.should.equal(204);
+                  done();
+               });
+            });
+         });
       });
-    });
-  });
-
-  clearTimeout(timeout);
-  t.end();
+   });
 });
 
-test('delete Repo', function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: "basic"
-  });
-  var repo = github.getRepo(test_user.USERNAME, repoTest);
+describe('deleting a Github.Repository', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+      repo = github.getRepo(testUser.USERNAME, repoTest);
+   });
 
-  repo.deleteRepo(function(err, res) {
-    t.error(err);
-    t.equals(res, true, 'Repo Deleted');
-    clearTimeout(timeout);
-    t.end();
-  });
+   it('should delete the repo', function(done) {
+      repo.deleteRepo(function(err, res) {
+         should.not.exist(err);
+         res.should.be.true; // jshint ignore:line
+         done();
+      });
+   });
 });
 
-test('Repo Returns commit errors correctly', function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: "basic"
-  });
-  var repo = github.getRepo(test_user.USERNAME, test_user.REPO);
+describe('Repo returns commit errors correctly', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+      repo = github.getRepo(testUser.USERNAME, testUser.REPO);
+   });
 
-  repo.commit("broken-parent-hash", "broken-tree-hash", "commit message", function(err){
-    t.ok(err, 'error thrown for bad commit');
-    t.ok(err.request);
-    t.equals(err.request.status, 422, 'Returns 422 status');
-    clearTimeout(timeout);
-    t.end();
-  });
+   it('should fail on broken commit', function(done) {
+      repo.commit('broken-parent-hash', 'broken-tree-hash', 'commit message', function(err) {
+         should.exist(err);
+         should.exist(err.request);
+         err.request.status.should.equal(422);
+         done();
+      });
+   });
 });

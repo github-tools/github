@@ -1,41 +1,56 @@
 'use strict';
 
-var test = require('tape'); //jshint ignore:line
-var Github = require("../");
-var test_user = require('./user.json');
+var testUser, github, user;
 
-test("Basic Auth - Pass", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: test_user.PASSWORD,
-    auth: "basic"
-  });
-  var user = github.getUser();
-  
-  user.notifications(function(err) {
-    t.error(err, 'user is authd');
-  });
-  
-  clearTimeout(timeout);
-  t.end(); 
+if (typeof window === 'undefined') {
+   // Module dependencies
+   var chai = require('chai');
+   var Github = require('../');
+
+   testUser = require('./user.json');
+
+   // Use should flavour for Mocha
+   var should = chai.should();
+}
+
+describe('Github constructor', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
+
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+
+      user = github.getUser();
+   });
+
+   it('should authenticate and return no errors', function(done) {
+      user.notifications(function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
 });
 
-test("Basic Auth - Fail", function(t) {
-  var timeout = setTimeout(function () { t.fail(); }, 10000);
-  var github = new Github({
-    username: test_user.USERNAME,
-    password: 'fake124',
-    auth: "basic"
-  });
-  var user = github.getUser();
+describe('Github constructor (failing case)', function() {
+   before(function() {
+      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
-  user.notifications(function(err) {
-      t.ok(err, 'user is not authd');
-      t.equals(JSON.parse(err.request.responseText).message, 'Bad credentials', 'confirm error');
-  });
+      github = new Github({
+         username: testUser.USERNAME,
+         password: 'fake124',
+         auth: 'basic'
+      });
+      user = github.getUser();
+   });
 
-  clearTimeout(timeout);
-  t.end();
-
+   it('should fail authentication and return err', function(done) {
+      user.notifications(function(err) {
+         err.request.status.should.equal(401, 'Return 401 status for bad auth');
+         JSON.parse(err.request.responseText).message.should.equal('Bad credentials');
+         done();
+      });
+   });
 });
