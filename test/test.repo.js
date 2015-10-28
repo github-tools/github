@@ -210,10 +210,22 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should list pulls on repo', function(done) {
-      repo.listPulls('open', function(err) {
-         should.not.exist(err);
+      var repo = github.getRepo('michael', 'github');
+      var options = {
+         state: 'all',
+         sort: 'updated',
+         direction: 'desc',
+         page: 1,
+         per_page: 100
+      };
 
-         // @TODO write better assertion
+      repo.listPulls(options, function(err, pull_list) {
+         should.not.exist(err);
+         pull_list.should.be.instanceof(Array);
+         pull_list.should.have.length(100);
+         should.exist(pull_list[0].title);
+         should.exist(pull_list[0].body);
+         should.exist(pull_list[0].url);
          done();
       });
    });
@@ -248,13 +260,6 @@ describe('Creating new Github.Repository', function() {
             should.not.exist(err);
             done();
          });
-      });
-   });
-
-   it('should list pull requests on repo', function(done) {
-      repo.listPulls('open', function(err) {
-         should.not.exist(err);
-         done();
       });
    });
 

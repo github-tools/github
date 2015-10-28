@@ -411,10 +411,46 @@
          // List all pull requests of a respository
          // -------
 
-         this.listPulls = function(state, cb) {
-            _request('GET', repoPath + '/pulls' + (state ? '?state=' + state : ''), null, function(err, pulls, xhr) {
-               if (err) return cb(err);
-               cb(null, pulls, xhr);
+         this.listPulls = function(options, cb) {
+            options = options || {};
+            var url = repoPath + "/pulls";
+            var params = [];
+
+            if (typeof options === 'string') {
+                // backward compatibility
+                params.push('state=' + options);
+            }
+            else {
+                if (options.state) {
+                    params.push("state=" + encodeURIComponent(options.state));
+                }
+                if (options.head) {
+                    params.push("head=" + encodeURIComponent(options.head));
+                }
+                if (options.base) {
+                    params.push("base=" + encodeURIComponent(options.base));
+                }
+                if (options.sort) {
+                    params.push("sort=" + encodeURIComponent(options.sort));
+                }
+                if (options.direction) {
+                     params.push("direction=" + encodeURIComponent(options.direction));
+                }
+                if (options.page) {
+                     params.push("page=" + options.page);
+                }
+                if (options.per_page) {
+                     params.push("per_page=" + options.per_page);
+                }
+            }
+
+            if (params.length > 0) {
+                url += "?" + params.join("&");
+            }
+
+            _request('GET', url, null, function(err, pulls, xhr) {
+                if (err) return cb(err);
+                cb(null, pulls, xhr);
             });
          };
 
