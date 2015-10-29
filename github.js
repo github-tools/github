@@ -21,10 +21,11 @@
       return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
     });
   } else if (typeof module === 'object' && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like enviroments that support module.exports,
-    // like Node.
-    module.exports = factory(XMLHttpRequest || require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
+    if (window) {
+     module.exports = factory(window.XMLHttpRequest, window.btoa);
+    } else {
+     module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
+    }
   } else {
     // Browser globals
     var b64encode = function(str) {
