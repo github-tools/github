@@ -11,30 +11,31 @@
  */
 
 (function (root, factory) {
-  // UMD boilerplate from https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
-  'use strict';
+   // UMD boilerplate from https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+   'use strict';
 
-  /* istanbul ignore next */
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module.
-    define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
-      return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
-    });
-  } else if (typeof module === 'object' && module.exports) {
-    if (window) {
-     module.exports = factory(window.XMLHttpRequest, window.btoa);
-    } else {
-     module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
-    }
-  } else {
-    // Browser globals
-    var b64encode = function(str) {
-      return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-      }));
-    };
-    root.Github = factory(root.XMLHttpRequest, b64encode);
-  }
+   /* istanbul ignore next */
+   if (typeof define === 'function' && define.amd) {
+      // AMD. Register as an anonymous module.
+      define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
+         return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
+      });
+   } else if (typeof module === 'object' && module.exports) {
+      if (typeof window !== 'undefined') { // jscs:ignore
+         module.exports = factory(window.XMLHttpRequest, window.btoa);
+      } else { // jscs:ignore
+         module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
+      }
+   } else {
+      // Browser globals
+      var b64encode = function(str) {
+         return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+            return String.fromCharCode('0x' + p1);
+         }));
+      };
+
+      root.Github = factory(root.XMLHttpRequest, b64encode);
+   }
 }(this, function (XMLHttpRequest, b64encode) {
    'use strict';
 
@@ -55,7 +56,7 @@
 
             url += ((/\?/).test(url) ? '&' : '?');
 
-            if (data && typeof data === 'object' && ['GET', 'HEAD'].indexOf(method) > -1) {
+            if (data && typeof data === 'object' && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
                for(var param in data) {
                   if (data.hasOwnProperty(param))
                     url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
@@ -720,24 +721,9 @@
             });
          };
 
-         // Delete a file from the tree
+         // Alias for repo.remove for backwards comapt.
          // -------
-
-         this.delete = function(branch, path, cb) {
-            that.getSha(branch, path, function(err, sha) {
-               if (!sha) return cb('not found', null);
-               var delPath = repoPath + '/contents/' + path;
-               var params = {
-                  message: 'Deleted ' + path,
-                  sha: sha
-               };
-
-               delPath += '?message=' + encodeURIComponent(params.message);
-               delPath += '&sha=' + encodeURIComponent(params.sha);
-               delPath += '&branch=' + encodeURIComponent(branch);
-               _request('DELETE', delPath, null, cb);
-            });
-         };
+         this.delete = this.remove;
 
          // Move a file to a new location
          // -------

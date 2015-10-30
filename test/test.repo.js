@@ -1,6 +1,6 @@
 'use strict';
 
-var github, repo, user, testUser;
+var github, repo, user, testUser, timeout;
 
 if (typeof window === 'undefined') {
    // Module dependencies
@@ -11,9 +11,17 @@ if (typeof window === 'undefined') {
 
    // Use should flavour for Mocha
    var should = chai.should();
+
+   // Long timeouts for Mocha.
+   timeout = 60000;
+} else {
+   // Short timeouts for Karma!
+   timeout = 12000;
 }
 
 describe('Github.Repository', function() {
+   this.timeout(timeout); // Bit of a longer timeout
+
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
@@ -122,6 +130,8 @@ describe('Creating new Github.Repository', function() {
 
       user = github.getUser();
       repo = github.getRepo(testUser.USERNAME, repoTest);
+
+      this.timeout(timeout);
    });
 
    it('should create repo', function(done) {
@@ -144,8 +154,6 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should write to repo branch', function(done) {
-      this.timeout(8000); // Bit of a longer timeout
-
       repo.branch('master', 'dev', function(err) {
          should.not.exist(err);
          repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
@@ -221,6 +229,28 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should delete a file on the repo', function(done) {
+      repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
+         should.not.exist(err);
+
+         repo.remove('master', 'REMOVE-TEST.md', function(err) {
+            should.not.exist(err);
+            done();
+         });
+      });
+   });
+
+   it('should use repo.delete as an alias for repo.remove', function(done) {
+      repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
+         should.not.exist(err);
+
+         repo.delete('master', 'REMOVE-TEST.md', function(err) {
+            should.not.exist(err);
+            done();
+         });
+      });
+   });
+
    it('should list pull requests on repo', function(done) {
       repo.listPulls('open', function(err) {
          should.not.exist(err);
@@ -275,8 +305,6 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should pass a regression test for _request (#14)', function(done) {
-      this.timeout(8000); // Bit of a longer timeout
-
       repo.getRef('heads/master', function(err, sha) {
          var refSpec = {
             ref: 'refs/heads/testing-14', sha: sha

@@ -8,4 +8,5 @@ node_js:
   - "0.10"
 script:
   - npm test
+  - mocha test/ --timeout=60000
   - npm run-script codecov

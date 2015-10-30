@@ -1,6 +1,6 @@
 'use strict';
 
-var testUser, user, github;
+var testUser, user, github, timeout;
 
 if (typeof window === 'undefined') {
    // Module dependencies
@@ -11,9 +11,15 @@ if (typeof window === 'undefined') {
 
    // Use should flavour for Mocha
    var should = chai.should();
+
+   timeout = 60000;
+} else {
+   timeout = 12000;
 }
 
 describe('Github.User', function() {
+   this.timeout(timeout);
+
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
       github = new Github({
@@ -22,13 +28,9 @@ describe('Github.User', function() {
          auth: 'basic'
       });
       user = github.getUser();
-
-      this.timeout(8000); // Bit of a longer timeout
    });
 
    it('should get user.repos', function(done) {
-      this.timeout(8000); // Bit of a longer timeout
-
       user.repos(function(err) {
          should.not.exist(err);
          done();
