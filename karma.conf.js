@@ -10,7 +10,7 @@ module.exports = function(config) {
 
       autoWatch: false,
 
-      frameworks: ['mocha', 'chai'],
+      frameworks: ['browserify', 'mocha', 'chai'],
 
       browsers: ['PhantomJS'],
 

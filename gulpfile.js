@@ -58,7 +58,7 @@ function runTests (singleRun, done) {
 
    if (singleRun) {
       pathSrcJs.forEach(function(path) {
-         preprocessors[path] = ['coverage'];
+         preprocessors[path] = ['coverage', 'browserify'];
       });
       reporters.push('coverage');
 
