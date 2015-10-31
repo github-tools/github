@@ -251,13 +251,6 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
-   it('should list pull requests on repo', function(done) {
-      repo.listPulls('open', function(err) {
-         should.not.exist(err);
-         done();
-      });
-   });
-
    it('should write author and committer to repo', function(done) {
       var options = {
          author: {
