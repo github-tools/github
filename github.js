@@ -454,7 +454,6 @@
             });
          };
 
-
          // Gets details for a specific pull request
          // -------
 
