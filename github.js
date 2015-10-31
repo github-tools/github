@@ -411,7 +411,7 @@
          // List all pull requests of a respository
          // -------
 
-         this.listPulls = function(state, cb) {
+         this.listPulls = function(options, cb) {
             options = options || {};
             var url = repoPath + "/pulls";
             var params = [];
