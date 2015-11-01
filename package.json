@@ -5,7 +5,7 @@
   "main": "github.js",
   "dependencies": {
     "js-base64": "^2.1.8",
-    "xmlhttprequest": "~1.7.0"
+    "superagent": "^1.4.0"
   },
   "devDependencies": {
     "chai": "^3.4.0",
@@ -20,6 +20,7 @@
     "jshint": "^2.5.8",
     "jshint-stylish": "^2.0.1",
     "karma": "^0.13.14",
+    "karma-browserify": "^4.4.0",
     "karma-chai": "^0.1.0",
     "karma-coverage": "^0.5.3",
     "karma-json-fixtures-preprocessor": "0.0.5",
@@ -44,7 +45,7 @@
   ],
   "contributors": [
     "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
-    "Aurelio De Rosa (http://www.audero.it/)",
+    "Aurelio De Rosa  <a.derosa@audero.it> (http://www.audero.it)",
     "Michael Aufreiter (http://substance.io)"
   ],
   "license": "BSD-3-Clause-Clear",
@@ -54,7 +55,7 @@
     "url": "https://github.com/michael/github/issues"
   },
   "browser": {
-    "xmlhttprequest": false,
+    "superagent": false,
     "base64": false
   }
 }

@@ -17,26 +17,27 @@
    /* istanbul ignore next */
    if (typeof define === 'function' && define.amd) {
       // AMD. Register as an anonymous module.
-      define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
-         return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
+      define(['superagent', 'js-base64'], function (superagent, b64encode) {
+         return (root.Github = factory(superagent, b64encode.Base64.btoa));
       });
    } else if (typeof module === 'object' && module.exports) {
-      if (typeof window !== 'undefined') { // jscs:ignore
-         module.exports = factory(window.XMLHttpRequest, window.btoa);
-      } else { // jscs:ignore
-         module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
-      }
+      // CommonJS
+      module.exports = factory(require('superagent'), require('js-base64').Base64.btoa);
    } else {
       // Browser globals
-      var b64encode = function(str) {
-         return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-            return String.fromCharCode('0x' + p1);
-         }));
-      };
+      var b64encode;
 
-      root.Github = factory(root.XMLHttpRequest, b64encode);
+      if (root.btoa) {
+         b64encode = function (str) {
+            return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+               return String.fromCharCode('0x' + p1);
+            }));
+         };
+      }
+
+      root.Github = factory(root.superagent, b64encode || root.Base64.btoa);
    }
-}(this, function (XMLHttpRequest, b64encode) {
+}(this, function (superagent, b64encode) {
    'use strict';
 
    // Initial Setup
@@ -50,7 +51,7 @@
       //
       // I'm not proud of this and neither should you be if you were responsible for the XMLHttpRequest spec.
 
-      var _request = Github._request = function _request(method, path, data, cb, raw, sync) {
+      var _request = Github._request = function _request(method, path, data, cb, raw) {
          function getURL() {
             var url = path.indexOf('//') >= 0 ? path : API_URL + path;
 
@@ -66,49 +67,39 @@
             return url + (typeof window !== 'undefined' ? '&' + new Date().getTime() : '');
          }
 
-         var xhr = new XMLHttpRequest();
-
-         xhr.open(method, getURL(), !sync);
-
-         if (!sync) {
-            xhr.onreadystatechange = function () {
-               if (this.readyState === 4) {
-                  if (this.status >= 200 && this.status < 300 || this.status === 304) {
-                     cb(null, raw ? this.responseText : this.responseText ? JSON.parse(this.responseText) : true, this);
-                  } else {
-                     cb({
-                        path: path, request: this, error: this.status
-                     });
-                  }
-               }
-            };
-         }
+         var request = superagent(method, getURL())
+            .set('Content-Type', 'application/json;charset=UTF-8');
 
          if (!raw) {
-            xhr.dataType = 'json';
-            xhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+            request
+               .type('json')
+               .set('Accept', 'application/vnd.github.v3+json');
          } else {
-            xhr.setRequestHeader('Accept', 'application/vnd.github.v3.raw+json');
+            request.set('Accept', 'application/vnd.github.v3.raw+json');
          }
-
-         xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
          if ((options.token) || (options.username && options.password)) {
             var authorization = options.token ? 'token ' + options.token :
                'Basic ' + b64encode(options.username + ':' + options.password);
 
-            xhr.setRequestHeader('Authorization', authorization);
+            request.set('Authorization', authorization);
          }
 
          if (data) {
-            xhr.send(JSON.stringify(data));
+            request.send(data);
          } else {
-            xhr.send();
+            request.send();
          }
 
-         if (sync) {
-            return xhr.response;
-         }
+         request.end(function(err, res) {
+            if (err) {
+               cb({
+                  path: path, request: this, error: err.status
+               });
+            } else {
+               cb(null, raw ? res.text : res.text ? res.body : true, this);
+            }
+         });
       };
 
       var _requestAllPages = Github._requestAllPages = function _requestAllPages(path, cb) {
