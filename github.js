@@ -4,7 +4,7 @@
  * @copyright (c) 2013 Michael Aufreiter, Development Seed
  *            Github.js is freely distributable.
  *
- * @license   Licensed under MIT license
+ * @license   Licensed under BSD-3-Clause-Clear
  *
  *            For all details and documentation:
  *            http://substance.io/michael/github
