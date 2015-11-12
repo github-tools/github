@@ -1,8 +1,8 @@
 'use strict';
 
-var github, repo, user, testUser, timeout;
+var github, repo, user, testUser, timeout, imageB64, imageBlob;
 
-if (typeof window === 'undefined') {
+if (typeof window === 'undefined') { // We're in NodeJS
    // Module dependencies
    var chai = require('chai');
    var Github = require('../');
@@ -14,9 +14,32 @@ if (typeof window === 'undefined') {
 
    // Long timeouts for Mocha.
    timeout = 60000;
-} else {
-   // Short timeouts for Karma!
+
+   var fs = require('fs');
+   var path = require('path');
+
+   imageBlob = fs.readFileSync(path.join(__dirname, 'gh.png')); // This is a Buffer().
+   imageB64 = imageBlob.toString('base64');
+} else { // We're in the browser
+   // Shorter timeouts for Karma!
    timeout = 12000;
+
+   var xhr = new XMLHttpRequest();
+
+   xhr.responseType = 'blob';
+   xhr.open('GET', 'base/test/gh.png');
+   xhr.onload = function() {
+      var reader = new FileReader();
+
+      reader.onloadend = function() {
+         imageB64 = btoa(reader.result);
+         imageBlob = reader.result;
+      };
+
+      reader.readAsBinaryString(xhr.response);
+   };
+
+   xhr.send();
 }
 
 describe('Github.Repository', function() {
@@ -216,13 +239,13 @@ describe('Creating new Github.Repository', function() {
          sort: 'updated',
          direction: 'desc',
          page: 1,
-         per_page: 100
+         per_page: 10
       };
 
       repo.listPulls(options, function(err, pull_list) {
          should.not.exist(err);
          pull_list.should.be.instanceof(Array);
-         pull_list.should.have.length(100);
+         pull_list.should.have.length(10);
          should.exist(pull_list[0].title);
          should.exist(pull_list[0].body);
          should.exist(pull_list[0].url);
@@ -300,6 +323,7 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'TEST_unicode.md', '\u2014', 'Long dash unicode', function(err) {
          should.not.exist(err);
 
+         if (err) console.log(err);
          repo.read('master', 'TEST_unicode.md', function(err, obj) {
             should.not.exist(err);
             obj.should.equal('\u2014');
@@ -331,6 +355,27 @@ describe('Creating new Github.Repository', function() {
                   done();
                });
             });
+         });
+      });
+   });
+
+   it('should be able to write an image to the repo', function(done) {
+      repo.write('master', 'TEST_image.png', imageB64, 'Image test', {
+         encode: false
+      }, function(err) {
+         if (err) console.log(err);
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should be able to write a blob to the repo', function(done) {
+      repo.postBlob('String test', function(err) { // Test strings
+         should.not.exist(err);
+
+         repo.postBlob(imageBlob, function(err) { // Test non-strings
+            should.not.exist(err);
+            done();
          });
       });
    });

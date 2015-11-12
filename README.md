@@ -133,7 +133,8 @@ You can also provide an optional object literal, (`options` in the example below
 ```js
 var options = {
   author: {name: 'Author Name', email: 'author@example.com'},
-  committer: {name: 'Committer Name', email: 'committer@example.com'}
+  committer: {name: 'Committer Name', email: 'committer@example.com'},
+  encode: true // Whether to base64 encode the file. (default: true)
 }
 repo.write('master', 'path/to/file', 'YOUR_NEW_CONTENTS', 'YOUR_COMMIT_MESSAGE', options, function(err) {});
 ```

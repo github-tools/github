@@ -12,7 +12,7 @@ module.exports = function(config) {
 
       frameworks: ['mocha', 'chai'],
 
-      browsers: ['PhantomJS'],
+      browsers: ['PhantomJS2'],
 
       coverageReporter: {
          reporters: [

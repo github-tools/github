@@ -25,7 +25,7 @@
     "karma-json-fixtures-preprocessor": "0.0.5",
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
-    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-phantomjs2-launcher": "^0.3.2",
     "mocha": "^2.3.3",
     "phantomjs": "^1.9.18"
   },

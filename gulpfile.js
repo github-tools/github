@@ -50,23 +50,28 @@ function runTests (singleRun, done) {
    var reporters = ['mocha'];
    var preprocessors = {};
 
-   var pathSrcJs = [
+   var files = [
      path.join(__dirname, 'github.js'),
-     path.join(__dirname, 'test/*.js'),
-     path.join(__dirname, 'test/user.json')
+     path.join(__dirname, 'test/*.js')
    ];
 
    if (singleRun) {
-      pathSrcJs.forEach(function(path) {
+      files.forEach(function(path) {
          preprocessors[path] = ['coverage'];
       });
       reporters.push('coverage');
-
-      preprocessors['test/user.json'] = ['json_fixtures'];
    }
 
+   files.push(path.join(__dirname, 'test/user.json'));
+   files.push({
+      pattern: path.join(__dirname, 'test/gh.png'),
+      watched: false,
+      included: false
+   });
+   preprocessors['test/user.json'] = ['json_fixtures'];
+
    var localConfig = {
-      files: pathSrcJs,
+      files: files,
       configFile: path.join(__dirname, './karma.conf.js'),
       singleRun: singleRun,
       autoWatch: !singleRun,
