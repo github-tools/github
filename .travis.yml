@@ -10,3 +10,6 @@ script:
   - npm test
   - mocha test/ --timeout=60000
   - npm run-script codecov
+
+before_script:
+   - npm install -g phantomjs2
