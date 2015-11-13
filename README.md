@@ -18,6 +18,10 @@ Alternatively, you can install the library using Bower:
 bower install github-api
 ```
 
+## Compatibility
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/githubjs.svg)](https://saucelabs.com/u/githubjs)
+
 ## Usage
 
 Create a Github instance.

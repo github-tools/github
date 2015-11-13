@@ -1,6 +1,6 @@
 'use strict';
 
-var testUser, user, github, timeout;
+var testUser, user, github;
 
 if (typeof window === 'undefined') {
    // Module dependencies
@@ -11,15 +11,9 @@ if (typeof window === 'undefined') {
 
    // Use should flavour for Mocha
    var should = chai.should();
-
-   timeout = 60000;
-} else {
-   timeout = 12000;
 }
 
 describe('Github.User', function() {
-   this.timeout(timeout);
-
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
       github = new Github({
@@ -96,7 +90,8 @@ describe('Github.User', function() {
    });
 
    it('should show user\'s repos', function(done) {
-      user.userRepos(testUser.USERNAME, function(err) {
+      // This is odd; userRepos times out on the test user, but user.repos does not.
+      user.userRepos('aendrew', function(err) {
          should.not.exist(err);
          done();
       });

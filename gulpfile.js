@@ -16,7 +16,7 @@ function runTests(singleRun, isCI, done) {
    var files = [
       path.join(__dirname, 'test/vendor/*.js'), // PhantomJS 1.x polyfills
       path.join(__dirname, 'github.js'),
-      path.join(__dirname, 'test/*.js')
+      path.join(__dirname, 'test/test.*.js')
    ];
 
    if (singleRun) {
@@ -45,11 +45,24 @@ function runTests(singleRun, isCI, done) {
 
    if (isCI) {
       localConfig.sauceLabs = {
-         testName: 'GitHub.js UAT tests'
+         testName: 'GitHub.js UAT tests',
+         idleTimeout: 120000,
+         recordVideo: false
       };
+
+      // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
+      localConfig.browserNoActivityTimeout = 400000;
+      localConfig.captureTimeout = 120000;
       localConfig.customLaunchers = sauceLaunchers;
       localConfig.browsers = Object.keys(sauceLaunchers);
       reporters.push('saucelabs');
+
+      // Set Mocha timeouts to longer.
+      localConfig.client = {
+         mocha: {
+            timeout: 20000
+         }
+      };
    }
 
    var server = new karma.Server(localConfig, function(failCount) {
@@ -116,12 +129,6 @@ var sauceLaunchers = {
       browserName: 'safari',
       platform: 'OS X 10.10',
       version: '8'
-   },
-   SL_IE_9: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 2008',
-      version: '9'
    },
    SL_IE_10: {
       base: 'SauceLabs',

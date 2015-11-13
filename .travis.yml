@@ -12,5 +12,5 @@ node_js:
 script:
   - gulp lint
   - gulp test:ci
-  - mocha test/ --timeout=60000
+  - mocha test/
   - npm run-script codecov

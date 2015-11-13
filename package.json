@@ -26,6 +26,7 @@
     "karma-json-fixtures-preprocessor": "0.0.5",
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
+    "karma-safari-launcher": "^0.1.1",
     "karma-sauce-launcher": "^0.3.0",
     "mocha": "^2.3.3"
   },

@@ -1,6 +1,6 @@
 'use strict';
 
-var github, repo, user, testUser, timeout, imageB64, imageBlob;
+var github, repo, user, testUser, imageB64, imageBlob;
 
 if (typeof window === 'undefined') { // We're in NodeJS
    // Module dependencies
@@ -12,17 +12,12 @@ if (typeof window === 'undefined') { // We're in NodeJS
    // Use should flavour for Mocha
    var should = chai.should();
 
-   // Long timeouts for Mocha.
-   timeout = 60000;
-
    var fs = require('fs');
    var path = require('path');
 
    imageBlob = fs.readFileSync(path.join(__dirname, 'gh.png')); // This is a Buffer().
    imageB64 = imageBlob.toString('base64');
 } else { // We're in the browser
-   timeout = 12000; // Shorter timeouts for Karma!
-
    if (typeof window._phantom !== 'undefined') {
       var xhr = new XMLHttpRequest();
 
@@ -50,8 +45,6 @@ if (typeof window === 'undefined') { // We're in NodeJS
 }
 
 describe('Github.Repository', function() {
-   this.timeout(timeout); // Bit of a longer timeout
-
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
 
@@ -160,8 +153,6 @@ describe('Creating new Github.Repository', function() {
 
       user = github.getUser();
       repo = github.getRepo(testUser.USERNAME, repoTest);
-
-      this.timeout(timeout);
    });
 
    it('should create repo', function(done) {

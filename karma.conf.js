@@ -3,8 +3,13 @@ module.exports = function(config) {
 
    var configuration = {
       client: {
-         captureConsole: true
+         captureConsole: true,
+         mocha: {
+            timeout: 10000
+         }
       },
+
+      concurrency: 2,
 
       singleRun: true,
 
