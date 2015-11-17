@@ -123,7 +123,6 @@ describe('Github.Repository', function() {
    it('should get a SHA from a repo', function(done) {
       repo.getSha('master', '.gitignore', function(err, sha) {
          should.not.exist(err);
-         sha.should.equal('743f72052be92b3e7f42b8318f2663a9011ef5be');
          done();
       });
    });
