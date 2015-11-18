@@ -47,7 +47,7 @@ function runTests(singleRun, isCI, done) {
       localConfig.sauceLabs = {
          testName: 'GitHub.js UAT tests',
          idleTimeout: 120000,
-         recordVideo: false
+         recordVideo: true
       };
 
       // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
