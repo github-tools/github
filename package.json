@@ -5,7 +5,6 @@
   "main": "github.js",
   "dependencies": {
     "js-base64": "^2.1.8",
-    "karma-phantomjs-launcher": "^0.2.1",
     "xmlhttprequest": "~1.7.0"
   },
   "devDependencies": {
@@ -26,7 +25,7 @@
     "karma-json-fixtures-preprocessor": "0.0.5",
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
-    "karma-safari-launcher": "^0.1.1",
+    "karma-phantomjs-launcher": "^0.2.1",
     "karma-sauce-launcher": "^0.3.0",
     "mocha": "^2.3.3"
   },
