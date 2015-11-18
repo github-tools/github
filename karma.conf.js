@@ -9,8 +9,6 @@ module.exports = function(config) {
          }
       },
 
-      concurrency: 2,
-
       singleRun: true,
 
       autoWatch: false,
