@@ -52,7 +52,7 @@ function runTests(singleRun, isCI, done) {
 
       // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
       localConfig.browserNoActivityTimeout = 1600000;
-      localConfig.captureTimeout = 120000;
+      localConfig.captureTimeout = 240000;
       localConfig.customLaunchers = sauceLaunchers;
       localConfig.browsers = Object.keys(sauceLaunchers);
       reporters.push('saucelabs');
@@ -63,6 +63,8 @@ function runTests(singleRun, isCI, done) {
             timeout: 20000
          }
       };
+
+      localConfig.reporters = ['dots', 'saucelabs'];
    }
 
    var server = new karma.Server(localConfig, function(failCount) {
