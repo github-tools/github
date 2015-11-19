@@ -51,7 +51,7 @@ function runTests(singleRun, isCI, done) {
       };
 
       // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
-      localConfig.browserNoActivityTimeout = 9999999999999999;
+      localConfig.browserNoActivityTimeout = 1600000;
       localConfig.captureTimeout = 120000;
       localConfig.customLaunchers = sauceLaunchers;
       localConfig.browsers = Object.keys(sauceLaunchers);
