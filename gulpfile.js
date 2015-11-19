@@ -10,7 +10,6 @@ var path = require('path');
 var karma = require('karma');
 
 function runTests(singleRun, isCI, done) {
-   var reporters = ['mocha'];
    var preprocessors = {};
 
    var files = [
@@ -18,13 +17,6 @@ function runTests(singleRun, isCI, done) {
       path.join(__dirname, 'github.js'),
       path.join(__dirname, 'test/test.*.js')
    ];
-
-   if (singleRun) {
-      files.forEach(function(path) {
-         preprocessors[path] = ['coverage'];
-      });
-      reporters.push('coverage');
-   }
 
    files.push(path.join(__dirname, 'test/user.json'));
    files.push({
@@ -39,7 +31,7 @@ function runTests(singleRun, isCI, done) {
       configFile: path.join(__dirname, './karma.conf.js'),
       singleRun: singleRun,
       autoWatch: !singleRun,
-      reporters: reporters,
+      reporters: ['mocha'],
       preprocessors: preprocessors
    };
 
@@ -51,11 +43,10 @@ function runTests(singleRun, isCI, done) {
       };
 
       // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
-      localConfig.browserNoActivityTimeout = 1600000;
-      localConfig.captureTimeout = 240000;
+      // localConfig.browserNoActivityTimeout = 1600000;
+      // localConfig.captureTimeout = 240000;
       localConfig.customLaunchers = sauceLaunchers;
       localConfig.browsers = Object.keys(sauceLaunchers);
-      reporters.push('saucelabs');
 
       // Set Mocha timeouts to longer.
       localConfig.client = {

@@ -12,5 +12,4 @@ node_js:
 script:
   - gulp lint
   - gulp test:ci
-  - mocha test/
-  - npm run-script codecov
+  - npm run-script coverage

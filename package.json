@@ -21,7 +21,6 @@
     "jshint-stylish": "^2.0.1",
     "karma": "^0.13.14",
     "karma-chai": "^0.1.0",
-    "karma-coverage": "^0.5.3",
     "karma-json-fixtures-preprocessor": "0.0.5",
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
@@ -32,7 +31,7 @@
   "scripts": {
     "test": "gulp test && gulp lint",
     "lint": "gulp lint",
-    "codecov": "cat coverage/*/lcov.info | codecov"
+    "coverage": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/codecov"
   },
   "repository": {
     "type": "git",
