@@ -1,29 +1,18 @@
 'use strict';
 
-var testUser, github, issues;
-
-if (typeof window === 'undefined') {
-   // Module dependencies
-   var chai = require('chai');
-   var Github = require('../');
-
-   testUser = require('./user.json');
-
-   // Use should flavour for Mocha
-   var should = chai.should();
-}
+var Github = require('../src/github.js');
+var testUser = require('./user.json');
+var github, issues;
 
 describe('Github.Issue', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
-
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
 
-      issues = github.getIssues('mikedeboertest', 'TestRepo');
+      issues = github.getIssues(testUser.USERNAME, 'TestRepo');
    });
 
    it('should list issues', function(done) {

@@ -1,17 +1,10 @@
 'use strict';
 
-var github, repo, user, testUser, imageB64, imageBlob;
+var Github = require('../src/github.js');
+var testUser = require('./user.json');
+var github, repo, user, imageB64, imageBlob;
 
 if (typeof window === 'undefined') { // We're in NodeJS
-   // Module dependencies
-   var chai = require('chai');
-   var Github = require('../');
-
-   testUser = require('./user.json');
-
-   // Use should flavour for Mocha
-   var should = chai.should();
-
    var fs = require('fs');
    var path = require('path');
 
@@ -46,8 +39,6 @@ if (typeof window === 'undefined') { // We're in NodeJS
 
 describe('Github.Repository', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
-
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -131,16 +122,16 @@ describe('Github.Repository', function() {
 
    it('should get statuses for a SHA from a repo', function(done) {
       repo.getStatuses('20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, statuses) {
-         statuses.length.should.equal(6)
+         statuses.length.should.equal(6);
          statuses.every(function(status) {
-            return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b'
+            return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
          }).should.equal(true);
          done();
       });
    });
 
    it('should get a SHA from a repo', function(done) {
-      repo.getSha('master', '.gitignore', function(err, sha) {
+      repo.getSha('master', '.gitignore', function(err) {
          should.not.exist(err);
          done();
       });
@@ -157,12 +148,10 @@ describe('Github.Repository', function() {
    });
 });
 
-var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
+var repoTest = Math.floor(Math.random() * 100000);
 
 describe('Creating new Github.Repository', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
-
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -399,7 +388,6 @@ describe('Creating new Github.Repository', function() {
 
 describe('deleting a Github.Repository', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -419,7 +407,6 @@ describe('deleting a Github.Repository', function() {
 
 describe('Repo returns commit errors correctly', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -432,7 +419,7 @@ describe('Repo returns commit errors correctly', function() {
       repo.commit('broken-parent-hash', 'broken-tree-hash', 'commit message', function(err) {
          should.exist(err);
          should.exist(err.request);
-         err.request.status.should.equal(422);
+         err.error.should.equal(422);
          done();
       });
    });

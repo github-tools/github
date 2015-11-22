@@ -77,7 +77,7 @@
             .then(function (response) {
                cb(
                   null,
-                  raw ? JSON.stringify(response.data) : response.data || true,
+                  response.data || true,
                   response
                );
             }, function (response) {

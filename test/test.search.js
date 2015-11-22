@@ -1,20 +1,11 @@
 'use strict';
 
+var Github = require('../src/github.js');
+var testUser = require('./user.json');
 var github;
-
-if (typeof window === 'undefined') {
-   // Module dependencies
-   var chai = require('chai');
-   var Github = require('../');
-   var testUser = require('./user.json');
-
-   // Use should flavour for Mocha
-   var should = chai.should();
-}
 
 describe('Github.Search', function() {
    before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
