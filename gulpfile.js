@@ -4,7 +4,12 @@ var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
 var rename = require('gulp-rename');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
+var sourcemaps = require('gulp-sourcemaps');
+var del = require('del');
 var stylish = require('gulp-jscs-stylish');
 var path = require('path');
 var karma = require('karma');
@@ -15,24 +20,22 @@ function runTests(singleRun, isCI, done) {
 
    var files = [
       path.join(__dirname, 'test/vendor/*.js'), // PhantomJS 1.x polyfills
-      path.join(__dirname, 'github.js'),
+      path.join(__dirname, 'src/github.js'),
       path.join(__dirname, 'test/test.*.js')
    ];
 
    if (singleRun) {
       files.forEach(function(path) {
-         preprocessors[path] = ['coverage'];
+         preprocessors[path] = ['browserify', 'coverage'];
       });
       reporters.push('coverage');
    }
 
-   files.push(path.join(__dirname, 'test/user.json'));
    files.push({
       pattern: path.join(__dirname, 'test/gh.png'),
       watched: false,
       included: false
    });
-   preprocessors['test/user.json'] = ['json_fixtures'];
 
    var localConfig = {
       files: files,
@@ -101,15 +104,40 @@ gulp.task('test:ci', function(done) {
 gulp.task('test:auto', function(done) {
    runTests(false, false, done);
 });
-
-gulp.task('build', function() {
-   return gulp.src('github.js')
-      .pipe(uglify())
-      .pipe(rename('github.min.js'))
-      .pipe(gulp.dest('dist/'));
+gulp.task('clean', function () {
+   return del('dist/*');
 });
 
-gulp.task('default', function() {
+gulp.task('build', function() {
+   var browserifyInstance = browserify({
+      debug: true,
+      entries: 'src/github.js',
+      standalone: 'Github'
+   });
+
+   browserifyInstance
+      .bundle()
+      .pipe(source('github.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+      .pipe(uglify())
+      .pipe(rename({
+         extname: '.bundle.min.js'
+      }))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'));
+
+   return gulp.src('src/github.js')
+      .pipe(sourcemaps.init())
+      .pipe(rename({
+         extname: '.min.js'
+      }))
+      .pipe(uglify())
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'));
+});
+
+gulp.task('default', ['clean'], function() {
    gulp.start('lint', 'test', 'build');
 });
 
