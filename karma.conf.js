@@ -5,7 +5,8 @@ module.exports = function(config) {
       client: {
          captureConsole: true,
          mocha: {
-            timeout: 10000
+            timeout: 10000,
+            ui: 'bdd'
          }
       },
 
@@ -15,9 +16,26 @@ module.exports = function(config) {
 
       autoWatch: false,
 
-      frameworks: ['mocha', 'chai'],
+      frameworks: [
+         'browserify',
+         'mocha',
+         'chai'
+      ],
 
       browsers: ['PhantomJS'],
+
+      browserify: {
+         debug: true
+      },
+
+      phantomjsLauncher: {
+         debug: true,
+         options: {
+            settings: {
+               webSecurityEnabled: false
+            }
+         }
+      },
 
       coverageReporter: {
          reporters: [
