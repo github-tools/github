@@ -2,7 +2,7 @@
   "name": "github-api",
   "version": "0.10.7",
   "description": "A higher-level wrapper around the Github API.",
-  "main": "github.js",
+  "main": "src/github.js",
   "dependencies": {
     "axios": "^0.9.0",
     "base-64": "^0.1.0",
@@ -60,9 +60,5 @@
   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
   "bugs": {
     "url": "https://github.com/michael/github/issues"
-  },
-  "browser": {
-    "xmlhttprequest": false,
-    "base64": false
   }
 }

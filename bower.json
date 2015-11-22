@@ -1,6 +1,6 @@
 {
   "name":"github-api",
-  "main":"github.js",
+  "main":"src/github.js",
   "homepage":"https://github.com/michael/github",
   "authors":[
     "Sergey Klimov <sergey.v.klimov@gmail.com> (http://darvin.github.com/)"
