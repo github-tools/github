@@ -143,8 +143,7 @@ Get list of statuses for a particular commit.
 repo.getStatuses(sha, function(err, statuses) {});
 ```
 
-Store contents at a certain path, where files that don't yet exist are created on the fly.
-You can also provide an optional object literal, (`options` in the example below) containing information about the author and the committer.
+Store content at a certain path. If the file specified in the path exists, the content is updated. If the file doesn't exist, it's created on the fly. You can also provide an optional object literal, (`options` in the example below) containing information about the author and the committer.
 
 ```js
 var options = {
