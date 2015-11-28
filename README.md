@@ -131,6 +131,12 @@ Retrieve all available branches (aka heads) of a repository.
 repo.listBranches(function(err, branches) {});
 ```
 
+Get list of statuses for a particular commit.
+
+```js
+repo.getStatuses(sha, function(err, statuses) {});
+```
+
 Store contents at a certain path, where files that don't yet exist are created on the fly.
 You can also provide an optional object literal, (`options` in the example below) containing information about the author and the committer.
 
