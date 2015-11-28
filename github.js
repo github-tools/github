@@ -521,6 +521,18 @@
                });
          };
 
+         // Get the statuses for a particular SHA
+         // -------
+
+         this.getStatuses = function(sha, cb) {
+            _request('GET', repoPath + '/statuses/' + sha, null, function(err, heads, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+               cb(null, heads, xhr);
+            })
+         };
+
          // Retrieve the tree a commit points to
          // -------
 
