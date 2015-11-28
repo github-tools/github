@@ -97,6 +97,16 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should get statuses for a SHA from a repo', function(done) {
+      repo.getStatuses('20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, statuses) {
+         statuses.length.should.equal(6)
+         statuses.every(function(status) {
+            return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b'
+         }).should.equal(true);
+         done();
+      });
+   });
+
    it('should get a SHA from a repo', function(done) {
       repo.getSha('master', '.gitignore', function(err, sha) {
          should.not.exist(err);
