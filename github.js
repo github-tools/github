@@ -3,7 +3,7 @@
  *
  * @copyright (c) 2013 Michael Aufreiter, Development Seed
  *            Github.js is freely distributable.
- *
+ *de
  * @license   Licensed under BSD-3-Clause-Clear
  *
  *            For all details and documentation:
@@ -321,13 +321,6 @@
          var currentTree = {
             branch: null,
             sha: null
-         };
-
-         // Delete a repo
-         // --------
-
-         this.deleteRepo = function(cb) {
-            _request('DELETE', repoPath, options, cb);
          };
 
          // Uses the cache if branch has not been changed
