@@ -1,21 +1,47 @@
 'use strict';
 
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
+var jshint = require('gulp-jshint');
+var webpack = require('webpack-stream');
 var stylish = require('gulp-jscs-stylish');
+
 var path = require('path');
 var karma = require('karma');
 
+console.log(Object.keys(webpack));
+
+/*
+ * Code style enforcement
+ */
+gulp.task('lint', function() {
+   return gulp.src([
+      path.join(__dirname, '/*.js'),
+      path.join(__dirname, '/test/*.js')
+   ],
+   {
+      base: './'
+   })
+   .pipe(jshint())
+   .pipe(jscs({
+      fix: true
+   }))
+   .pipe(stylish.combineWithHintResults())
+   .pipe(jscs.reporter())
+   .pipe(jshint.reporter('jshint-stylish'))
+   .pipe(gulp.dest('.'));
+});
+
+/*
+ * Testing fixtures
+ */
 function runTests(singleRun, isCI, done) {
    var reporters = ['mocha'];
    var preprocessors = {};
 
    var files = [
       path.join(__dirname, 'test/vendor/*.js'), // PhantomJS 1.x polyfills
-      path.join(__dirname, 'github.js'),
+      path.join(__dirname, 'dist', 'github.min.js'),
       path.join(__dirname, 'test/test.*.js')
    ];
 
@@ -72,25 +98,7 @@ function runTests(singleRun, isCI, done) {
    server.start();
 } // End runTests()
 
-gulp.task('lint', function() {
-   return gulp.src([
-      path.join(__dirname, '/*.js'),
-      path.join(__dirname, '/test/*.js')
-   ],
-   {
-      base: './'
-   })
-   .pipe(jshint())
-   .pipe(jscs({
-      fix: true
-   }))
-   .pipe(stylish.combineWithHintResults())
-   .pipe(jscs.reporter())
-   .pipe(jshint.reporter('jshint-stylish'))
-   .pipe(gulp.dest('.'));
-});
-
-gulp.task('test', function(done) {
+gulp.task('test', ['build'], function(done) {
    runTests(true, false, done);
 });
 
@@ -102,11 +110,35 @@ gulp.task('test:auto', function(done) {
    runTests(false, false, done);
 });
 
+/*
+ * Build
+ */
+var WEBPACK_CONFIG = {
+   entry: {
+      github: './github.js'
+   },
+   output: {
+      library: 'Github',
+      libraryTarget: 'umd',
+      filename: '[name].min.js'
+   },
+   resolve: {
+      extensions: ['', '.js']
+   },
+   plugins: [
+      new webpack.webpack.optimize.UglifyJsPlugin()
+   ],
+   devtool: 'source-map',
+   stats: {
+      colors: 'true'
+   }
+};
+
 gulp.task('build', function() {
-   return gulp.src('github.js')
-      .pipe(uglify())
-      .pipe(rename('github.min.js'))
-      .pipe(gulp.dest('dist/'));
+   return gulp.src('./github.js')
+      .pipe(webpack(WEBPACK_CONFIG))
+      .pipe(gulp.dest('dist/'))
+      ;
 });
 
 gulp.task('default', function() {
