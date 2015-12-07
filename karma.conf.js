@@ -15,7 +15,7 @@ module.exports = function(config) {
 
       autoWatch: false,
 
-      frameworks: ['mocha', 'chai', 'phantomjs-shim'],
+      frameworks: ['mocha', 'chai'],
 
       browsers: ['Chrome'],
 

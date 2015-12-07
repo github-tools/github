@@ -9,8 +9,6 @@ var stylish = require('gulp-jscs-stylish');
 var path = require('path');
 var karma = require('karma');
 
-console.log(Object.keys(webpack));
-
 /*
  * Code style enforcement
  */
@@ -42,7 +40,8 @@ function runTests(singleRun, isCI, done) {
    var files = [
       path.join(__dirname, 'test/vendor/*.js'), // PhantomJS 1.x polyfills
       path.join(__dirname, 'dist', 'github.min.js'),
-      path.join(__dirname, 'test/test.*.js')
+      path.join(__dirname, 'test', 'helpers.js'),
+      path.join(__dirname, 'test', 'test.*.js')
    ];
 
    if (singleRun) {

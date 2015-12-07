@@ -1,6 +1,8 @@
-.DS_Store
-.idea
-node_modules/
-npm-debug.log
+dist/
 coverage/
+node_modules/
+
+.idea
+.DS_Store
 sauce.json
+npm-debug.log

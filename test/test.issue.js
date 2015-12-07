@@ -1,22 +1,25 @@
 'use strict';
 
-var testUser, github, issues;
+var testUser;
 
 if (typeof window === 'undefined') {
-   // Module dependencies
-   var chai = require('chai');
    var Github = require('../');
+   var callbackWithError = require('./helpers.js');
 
    testUser = require('./user.json');
+
+   // Module dependencies
+   var chai = require('chai');
 
    // Use should flavour for Mocha
    var should = chai.should();
 }
 
-describe('Github.Issue', function() {
+describe('Issues', function() {
+   var github, issues;
+
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
-
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -27,20 +30,21 @@ describe('Github.Issue', function() {
    });
 
    it('should list issues', function(done) {
-      issues.list({}, function(err, issues) {
+      issues.list({}, callbackWithError(done, function(err, issues) {
          should.not.exist(err);
          issues.should.have.length.above(0);
          done();
-      });
+      }));
    });
 
    it('should post issue comment', function(done) {
-      issues.list({}, function(err, issuesList) {
-         issues.comment(issuesList[0], 'Comment test', function(err, res) {
+      issues.list({}, callbackWithError(done, function(err, issuesList) {
+         should.not.exist(err);
+         issues.comment(issuesList[0], 'Comment test', callbackWithError(done, function(err, res) {
             should.not.exist(err);
             res.body.should.equal('Comment test');
             done();
-         });
-      });
+         }));
+      }));
    });
 });

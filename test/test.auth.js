@@ -1,56 +1,52 @@
 'use strict';
 
-var testUser, github, user;
+var testUser;
 
 if (typeof window === 'undefined') {
-   // Module dependencies
-   var chai = require('chai');
    var Github = require('../');
+   var callbackWithError = require('./helpers.js');
 
    testUser = require('./user.json');
+
+   // Module dependencies
+   var chai = require('chai');
 
    // Use should flavour for Mocha
    var should = chai.should();
 }
 
-describe('Github constructor', function() {
+describe('Authentication', function() {
    before(function() {
       if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
+   });
 
-      github = new Github({
+   it('should authenticate with valid credentials', function(done) {
+      var github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
+      var user = github.getUser();
 
-      user = github.getUser();
-   });
-
-   it('should authenticate and return no errors', function(done) {
-      user.notifications(function(err) {
+      user.notifications(callbackWithError(done, function(err) {
          should.not.exist(err);
          done();
-      });
+      }));
    });
-});
 
-describe('Github constructor (failing case)', function() {
-   before(function() {
-      if (typeof window !== 'undefined') testUser = window.__fixtures__['test/user'];
-
-      github = new Github({
+   it('should fail authentication with invalid credentials', function(done) {
+      var github = new Github({
          username: testUser.USERNAME,
          password: 'fake124',
          auth: 'basic'
       });
-      user = github.getUser();
-   });
+      var user = github.getUser();
 
-   it('should fail authentication and return err', function(done) {
-      user.notifications(function(err) {
-         err.request.status.should.equal(401, 'Return 401 status for bad auth');
-         JSON.parse(err.request.responseText).message.should.equal('Bad credentials');
+      user.notifications(callbackWithError(done, function(err) {
+         err.status.should.equal(401, 'Return 401 status for bad auth');
+         err.response.data.message.should.equal('Bad credentials');
+
          done();
-      });
+      }));
    });
 });
