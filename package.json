@@ -2,37 +2,15 @@
   "name": "github-api",
   "version": "0.10.7",
   "description": "A higher-level wrapper around the Github API.",
-  "main": "github.js",
-  "dependencies": {
-    "js-base64": "^2.1.8",
-    "xmlhttprequest": "~1.7.0"
-  },
-  "devDependencies": {
-    "chai": "^3.4.0",
-    "codecov": "^1.0.1",
-    "gulp": "^3.9.0",
-    "gulp-jscs": "^3.0.1",
-    "gulp-jscs-stylish": "^1.2.1",
-    "gulp-jshint": "^1.11.2",
-    "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.4.2",
-    "istanbul": "^0.3.13",
-    "jshint": "^2.5.8",
-    "jshint-stylish": "^2.0.1",
-    "karma": "^0.13.14",
-    "karma-chai": "^0.1.0",
-    "karma-coverage": "^0.5.3",
-    "karma-json-fixtures-preprocessor": "0.0.5",
-    "karma-mocha": "^0.2.0",
-    "karma-mocha-reporter": "^1.1.1",
-    "karma-phantomjs-launcher": "^0.2.1",
-    "karma-sauce-launcher": "^0.3.0",
-    "mocha": "^2.3.3"
-  },
+  "license": "BSD-3-Clause-Clear",
+  "readmeFilename": "README.md",
   "scripts": {
     "test": "gulp test && gulp lint",
     "lint": "gulp lint",
     "codecov": "cat coverage/*/lcov.info | codecov"
+  },
+  "bugs": {
+    "url": "https://github.com/michael/github/issues"
   },
   "repository": {
     "type": "git",
@@ -45,16 +23,38 @@
   "contributors": [
     "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
     "Aurelio De Rosa (http://www.audero.it/)",
-    "Michael Aufreiter (http://substance.io)"
+    "Michael Aufreiter (http://substance.io)",
+    "Clay Reimann (http://clayreimann.me)"
   ],
-  "license": "BSD-3-Clause-Clear",
-  "readmeFilename": "README.md",
-  "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
-  "bugs": {
-    "url": "https://github.com/michael/github/issues"
+  "main": "github.js",
+  "dependencies": {
+    "axios": "^0.7.0",
+    "debug": "^2.2.0",
+    "es6-promise": "^3.0.2",
+    "inherits": "^2.0.1",
+    "js-base64": "^2.1.8",
+    "xmlhttprequest": "~1.7.0"
   },
-  "browser": {
-    "xmlhttprequest": false,
-    "base64": false
-  }
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "codecov": "^1.0.1",
+    "gulp": "^3.9.0",
+    "gulp-jscs": "^3.0.1",
+    "gulp-jscs-stylish": "^1.2.1",
+    "gulp-jshint": "^1.11.2",
+    "istanbul": "^0.3.13",
+    "jshint": "^2.5.8",
+    "jshint-stylish": "^2.0.1",
+    "karma": "^0.13.14",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-coverage": "^0.5.3",
+    "karma-json-fixtures-preprocessor": "0.0.5",
+    "karma-mocha": "^0.2.0",
+    "karma-mocha-reporter": "^1.1.1",
+    "karma-sauce-launcher": "^0.3.0",
+    "mocha": "^2.3.3",
+    "webpack-stream": "^2.3.0"
+  },
+  "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36"
 }
