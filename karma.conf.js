@@ -15,9 +15,9 @@ module.exports = function(config) {
 
       autoWatch: false,
 
-      frameworks: ['mocha', 'chai'],
+      frameworks: ['mocha', 'chai', 'phantomjs-shim'],
 
-      browsers: ['PhantomJS'],
+      browsers: ['Chrome'],
 
       coverageReporter: {
          reporters: [
