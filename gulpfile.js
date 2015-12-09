@@ -2,12 +2,15 @@
 
 var gulp = require('gulp');
 var jscs = require('gulp-jscs');
+var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var webpack = require('webpack-stream');
+var codecov = require('gulp-codecov.io');
 var stylish = require('gulp-jscs-stylish');
 
 var path = require('path');
 var karma = require('karma');
+var sequence = require('run-sequence');
 
 /*
  * Code style enforcement
@@ -33,6 +36,43 @@ gulp.task('lint', function() {
 /*
  * Testing fixtures
  */
+var sauceLaunchers = {
+   SL_Chrome: {
+      base: 'SauceLabs',
+      browserName: 'chrome',
+      version: '45'
+   },
+   SL_Firefox: {
+      base: 'SauceLabs',
+      browserName: 'firefox',
+      version: '39'
+   },
+   SL_Safari: {
+      base: 'SauceLabs',
+      browserName: 'safari',
+      platform: 'OS X 10.10',
+      version: '8'
+   },
+   SL_IE_10: {
+      base: 'SauceLabs',
+      browserName: 'internet explorer',
+      platform: 'Windows 2012',
+      version: '10'
+   },
+   SL_IE_11: {
+      base: 'SauceLabs',
+      browserName: 'internet explorer',
+      platform: 'Windows 8.1',
+      version: '11'
+   },
+   SL_iOS: {
+      base: 'SauceLabs',
+      browserName: 'iphone',
+      platform: 'OS X 10.10',
+      version: '8.1'
+   }
+};
+
 function runTests(singleRun, isCI, done) {
    var reporters = ['mocha'];
    var preprocessors = {};
@@ -72,7 +112,9 @@ function runTests(singleRun, isCI, done) {
       localConfig.sauceLabs = {
          testName: 'GitHub.js UAT tests',
          idleTimeout: 120000,
-         recordVideo: false
+         recordVideo: false,
+         username: 'clayreimann',
+         accessKey: '16176d74-6882-4457-b4cd-d8f36aa9d0be'
       };
 
       // Increase timeouts massively so Karma doesn't timeout in Sauce tunnel.
@@ -97,8 +139,17 @@ function runTests(singleRun, isCI, done) {
    server.start();
 } // End runTests()
 
-gulp.task('test', ['build'], function(done) {
+gulp.task('test', ['test:node', 'test:web']);
+
+gulp.task('test:web', ['build'], function(done) {
    runTests(true, false, done);
+});
+
+gulp.task('test:node', function() {
+   return gulp.src('test/test.*.js')
+      .pipe(mocha({
+         timeout: 10000
+      }));
 });
 
 gulp.task('test:ci', function(done) {
@@ -107,6 +158,11 @@ gulp.task('test:ci', function(done) {
 
 gulp.task('test:auto', function(done) {
    runTests(false, false, done);
+});
+
+gulp.task('codecov', function() {
+   return gulp.src('coverage/*/lcov.info')
+      .pipe(codecov());
 });
 
 /*
@@ -140,43 +196,9 @@ gulp.task('build', function() {
       ;
 });
 
+/*
+ * Miscellaneous tasks
+ */
 gulp.task('default', function() {
    gulp.start('lint', 'test', 'build');
 });
-
-var sauceLaunchers = {
-   SL_Chrome: {
-      base: 'SauceLabs',
-      browserName: 'chrome',
-      version: '45'
-   },
-   SL_Firefox: {
-      base: 'SauceLabs',
-      browserName: 'firefox',
-      version: '39'
-   },
-   SL_Safari: {
-      base: 'SauceLabs',
-      browserName: 'safari',
-      platform: 'OS X 10.10',
-      version: '8'
-   },
-   SL_IE_10: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 2012',
-      version: '10'
-   },
-   SL_IE_11: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 8.1',
-      version: '11'
-   },
-   SL_iOS: {
-      base: 'SauceLabs',
-      browserName: 'iphone',
-      platform: 'OS X 10.10',
-      version: '8.1'
-   }
-};

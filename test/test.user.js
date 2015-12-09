@@ -14,7 +14,7 @@ if (typeof window === 'undefined') {
    var should = chai.should();
 }
 
-describe('Github.User', function() {
+describe('User', function() {
    var user, github;
 
    before(function() {
@@ -27,14 +27,14 @@ describe('Github.User', function() {
       user = github.getUser();
    });
 
-   it('should get user.repos', function(done) {
+   it('should get user repos', function(done) {
       user.repos(callbackWithError(done, function(err) {
          should.not.exist(err);
          done();
       }));
    });
 
-   it('should get user.repos with options', function(done) {
+   it('should get user repos with options', function(done) {
       var options = {
          type: 'owner',
          sort: 'updated',
@@ -50,28 +50,28 @@ describe('Github.User', function() {
       }));
    });
 
-   it('should get user.orgs', function(done) {
+   it('should get user orgs', function(done) {
       user.orgs(callbackWithError(done, function(err) {
          should.not.exist(err);
          done();
       }));
    });
 
-   it('should get user.gists', function(done) {
+   it('should get user gists', function(done) {
       user.gists(function(err) {
          should.not.exist(err);
          done();
       });
    });
 
-   it('should get user.notifications', function(done) {
+   it('should get user notifications', function(done) {
       user.notifications(callbackWithError(done, function(err) {
          should.not.exist(err);
          done();
       }));
    });
 
-   it('should get user.notifications with options', function(done) {
+   it('should get user notifications with options', function(done) {
       var options = {
          all: true,
          participating: true,

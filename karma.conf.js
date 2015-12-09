@@ -22,11 +22,11 @@ module.exports = function(config) {
       coverageReporter: {
          reporters: [
             {
-              type: 'lcov'
-           },
-           {
-              type: 'text-summary'
-           }
+               type: 'lcov'
+            },
+            {
+               type: 'text-summary'
+            }
          ],
          instrumenterOptions: {
             istanbul: {

@@ -5,7 +5,7 @@
   "license": "BSD-3-Clause-Clear",
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "gulp test && gulp lint",
+    "test": "gulp lint && gulp test",
     "lint": "gulp lint",
     "codecov": "cat coverage/*/lcov.info | codecov"
   },
@@ -32,16 +32,17 @@
     "debug": "^2.2.0",
     "es6-promise": "^3.0.2",
     "inherits": "^2.0.1",
-    "js-base64": "^2.1.8",
-    "xmlhttprequest": "~1.7.0"
+    "js-base64": "^2.1.8"
   },
   "devDependencies": {
     "chai": "^3.4.0",
     "codecov": "^1.0.1",
     "gulp": "^3.9.0",
+    "gulp-codecov.io": "^1.0.1",
     "gulp-jscs": "^3.0.1",
     "gulp-jscs-stylish": "^1.2.1",
     "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.2.0",
     "istanbul": "^0.3.13",
     "jshint": "^2.5.8",
     "jshint-stylish": "^2.0.1",
@@ -54,6 +55,7 @@
     "karma-mocha-reporter": "^1.1.1",
     "karma-sauce-launcher": "^0.3.0",
     "mocha": "^2.3.3",
+    "run-sequence": "^1.1.5",
     "webpack-stream": "^2.3.0"
   },
   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36"

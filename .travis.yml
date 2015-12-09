@@ -10,7 +10,9 @@ node_js:
   - "0.10"
 
 script:
-  - gulp lint
-  - gulp test:ci
-  - mocha test/
-  - npm run-script codecov
+  - >
+   gulp lint &&
+   gulp build &&
+   gulp test:node &&
+   gulp test:ci &&
+   gulp codecov

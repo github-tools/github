@@ -147,7 +147,9 @@ describe('Repository', function() {
             should.not.exist(err);
             statuses.length.should.equal(6);
             statuses.every(function(status) {
+               // jscs:disable
                return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+               // jscs:enable
             }).should.equal(true);
             done();
          }));
@@ -295,9 +297,10 @@ describe('Repository', function() {
       it('should use repo.delete as an alias for repo.remove', function(done) {
          repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', callbackWithError(done, function(err) {
             should.not.exist(err);
-            repo.delete('master', 'REMOVE-TEST.md', function(err) {
-               done(err);
-            });
+            repo.delete('master', 'REMOVE-TEST.md', callbackWithError(done, function(err) {
+               should.not.exist(err);
+               done();
+            }));
          }));
       });
 
