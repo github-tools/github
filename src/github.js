@@ -107,6 +107,10 @@
                   return cb(err);
                }
 
+               if (!(res instanceof Array)) {
+                  res = [res];
+               }
+
                results.push.apply(results, res);
 
                var links = (xhr.getResponseHeader('link') || '').split(/\s*,\s*/g);
