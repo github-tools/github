@@ -121,6 +121,10 @@
                   return cb(err);
                }
 
+               if (Object.prototype.toString.call(res) === '[object Object]') {
+                  res = [ res ];
+               }
+
                results.push.apply(results, res);
 
                var next = (xhr.getResponseHeader('link') || '')
