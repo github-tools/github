@@ -51,7 +51,7 @@ See these pages for more info:
 
 [Creating an access token for command-line use](https://help.github.com/articles/creating-an-access-token-for-command-line-use)
 
-[Github API OAuth Overview] (http://developer.github.com/v3/oauth)
+[Github API OAuth Overview](http://developer.github.com/v3/oauth)
 
 Enterprise Github instances may be specified using the `apiUrl` option:
 
