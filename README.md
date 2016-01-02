@@ -237,7 +237,7 @@ List repositories of the authenticated user, including private repositories and 
 user.repos(options, function(err, repos) {});
 ```
 
-List organizations the autenticated user belongs to.
+List organizations the authenticated user belongs to.
 
 ```js
 user.orgs(function(err, orgs) {});
