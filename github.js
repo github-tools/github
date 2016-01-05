@@ -9,14 +9,11 @@
  *            For all details and documentation:
  *            http://substance.io/michael/github
  */
-
 (function (root, factory) {
-   // UMD boilerplate from https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
    'use strict';
 
    /* istanbul ignore next */
    if (typeof define === 'function' && define.amd) {
-      // AMD. Register as an anonymous module.
       define(['xmlhttprequest', 'js-base64'], function (XMLHttpRequest, b64encode) {
          return (root.Github = factory(XMLHttpRequest.XMLHttpRequest, b64encode.Base64.encode));
       });
@@ -27,7 +24,6 @@
          module.exports = factory(require('xmlhttprequest').XMLHttpRequest, require('js-base64').Base64.encode);
       }
    } else {
-      // Browser globals
       var b64encode = function(str) {
          return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
             return String.fromCharCode('0x' + p1);
