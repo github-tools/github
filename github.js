@@ -25,7 +25,7 @@
       }
    } else {
       var b64encode = function(str) {
-         return root.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+         return root.btoa(str.replace(/%([0-9A-F]{2})/g, function(match, p1) {
             return String.fromCharCode('0x' + p1);
          }));
       };
