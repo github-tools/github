@@ -86,6 +86,7 @@
     "globals"       : {
       "require": false,
       "define": false,
-      "escape": false
+      "escape": false,
+      "should": false
     }        // additional predefined global variables
 }
