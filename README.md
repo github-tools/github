@@ -243,6 +243,12 @@ List organizations the authenticated user belongs to.
 user.orgs(function(err, orgs) {});
 ```
 
+List organization members by organization ID
+
+```js
+user.orgMembers(orgId);
+```
+
 List authenticated user's gists.
 
 ```js

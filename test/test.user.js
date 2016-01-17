@@ -54,6 +54,13 @@ describe('Github.User', function() {
       });
    });
 
+   it('should get user.orgMembers from "dolores" company', function(done) {
+      user.orgMembers(testUser.ORGID, function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
    it('should get user.gists', function(done) {
       user.gists(function(err) {
          should.not.exist(err);

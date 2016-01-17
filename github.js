@@ -173,6 +173,12 @@
          this.orgs = function(cb) {
             _request('GET', '/user/orgs', null, cb);
          };
+         
+         // List members of given organization
+         // -------
+         this.orgMembers = function (orgId, cb) {
+            _request('GET', '/organizations/' + orgId + '/members', options, cb);
+         };
 
          // List authenticated user's gists
          // -------
