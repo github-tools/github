@@ -117,6 +117,10 @@
                   return cb(err);
                }
 
+               if (!(res instanceof Array)) {
+                  res = [res];
+               }
+
                results.push.apply(results, res);
 
                var next = (xhr.getResponseHeader('link') || '')
