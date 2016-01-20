@@ -121,8 +121,8 @@
                   return cb(err);
                }
 
-               if (Object.prototype.toString.call(res) === '[object Object]') {
-                  res = [ res ];
+               if (!(res instanceof Array)) {
+                  res = [res];
                }
 
                results.push.apply(results, res);
