@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
    'use strict';
 
    var configuration = {
@@ -25,7 +25,8 @@ module.exports = function(config) {
       browsers: ['PhantomJS'],
 
       browserify: {
-         debug: true
+         debug: true,
+         transform: ['browserify-istanbul']
       },
 
       phantomjsLauncher: {
@@ -40,11 +41,11 @@ module.exports = function(config) {
       coverageReporter: {
          reporters: [
             {
-              type: 'lcov'
-           },
-           {
-              type: 'text-summary'
-           }
+               type: 'lcov'
+            },
+            {
+               type: 'text-summary'
+            }
          ],
          instrumenterOptions: {
             istanbul: {

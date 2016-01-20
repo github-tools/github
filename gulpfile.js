@@ -20,14 +20,11 @@ function runTests(singleRun, isCI, done) {
 
    var files = [
       path.join(__dirname, 'test/vendor/*.js'), // PhantomJS 1.x polyfills
-      path.join(__dirname, 'src/github.js'),
       path.join(__dirname, 'test/test.*.js')
    ];
 
    if (singleRun) {
-      files.forEach(function(path) {
-         preprocessors[path] = ['browserify', 'coverage'];
-      });
+      preprocessors['test/test.*.js'] = ['browserify'];
       reporters.push('coverage');
    }
 
@@ -119,8 +116,10 @@ gulp.task('build', function() {
       .bundle()
       .pipe(source('github.js'))
       .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-      .pipe(uglify())
+      .pipe(sourcemaps.init({
+         loadMaps: true
+      }))
+            .pipe(uglify())
       .pipe(rename({
          extname: '.bundle.min.js'
       }))

@@ -12,6 +12,7 @@
 'use strict';
 
 (function (root, factory) {
+   /* istanbul ignore next */
    if (typeof define === 'function' && define.amd) {
       define(['es6-promise', 'base-64', 'utf8', 'axios'], function (Promise, Base64, Utf8, axios) {
          return (root.Github = factory(Promise, Base64, Utf8, axios));

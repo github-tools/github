@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "browserify-istanbul": "^0.2.1",
     "chai": "^3.4.1",
     "codecov": "^1.0.1",
     "del": "^2.2.0",
