@@ -57,10 +57,17 @@ describe('Github.Repository', function() {
    });
 
    it('should show repo contents', function(done) {
-      repo.contents('master', './', function(err) {
+      repo.contents('master', '', function(err, contents) {
          should.not.exist(err);
+         contents.should.be.instanceof(Array);
 
-         // @TODO write better assertion.
+         var readme = contents.filter(function(content) {
+            return content.path === 'README.md';
+         });
+
+         readme.should.have.length(1);
+         readme[0].should.have.property('type', 'file');
+
          done();
       });
    });
