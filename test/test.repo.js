@@ -214,6 +214,21 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should compare two branches', function(done) {
+      repo.branch('master', 'compare', function() {
+         repo.write('compare', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function() {
+            repo.compare('master', 'compare', function(err, diff) {
+               should.not.exist(err);
+
+               diff.should.have.property('total_commits', 1);
+               diff.should.have.deep.property('files[0].filename', 'TEST.md');
+
+               done();
+            });
+         });
+      });
+   });
+
    it('should get ref from repo', function(done) {
       repo.getRef('heads/master', function(err) {
          should.not.exist(err);
