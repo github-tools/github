@@ -221,8 +221,9 @@ describe('Creating new Github.Repository', function() {
          repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
             should.not.exist(err);
             repo.read('dev', 'TEST.md', function(err, res) {
-               res.should.equal('THIS IS AN UPDATED TEST');
                should.not.exist(err);
+               res.should.equal('THIS IS AN UPDATED TEST');
+
                done();
             });
          });
