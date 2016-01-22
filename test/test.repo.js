@@ -206,8 +206,12 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
          should.not.exist(err);
 
-         // @TODO write a better assertion.
-         done();
+         repo.read('master', 'TEST.md', function(err, res) {
+            should.not.exist(err);
+            res.should.equal('THIS IS A TEST');
+
+            done();
+         });
       });
    });
 
