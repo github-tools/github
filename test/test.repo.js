@@ -56,6 +56,18 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should get blob', function(done) {
+      repo.getSha('master', 'README.md', function(err, sha) {
+         repo.getBlob(sha, function(err, content) {
+            should.not.exist(err);
+
+            content.indexOf('# Github.js').should.be.above(-1);
+
+            done();
+         });
+      });
+   });
+
    it('should show repo contents', function(done) {
       repo.contents('master', '', function(err, contents) {
          should.not.exist(err);
