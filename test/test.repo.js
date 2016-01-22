@@ -84,6 +84,17 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should get tree', function(done) {
+      repo.getTree('master', function(err, tree) {
+         should.not.exist(err);
+
+         tree.should.be.instanceof(Array);
+         tree.should.have.length.above(0);
+
+         done();
+      });
+   });
+
    it('should fork repo', function(done) {
       repo.fork(function(err) {
          should.not.exist(err);
