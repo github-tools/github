@@ -229,6 +229,35 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should submit a pull request', function(done) {
+      var baseBranch = 'master';
+      var headBranch = 'pull-request';
+      var pullRequestTitle = 'Test pull request';
+      var pullRequestBody = 'This is a test pull request';
+
+      repo.branch(baseBranch, headBranch, function() {
+         repo.write(headBranch, 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function() {
+            repo.createPullRequest(
+               {
+                  title: pullRequestTitle,
+                  body: pullRequestBody,
+                  base: baseBranch,
+                  head: headBranch
+               },
+               function(err, pullRequest) {
+                  should.not.exist(err);
+
+                  pullRequest.should.have.property('number').above(0);
+                  pullRequest.should.have.property('title', pullRequestTitle);
+                  pullRequest.should.have.property('body', pullRequestBody);
+
+                  done();
+               }
+            );
+         });
+      });
+   });
+
    it('should get ref from repo', function(done) {
       repo.getRef('heads/master', function(err) {
          should.not.exist(err);
