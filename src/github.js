@@ -109,7 +109,7 @@
 
                results.push.apply(results, res);
 
-               var links = (xhr.headers.link || '').split(/\s*,\s*/g);
+               var links = (xhr.getResponseHeader('link') || '').split(/\s*,\s*/g);
                var next = null;
 
                links.forEach(function (link) {
