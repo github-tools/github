@@ -818,6 +818,7 @@
          // List commits on a repository. Takes an object of optional parameters:
          // sha: SHA or branch to start listing commits from
          // path: Only commits containing this file path will be returned
+         // author: Only commits by this author will be returned. Its value can be the GitHub login or the email address
          // since: ISO 8601 date - only commits after this date will be returned
          // until: ISO 8601 date - only commits before this date will be returned
          // -------
@@ -833,6 +834,10 @@
 
             if (options.path) {
                params.push('path=' + encodeURIComponent(options.path));
+            }
+
+            if (options.author) {
+               params.push('author=' + encodeURIComponent(options.author));
             }
 
             if (options.since) {
