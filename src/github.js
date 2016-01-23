@@ -79,19 +79,19 @@
                cb(
                   null,
                   response.data || true,
-                  response
+                  response.request
                );
             }, function (response) {
                if (response.status === 304) {
                   cb(
                      null,
                      response.data || true,
-                     response
+                     response.request
                   );
                } else {
                   cb({
                      path: path,
-                     request: response.data,
+                     request: response.request,
                      error: response.status
                   });
                }
