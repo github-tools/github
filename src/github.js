@@ -815,7 +815,7 @@
             });
          };
 
-         // List commits on a repository. Takes an object of optional paramaters:
+         // List commits on a repository. Takes an object of optional parameters:
          // sha: SHA or branch to start listing commits from
          // path: Only commits containing this file path will be returned
          // since: ISO 8601 date - only commits after this date will be returned
