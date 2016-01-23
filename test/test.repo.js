@@ -113,6 +113,23 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should list commits', function(done) {
+      var options = {
+         sha: 'master',
+         path: 'test'
+      };
+
+      repo.getCommits(options, function(err, commits) {
+         should.not.exist(err);
+         commits.should.be.instanceof(Array);
+         commits.should.have.length.above(0);
+         commits[0].should.have.property('commit');
+         commits[0].should.have.property('author');
+
+         done();
+      });
+   });
+
    it('should show repo contributors', function(done) {
       repo.contributors(function(err, res) {
          should.not.exist(err);
