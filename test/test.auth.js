@@ -37,7 +37,7 @@ describe('Github constructor (failing case)', function() {
    it('should fail authentication and return err', function(done) {
       user.notifications(function(err) {
          err.error.should.equal(401, 'Return 401 status for bad auth');
-         err.request.message.should.equal('Bad credentials');
+         JSON.parse(err.request.responseText).message.should.equal('Bad credentials');
          done();
       });
    });
