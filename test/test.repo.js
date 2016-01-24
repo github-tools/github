@@ -505,6 +505,17 @@ describe('Creating new Github.Repository', function() {
          });
       });
    });
+
+   it('should star the repo', function(done) {
+      repo.star(testUser.USERNAME, repoTest, function(err) {
+         should.not.exist(err);
+
+         repo.isStarred(testUser.USERNAME, repoTest, function(err) {
+            should.not.exist(err);
+            done();
+         });
+      });
+   });
 });
 
 describe('deleting a Github.Repository', function() {

@@ -244,6 +244,12 @@ Check if a repository is starred.
 repo.isStarred(owner, repository, function(err) {});
 ```
 
+Star a repository.
+
+```js
+repo.star(owner, repository, function(err) {});
+```
+
 ## User API
 
 

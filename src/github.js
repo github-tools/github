@@ -852,6 +852,13 @@
          this.isStarred = function(owner, repository, cb) {
             _request('GET', '/user/starred/' + owner + '/' + repository, null, cb);
          };
+
+         // Star a repository.
+         // --------
+
+         this.star = function(owner, repository, cb) {
+            _request('PUT', '/user/starred/' + owner + '/' + repository, null, cb)
+         };
       };
 
       // Gists API
