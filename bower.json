@@ -1,5 +1,6 @@
 {
   "name":"github-api",
+  "version": "0.11.1",
   "main":"src/github.js",
   "homepage":"https://github.com/michael/github",
   "authors":[
