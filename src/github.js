@@ -250,9 +250,7 @@
 
          this.userStarred = function (username, cb) {
             // Github does not always honor the 1000 limit so we want to iterate over the data set.
-            _requestAllPages('/users/' + username + '/starred?type=all&per_page=100', function (err, res) {
-               cb(err, res);
-            });
+            _requestAllPages('/users/' + username + '/starred?type=all&per_page=100', cb);
          };
 
          // List a user's gists
@@ -360,9 +358,7 @@
          // repo.deleteRef('tags/v1.0')
 
          this.deleteRef = function (ref, cb) {
-            _request('DELETE', repoPath + '/git/refs/' + ref, options, function (err, res, xhr) {
-               cb(err, res, xhr);
-            });
+            _request('DELETE', repoPath + '/git/refs/' + ref, options, cb);
          };
 
          // Create a repo
@@ -383,13 +379,7 @@
          // -------
 
          this.listTags = function (cb) {
-            _request('GET', repoPath + '/tags', null, function (err, tags, xhr) {
-               if (err) {
-                  return cb(err);
-               }
-
-               cb(null, tags, xhr);
-            });
+            _request('GET', repoPath + '/tags', null, cb);
          };
 
          // List all pull requests of a respository
@@ -437,30 +427,21 @@
                url += '?' + params.join('&');
             }
 
-            _request('GET', url, null, function (err, pulls, xhr) {
-               if (err) return cb(err);
-               cb(null, pulls, xhr);
-            });
+            _request('GET', url, null, cb);
          };
 
          // Gets details for a specific pull request
          // -------
 
          this.getPull = function (number, cb) {
-            _request('GET', repoPath + '/pulls/' + number, null, function (err, pull, xhr) {
-               if (err) return cb(err);
-               cb(null, pull, xhr);
-            });
+            _request('GET', repoPath + '/pulls/' + number, null, cb);
          };
 
          // Retrieve the changes made between base and head
          // -------
 
          this.compare = function (base, head, cb) {
-            _request('GET', repoPath + '/compare/' + base + '...' + head, null, function (err, diff, xhr) {
-               if (err) return cb(err);
-               cb(null, diff, xhr);
-            });
+            _request('GET', repoPath + '/compare/' + base + '...' + head, null, cb);
          };
 
          // List all branches of a repository
@@ -486,10 +467,7 @@
          // -------
 
          this.getCommit = function (branch, sha, cb) {
-            _request('GET', repoPath + '/git/commits/' + sha, null, function (err, commit, xhr) {
-               if (err) return cb(err);
-               cb(null, commit, xhr);
-            });
+            _request('GET', repoPath + '/git/commits/' + sha, null, cb);
          };
 
          // For a given file path, get the corresponding sha (blob for files, tree for dirs)
@@ -613,9 +591,7 @@
          this.updateHead = function (head, commit, cb) {
             _request('PATCH', repoPath + '/git/refs/heads/' + head, {
                sha: commit
-            }, function (err) {
-               cb(err);
-            });
+            }, cb);
          };
 
          // Show repository information
@@ -779,9 +755,7 @@
 
                   that.postTree(tree, function (err, rootTree) {
                      that.commit(latestCommit, rootTree, 'Deleted ' + path, function (err, commit) {
-                        that.updateHead(branch, commit, function (err) {
-                           cb(err);
-                        });
+                        that.updateHead(branch, commit, cb);
                      });
                   });
                });
@@ -967,9 +941,7 @@
          this.comment = function (issue, comment, cb) {
             _request('POST', issue.comments_url, {
                body: comment
-            }, function (err, res) {
-               cb(err, res);
-            });
+            }, cb);
          };
       };
 
