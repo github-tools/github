@@ -9,6 +9,10 @@ node_js:
   - "0.11"
   - "0.10"
 
+cache:
+  directories:
+    - node_modules
+
 script:
   - gulp lint
   - gulp test:ci
