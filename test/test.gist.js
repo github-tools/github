@@ -2,16 +2,18 @@
 
 var Github = require('../src/github.js');
 var testUser = require('./user.json');
-var github = new Github({
-   username: testUser.USERNAME,
-   password: testUser.PASSWORD,
-   auth: 'basic'
-});
+var github;
 
 describe('Github.Gist', function() {
    var gist;
 
    before(function() {
+      github = new Github({
+         username: testUser.USERNAME,
+         password: testUser.PASSWORD,
+         auth: 'basic'
+      });
+
       gist = github.getGist('f1c0f84e53aa6b98ec03');
    });
 
