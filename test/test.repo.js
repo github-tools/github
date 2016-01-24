@@ -113,10 +113,27 @@ describe('Github.Repository', function() {
       });
    });
 
-   it('should list commits', function(done) {
+   it('should list commits with no options', function(done) {
+      repo.getCommits(null, function(err, commits) {
+         should.not.exist(err);
+         commits.should.be.instanceof(Array);
+         commits.should.have.length.above(0);
+         commits[0].should.have.property('commit');
+         commits[0].should.have.property('author');
+
+         done();
+      });
+   });
+
+   it('should list commits with all options', function(done) {
+      var sinceDate = new Date(2015, 0, 1);
+      var untilDate = new Date(2016, 0, 20);
       var options = {
          sha: 'master',
-         path: 'test'
+         path: 'test',
+         author: 'AurelioDeRosa',
+         since: sinceDate,
+         until: untilDate
       };
 
       repo.getCommits(options, function(err, commits) {
@@ -124,7 +141,8 @@ describe('Github.Repository', function() {
          commits.should.be.instanceof(Array);
          commits.should.have.length.above(0);
          commits[0].should.have.property('commit');
-         commits[0].should.have.property('author');
+         commits[0].should.have.deep.property('author.login', 'AurelioDeRosa');
+         (new Date(commits[0].commit.author.date)).getTime().should.be.within(sinceDate.getTime(), untilDate.getTime());
 
          done();
       });
