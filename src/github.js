@@ -313,13 +313,6 @@
             sha: null
          };
 
-         // Delete a repo
-         // --------
-
-         this.deleteRepo = function (cb) {
-            _request('DELETE', repoPath, options, cb);
-         };
-
          // Uses the cache if branch has not been changed
          // -------
 
