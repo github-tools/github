@@ -37,7 +37,7 @@ if (typeof window === 'undefined') { // We're in NodeJS
    }
 }
 
-describe('Github.Repository', function() {
+describe.only('Github.Repository', function() {
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
@@ -208,6 +208,13 @@ describe('Github.Repository', function() {
       repo2.show(function(err, res) {
          should.not.exist(err);
          res.full_name.should.equal('michael/github'); // jscs:ignore
+         done();
+      });
+   });
+
+   it('should check if the repo is starred', function(done) {
+      repo.isStarred('michael', 'github', function(err) {
+         err.error.should.equal(404);
          done();
       });
    });

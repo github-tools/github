@@ -238,6 +238,12 @@ Get contributors list with additions, deletions, and commit counts.
 repo.contributors(function(err, data) {});
 ```
 
+Check if a repository is starred.
+
+```js
+repo.isStarred(owner, repository, function(err) {});
+```
+
 ## User API
 
 

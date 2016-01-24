@@ -845,6 +845,13 @@
 
             _request('GET', url, null, cb);
          };
+
+         // Check if a repository is starred.
+         // --------
+
+         this.isStarred = function(owner, repository, cb) {
+            _request('GET', '/user/starred/' + owner + '/' + repository, null, cb);
+         };
       };
 
       // Gists API
