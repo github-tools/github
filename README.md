@@ -250,6 +250,12 @@ Star a repository.
 repo.star(owner, repository, function(err) {});
 ```
 
+Unstar a repository.
+
+```js
+repo.unstar(owner, repository, function(err) {});
+```
+
 ## User API
 
 

@@ -859,6 +859,13 @@
          this.star = function(owner, repository, cb) {
             _request('PUT', '/user/starred/' + owner + '/' + repository, null, cb)
          };
+
+         // Unstar a repository.
+         // --------
+
+         this.unstar = function(owner, repository, cb) {
+            _request('DELETE', '/user/starred/' + owner + '/' + repository, null, cb)
+         };
       };
 
       // Gists API

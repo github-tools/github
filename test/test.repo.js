@@ -37,7 +37,7 @@ if (typeof window === 'undefined') { // We're in NodeJS
    }
 }
 
-describe.only('Github.Repository', function() {
+describe('Github.Repository', function() {
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
@@ -512,6 +512,17 @@ describe('Creating new Github.Repository', function() {
 
          repo.isStarred(testUser.USERNAME, repoTest, function(err) {
             should.not.exist(err);
+            done();
+         });
+      });
+   });
+
+   it('should unstar the repo', function(done) {
+      repo.unstar(testUser.USERNAME, repoTest, function(err) {
+         should.not.exist(err);
+
+         repo.isStarred(testUser.USERNAME, repoTest, function(err) {
+            err.error.should.equal(404);
             done();
          });
       });
