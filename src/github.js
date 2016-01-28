@@ -1032,6 +1032,14 @@
                body: comment
             }, cb);
          };
+
+         this.edit = function (issue, options, cb) {
+            _request('PATCH', path + '/' + issue, options, cb);
+         };
+
+         this.get = function (issue, cb) {
+            _request('GET', path + '/' + issue, null, cb);
+         };
       };
 
       // Search API

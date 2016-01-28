@@ -36,4 +36,30 @@ describe('Github.Issue', function() {
          });
       });
    });
+
+   it('should edit issues title', function(done) {
+      issues.list({}, function(err, issuesList) {
+         issues.edit(issuesList[0].number, {
+            title: 'Edited title'
+         }, function(err, res, xhr) {
+            should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
+            res.title.should.equal('Edited title');
+
+            done();
+         });
+      });
+   });
+
+   it('should get issue', function(done) {
+      issues.list({}, function(err, issuesList) {
+         issues.get(issuesList[0].number, function(err, res, xhr) {
+            should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
+            res.number.should.equal(issuesList[0].number);
+
+            done();
+         });
+      });
+   });
 });
