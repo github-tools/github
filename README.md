@@ -382,6 +382,27 @@ To comment in a issue
 issues.comment(issue, comment,function(err, comment) {});
 ```
 
+To edit an issue
+
+| Parameter | Type |
+| --------- | ---- |
+| issue | object/int |
+| [options](https://developer.github.com/v3/issues/#parameters-3) | object |
+
+```js
+issues.edit(issue,options,function (err,issue) {});
+```
+
+To get an issue
+
+| Parameter | Type |
+| --------- | ---- |
+| issue | object/int |
+
+```js
+issues.get(issue,function (err,issue) {});
+```
+
 ## Search API
 
 ```js
