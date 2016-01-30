@@ -25,6 +25,9 @@
     "tests"
   ],
   "dependencies": {
-      "axios":"https://github.com/github-tools/axios.git"
+      "axios":"https://github.com/github-tools/axios.git",
+      "base-64": "^0.1.0",
+      "es6-promise": "^3.0.2",
+      "utf8": "^2.1.1"
   }
 }
