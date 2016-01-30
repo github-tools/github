@@ -23,5 +23,8 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+      "axios":"https://github.com/github-tools/axios.git"
+  }
 }
