@@ -289,6 +289,27 @@
          };
       };
 
+      // Organization API
+      // =======
+
+      Github.Organization = function (org) {
+
+         // Check if user is part of organization
+         // -------
+
+         this.checkMembership = function (organization, username, cb) {
+            _request('GET', '/orgs/' + organization + '/members/' + username, null, cb);
+         };
+
+         // List organization members
+         // -------
+
+         this.listMembers = function (organization, cb) {
+            _request('GET', '/orgs/' + organization + '/members', null, cb);
+         };
+
+      };
+
       // Repository API
       // =======
 
@@ -1018,6 +1039,10 @@
 
    Github.getUser = function () {
       return new Github.User();
+   };
+
+   Github.getOrg = function() {
+      return new Github.Organization();
    };
 
    Github.getGist = function (id) {
