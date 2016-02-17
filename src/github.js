@@ -292,7 +292,7 @@
       // Organization API
       // =======
 
-      Github.Organization = function (org) {
+      Github.Organization = function () {
 
          // Check if user is part of organization
          // -------
@@ -306,6 +306,13 @@
 
          this.listMembers = function (organization, cb) {
             _request('GET', '/orgs/' + organization + '/members', null, cb);
+         };
+
+         // List organization repos
+         // -------
+
+         this.listRepos = function (organization, cb) {
+            _request('GET', '/orgs/' + organization + '/repos', null, cb);
          };
 
       };
