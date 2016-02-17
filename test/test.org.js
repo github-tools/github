@@ -15,17 +15,23 @@ describe('Github.Organization', function() {
    });
 
    it('should check organization membership', function(done) {
-      org.checkMembership('teenscode', 'daconex', function(err) {
+      org.checkMembership('github-tools', 'AurelioDeRosa', function(err) {
          should.not.exist(err);
          done();
       });
    });
 
    it('should list organization members', function(done) {
-      org.listMembers('teenscode', function(err) {
+      org.listMembers('github-tools', function(err) {
+         should.not.exist(err);
+         done();
+      });
+   });
+
+   it('should list organization repos', function(done) {
+      org.listRepos('github-tools', function(err) {
          should.not.exist(err);
          done();
       });
    });
 });
-
