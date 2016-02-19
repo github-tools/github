@@ -287,6 +287,14 @@
          this.createRepo = function (options, cb) {
             _request('POST', '/user/repos', options, cb);
          };
+
+         // Get another user by username
+         // -------
+
+         this.getUserData = function (username, cb) {
+            _request('GET', '/users/'+username, null, cb);
+         }
+
       };
 
       // Organization API
