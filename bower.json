@@ -2,6 +2,12 @@
   "name":"github-api",
   "version": "0.11.2",
   "main":"src/github.js",
+  "dependencies": {
+    "axios": "https://github.com/github-tools/axios.git",
+    "base-64": "^0.1.0",
+    "es6-promise": "^3.0.2",
+    "utf8": "^2.1.1"
+  },
   "homepage":"https://github.com/michael/github",
   "authors":[
      "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
