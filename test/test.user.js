@@ -15,8 +15,9 @@ describe('Github.User', function() {
    });
 
    it('should get user.repos', function(done) {
-      user.repos(function(err) {
+      user.repos(function(err, repos) {
          should.not.exist(err);
+         repos.should.be.instanceof(Array);
          done();
       });
    });
@@ -25,14 +26,13 @@ describe('Github.User', function() {
       var options = {
          type: 'owner',
          sort: 'updated',
-         per_page: 10, // jscs:ignore
-         page: 1
+         per_page: 90, // jscs:ignore
+         page: 10
       };
 
       user.repos(options, function(err, repos) {
-         repos.should.have.length(10);
          should.not.exist(err);
-
+         repos.should.be.instanceof(Array);
          done();
       });
    });

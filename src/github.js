@@ -160,7 +160,7 @@
 
             url += '?' + params.join('&');
 
-            _request('GET', url, null, cb);
+            _requestAllPages(url, cb); 
          };
 
          // List user organizations
