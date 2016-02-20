@@ -21,7 +21,7 @@ describe('Github.Gist', function() {
       gist.read(function(err, res) {
          should.not.exist(err);
          res.should.have.property('description', 'This is a test gist');
-         res.files["README.md"].should.have.property('content', 'Hello World');
+         res.files['README.md'].should.have.property('content', 'Hello World');
 
          done();
       });
