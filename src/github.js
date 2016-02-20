@@ -104,7 +104,7 @@
          (function iterate() {
             _request('GET', path, null, function (err, res, xhr) {
                if (err) {
-                  return cb(err);
+                  return cb(err, null, xhr);
                }
 
                if (!(res instanceof Array)) {
@@ -125,7 +125,7 @@
                }
 
                if (!next) {
-                  cb(err, results);
+                  cb(err, results, xhr);
                } else {
                   path = next;
                   iterate();
