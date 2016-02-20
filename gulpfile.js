@@ -75,6 +75,7 @@ function runTests(singleRun, isCI, done) {
 gulp.task('lint', function() {
    return gulp.src([
       path.join(__dirname, '/*.js'),
+      path.join(__dirname, '/src/*.js'),
       path.join(__dirname, '/test/*.js')
    ],
    {
