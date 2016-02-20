@@ -55,7 +55,8 @@
                }
             }
 
-            return url + (typeof window !== 'undefined' ? '&' + new Date().getTime() : '');
+            return url.replace(/(&timestamp=\d+)/, '') +
+               (typeof window !== 'undefined' ? '&timestamp=' + new Date().getTime() : '');
          }
 
          var config = {
