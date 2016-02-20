@@ -305,7 +305,7 @@
          // Check if user is part of organization
          // -------
 
-         this.checkMembership = function (organization, username, cb) {
+         this.isMember = function (organization, username, cb) {
             _request('GET', '/orgs/' + organization + '/members/' + username, null, cb);
          };
 

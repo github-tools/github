@@ -15,7 +15,7 @@ describe('Github.Organization', function() {
    });
 
    it('should check organization membership', function(done) {
-      org.checkMembership('github-tools', 'AurelioDeRosa', function(err) {
+      org.isMember('github-tools', 'AurelioDeRosa', function(err) {
          should.not.exist(err);
          done();
       });
