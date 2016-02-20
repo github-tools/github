@@ -14,15 +14,23 @@
 (function (root, factory) {
    /* istanbul ignore next */
    if (typeof define === 'function' && define.amd) {
-      define(['es6-promise', 'base-64', 'utf8', 'axios'], function (Promise, Base64, Utf8, axios) {
-         return (root.Github = factory(Promise, Base64, Utf8, axios));
-      });
+      define(
+         [
+            'es6-promise',
+            'base-64',
+            'utf8',
+            'axios'
+         ],
+         function (Promise, Base64, Utf8, axios) {
+            return (root.Github = factory(Promise, Base64, Utf8, axios));
+         }
+      );
    } else if (typeof module === 'object' && module.exports) {
       module.exports = factory(require('es6-promise'), require('base-64'), require('utf8'), require('axios'));
    } else {
       root.Github = factory(root.Promise, root.base64, root.utf8, root.axios);
    }
-}(this, function(Promise, Base64, Utf8, axios) {
+}(this, function(Promise, Base64, Utf8, axios) { // jshint ignore:line
    function b64encode(string) {
       return Base64.encode(Utf8.encode(string));
    }
@@ -49,7 +57,7 @@
             url += ((/\?/).test(url) ? '&' : '?');
 
             if (data && typeof data === 'object' && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
-               for (var param in data) {
+               for(var param in data) {
                   if (data.hasOwnProperty(param)) {
                      url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
                   }
@@ -71,7 +79,7 @@
          };
 
          if ((options.token) || (options.username && options.password)) {
-            config.headers['Authorization'] = options.token ?
+            config.headers.Authorization = options.token ?
             'token ' + options.token :
             'Basic ' + b64encode(options.username + ':' + options.password);
          }
@@ -160,7 +168,7 @@
 
             url += '?' + params.join('&');
 
-            _requestAllPages(url, cb); 
+            _requestAllPages(url, cb);
          };
 
          // List user organizations
@@ -450,7 +458,10 @@
 
          this.listBranches = function (cb) {
             _request('GET', repoPath + '/git/refs/heads', null, function (err, heads, xhr) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                cb(null, heads.map(function (head) {
                   return head.ref.replace(/^refs\/heads\//, '');
                }), xhr);
@@ -475,10 +486,16 @@
          // -------
 
          this.getSha = function (branch, path, cb) {
-            if (!path || path === '') return that.getRef('heads/' + branch, cb);
+            if (!path || path === '') {
+               return that.getRef('heads/' + branch, cb);
+            }
+
             _request('GET', repoPath + '/contents/' + path + (branch ? '?ref=' + branch : ''),
                null, function (err, pathContent, xhr) {
-                  if (err) return cb(err);
+                  if (err) {
+                     return cb(err);
+                  }
+
                   cb(null, pathContent.sha, xhr);
                });
          };
@@ -495,7 +512,10 @@
 
          this.getTree = function (tree, cb) {
             _request('GET', repoPath + '/git/trees/' + tree, null, function (err, res, xhr) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                cb(null, res.tree, xhr);
             });
          };
@@ -517,7 +537,10 @@
             }
 
             _request('POST', repoPath + '/git/blobs', content, function (err, res) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                cb(null, res.sha);
             });
          };
@@ -539,7 +562,10 @@
             };
 
             _request('POST', repoPath + '/git/trees', data, function (err, res) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                cb(null, res.sha);
             });
          };
@@ -552,7 +578,10 @@
             _request('POST', repoPath + '/git/trees', {
                tree: tree
             }, function (err, res) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                cb(null, res.sha);
             });
          };
@@ -565,7 +594,10 @@
             var user = new Github.User();
 
             user.show(null, function (err, userData) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                var data = {
                   message: message,
                   author: {
@@ -579,7 +611,10 @@
                };
 
                _request('POST', repoPath + '/git/commits', data, function (err, res) {
-                  if (err) return cb(err);
+                  if (err) {
+                     return cb(err);
+                  }
+
                   currentTree.sha = res.sha; // Update latest commit
                   cb(null, res.sha);
                });
@@ -610,7 +645,9 @@
             var that = this;
 
             _request('GET', repoPath + '/stats/contributors', null, function (err, data, xhr) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
 
                if (xhr.status === 202) {
                   setTimeout(
@@ -660,7 +697,10 @@
             }
 
             this.getRef('heads/' + oldBranch, function (err, ref) {
-               if (err && cb) return cb(err);
+               if (err && cb) {
+                  return cb(err);
+               }
+
                that.createRef({
                   ref: 'refs/heads/' + newBranch,
                   sha: ref
@@ -716,9 +756,14 @@
          this.read = function (branch, path, cb) {
             _request('GET', repoPath + '/contents/' + encodeURI(path) + (branch ? '?ref=' + branch : ''),
                null, function (err, obj, xhr) {
-                  if (err && err.error === 404) return cb('not found', null, null);
+                  if (err && err.error === 404) {
+                     return cb('not found', null, null);
+                  }
 
-                  if (err) return cb(err);
+                  if (err) {
+                     return cb(err);
+                  }
+
                   cb(null, obj, xhr);
                }, true);
          };
@@ -728,7 +773,10 @@
 
          this.remove = function (branch, path, cb) {
             that.getSha(branch, path, function (err, sha) {
-               if (err) return cb(err);
+               if (err) {
+                  return cb(err);
+               }
+
                _request('DELETE', repoPath + '/contents/' + path, {
                   message: path + ' is removed',
                   sha: sha,
@@ -749,9 +797,13 @@
                that.getTree(latestCommit + '?recursive=true', function (err, tree) {
                   // Update Tree
                   tree.forEach(function (ref) {
-                     if (ref.path === path) ref.path = newPath;
+                     if (ref.path === path) {
+                        ref.path = newPath;
+                     }
 
-                     if (ref.type === 'tree') delete ref.sha;
+                     if (ref.type === 'tree') {
+                        delete ref.sha;
+                     }
                   });
 
                   that.postTree(tree, function (err, rootTree) {
@@ -782,7 +834,10 @@
                };
 
                // If no error, we set the sha to overwrite an existing file
-               if (!(err && err.error !== 404)) writeOptions.sha = sha;
+               if (!(err && err.error !== 404)) {
+                  writeOptions.sha = sha;
+               }
+
                _request('PUT', repoPath + '/contents/' + encodeURI(path), writeOptions, cb);
             });
          };
@@ -858,14 +913,14 @@
          // --------
 
          this.star = function(owner, repository, cb) {
-            _request('PUT', '/user/starred/' + owner + '/' + repository, null, cb)
+            _request('PUT', '/user/starred/' + owner + '/' + repository, null, cb);
          };
 
          // Unstar a repository.
          // --------
 
          this.unstar = function(owner, repository, cb) {
-            _request('DELETE', '/user/starred/' + owner + '/' + repository, null, cb)
+            _request('DELETE', '/user/starred/' + owner + '/' + repository, null, cb);
          };
       };
 
@@ -951,7 +1006,7 @@
          this.list = function (options, cb) {
             var query = [];
 
-            for (var key in options) {
+            for(var key in options) {
                if (options.hasOwnProperty(key)) {
                   query.push(encodeURIComponent(key) + '=' + encodeURIComponent(options[key]));
                }
@@ -998,13 +1053,13 @@
          this.getRateLimit = function(cb) {
             _request('GET', '/rate_limit', null, cb);
          };
-      }
+      };
 
       return Github;
    };
 
-// Top Level API
-// -------
+   // Top Level API
+   // -------
 
    Github.getIssues = function (user, repo) {
       return new Github.Issue({
