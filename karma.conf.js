@@ -2,6 +2,8 @@ module.exports = function (config) {
    'use strict';
 
    var configuration = {
+      browserNoActivityTimeout: 30000,
+
       client: {
          captureConsole: true,
          mocha: {
