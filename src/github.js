@@ -990,6 +990,15 @@
          };
       };
 
+      // Rate Limit API
+      // ==========
+
+      Github.RateLimit = function() {
+         this.getRateLimit = function(cb) {
+            _request('GET', '/rate_limit', null, cb);
+         };
+      }
+
       return Github;
    };
 
@@ -1030,6 +1039,10 @@
       return new Github.Search({
          query: query
       });
+   };
+
+   Github.getRateLimit = function() {
+      return new Github.RateLimit();
    };
 
    return Github;

@@ -426,6 +426,17 @@ search.users(options, function (err, users) {});
 
 Here, we’re looking at users with the name Tom. We’re only interested in those with more than 42 repositories, and only if they have over 1,000 followers.
 
+## Rate Limit API
+
+```js
+var rateLimit = github.getRateLimit();
+```
+
+Get the rate limit.
+
+```js
+rateLimit.getRateLimit(function (err, rateInfo) {});
+```
 
 ## Change Log
 
