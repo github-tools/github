@@ -449,7 +449,6 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'TEST_unicode.md', '\u2014', 'Long dash unicode', function(err) {
          should.not.exist(err);
 
-         if (err) console.log(err);
          repo.read('master', 'TEST_unicode.md', function(err, obj) {
             should.not.exist(err);
             obj.should.equal('\u2014');
@@ -489,7 +488,6 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'TEST_image.png', imageB64, 'Image test', {
          encode: false
       }, function(err) {
-         if (err) console.log(err);
          should.not.exist(err);
          done();
       });

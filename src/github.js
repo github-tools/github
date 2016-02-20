@@ -50,8 +50,9 @@
 
             if (data && typeof data === 'object' && ['GET', 'HEAD', 'DELETE'].indexOf(method) > -1) {
                for (var param in data) {
-                  if (data.hasOwnProperty(param))
+                  if (data.hasOwnProperty(param)) {
                      url += '&' + encodeURIComponent(param) + '=' + encodeURIComponent(data[param]);
+                  }
                }
             }
 
