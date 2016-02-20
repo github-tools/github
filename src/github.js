@@ -547,10 +547,18 @@
          // with a new blob SHA getting a tree SHA back
          // -------
 
-         this.postTree = function (tree, cb) {
-            _request('POST', repoPath + '/git/trees', {
-               tree: tree
-            }, function (err, res) {
+         this.postTree = function (tree, base_tree, cb) {
+            if (base_tree && typeof base_tree === 'function') {
+               cb = base_tree;
+            }
+
+            var reqBody = { tree: tree };
+
+            if (base_tree && typeof base_tree === 'string') {
+               reqBody.base_tree = base_tree;
+            }
+
+            _request('POST', repoPath + '/git/trees', reqBody, function (err, res) {
                if (err) return cb(err);
                cb(null, res.sha);
             });
