@@ -114,16 +114,15 @@
 
                results.push.apply(results, res);
 
-               var links = (xhr.getResponseHeader('link') || '').split(/\s*,\s*/g);
-               var next = null;
-
-               links.forEach(function (link) {
-                  next = /rel="next"/.test(link) ? link : next;
-               });
-
-               if (next) {
-                  next = (/<(.*)>/.exec(next) || [])[1];
-               }
+               var next = (xhr.getResponseHeader('link') || '')
+                  .split(',')
+                  .filter(function(link) {
+                     return /rel="next"/.test(link);
+                  })
+                  .map(function(link) {
+                     return (/<(.*)>/.exec(link) || [])[1];
+                  })
+                  .pop();
 
                if (!next) {
                   cb(err, results, xhr);
