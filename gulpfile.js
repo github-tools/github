@@ -13,6 +13,7 @@ var del = require('del');
 var stylish = require('gulp-jscs-stylish');
 var path = require('path');
 var karma = require('karma');
+var babel = require('gulp-babel');
 
 function runTests(singleRun, isCI, done) {
    var reporters = ['mocha'];
@@ -107,34 +108,47 @@ gulp.task('clean', function () {
 });
 
 gulp.task('build', function() {
-   var browserifyInstance = browserify({
+   var bundler = browserify({
       debug: true,
       entries: 'src/github.js',
       standalone: 'Github'
    });
 
-   browserifyInstance
+   bundler
+      .transform('babelify')
       .bundle()
       .pipe(source('github.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({
          loadMaps: true
       }))
-            .pipe(uglify())
+      .pipe(uglify())
       .pipe(rename({
          extname: '.bundle.min.js'
       }))
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('dist'));
+      .pipe(gulp.dest('dist'))
+      ;
 
-   return gulp.src('src/github.js')
+   var babeled = gulp.src('src/github.js')
+      .pipe(babel())
+      ;
+
+   babeled
+      .pipe(sourcemaps.init())
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'))
+      ;
+
+   return babeled
       .pipe(sourcemaps.init())
       .pipe(rename({
          extname: '.min.js'
       }))
       .pipe(uglify())
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('dist'));
+      .pipe(gulp.dest('dist'))
+      ;
 });
 
 gulp.task('default', ['clean'], function() {

@@ -11,26 +11,11 @@
  */
 'use strict';
 
-(function (root, factory) {
-   /* istanbul ignore next */
-   if (typeof define === 'function' && define.amd) {
-      define(
-         [
-            'es6-promise',
-            'base-64',
-            'utf8',
-            'axios'
-         ],
-         function (Promise, Base64, Utf8, axios) {
-            return (root.Github = factory(Promise, Base64, Utf8, axios));
-         }
-      );
-   } else if (typeof module === 'object' && module.exports) {
-      module.exports = factory(require('es6-promise'), require('base-64'), require('utf8'), require('axios'));
-   } else {
-      root.Github = factory(root.Promise, root.base64, root.utf8, root.axios);
-   }
-}(this, function(Promise, Base64, Utf8, axios) { // jshint ignore:line
+var Utf8 = require('utf8');
+var axios = require('axios');
+var Base64 = require('base-64');
+var Promise = require('es6-promise');
+
    function b64encode(string) {
       return Base64.encode(Utf8.encode(string));
    }
@@ -42,7 +27,7 @@
    // Initial Setup
    // -------------
 
-   var Github = function (options) {
+   function Github(options) {
       options = options || {};
 
       var API_URL = options.apiUrl || 'https://api.github.com';
@@ -1146,5 +1131,4 @@
       return new Github.RateLimit();
    };
 
-   return Github;
-}));
+module.exports = Github;
