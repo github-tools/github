@@ -150,7 +150,7 @@
 
       Github.User = function () {
          this.repos = function (options, cb) {
-            if (arguments.length === 1 && typeof arguments[0] === 'function') {
+            if (typeof options === 'function') {
                cb = options;
                options = {};
             }
@@ -191,7 +191,7 @@
          // -------
 
          this.notifications = function (options, cb) {
-            if (arguments.length === 1 && typeof arguments[0] === 'function') {
+            if (typeof options === 'function') {
                cb = options;
                options = {};
             }
@@ -538,7 +538,7 @@
          // -------
 
          this.postBlob = function (content, cb) {
-            if (typeof (content) === 'string') {
+            if (typeof content === 'string') {
                content = {
                   content: content,
                   encoding: 'utf-8'
@@ -824,7 +824,7 @@
          // -------
 
          this.write = function (branch, path, content, message, options, cb) {
-            if (typeof cb === 'undefined') {
+            if (typeof options === 'function') {
                cb = options;
                options = {};
             }
