@@ -392,6 +392,29 @@ To comment in a issue
 issues.comment(issue, comment,function(err, comment) {});
 ```
 
+To edit an issue
+
+```js
+var options = {
+  title: "Found a bug",
+  body: "I'm having a problem with this.",
+  assignee: "octocat",
+  milestone: 1,
+  state: "open",
+  labels: [
+    "Label1",
+    "Label2"
+  ]
+};
+issues.edit(issue,options,function (err,issue) {});
+```
+
+To get an issue
+
+```js
+issues.get(issue,function (err,issue) {});
+```
+
 ## Search API
 
 ```js

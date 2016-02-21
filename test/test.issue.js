@@ -36,4 +36,24 @@ describe('Github.Issue', function() {
          });
       });
    });
+   it('should edit the issues title', function(done){
+       issues.list({}, function(err, issuesList) {
+         issues.edit(issuesList[0], {
+             title: 'Edited test title'
+         }, function(err, res) {
+            should.not.exist(err);
+            res.title.should.equal('Edited test title');
+            done();
+         });
+      });
+   });
+   it('should edit the issues title', function(done){
+       issues.list({}, function(err, issuesList) {
+         issues.get(issuesList[0], function(err, res) {
+            should.not.exist(err);
+            res.title.should.equal('Edited test title');
+            done();
+         });
+      });
+   });
 });
