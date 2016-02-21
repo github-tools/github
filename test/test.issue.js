@@ -5,6 +5,8 @@ var testUser = require('./user.json');
 var github, issues;
 
 describe('Github.Issue', function() {
+   var issue;
+
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
@@ -21,45 +23,41 @@ describe('Github.Issue', function() {
          xhr.should.be.instanceof(XMLHttpRequest);
          issues.should.have.length.above(0);
 
+         issue = issues[0];
+
          done();
       });
    });
 
    it('should post issue comment', function(done) {
-      issues.list({}, function(err, issuesList) {
-         issues.comment(issuesList[0], 'Comment test', function(err, res, xhr) {
-            should.not.exist(err);
-            xhr.should.be.instanceof(XMLHttpRequest);
-            res.body.should.equal('Comment test');
+      issues.comment(issue, 'Comment test', function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.body.should.equal('Comment test');
 
-            done();
-         });
+         done();
       });
    });
 
    it('should edit issues title', function(done) {
-      issues.list({}, function(err, issuesList) {
-         issues.edit(issuesList[0].number, {
-            title: 'Edited title'
-         }, function(err, res, xhr) {
-            should.not.exist(err);
-            xhr.should.be.instanceof(XMLHttpRequest);
-            res.title.should.equal('Edited title');
+      issues.edit(issue.number, {
+         title: 'Edited title'
+      }, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.title.should.equal('Edited title');
 
-            done();
-         });
+         done();
       });
    });
 
    it('should get issue', function(done) {
-      issues.list({}, function(err, issuesList) {
-         issues.get(issuesList[0].number, function(err, res, xhr) {
-            should.not.exist(err);
-            xhr.should.be.instanceof(XMLHttpRequest);
-            res.number.should.equal(issuesList[0].number);
+      issues.get(issue.number, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.number.should.equal(issue.number);
 
-            done();
-         });
+         done();
       });
    });
 });
