@@ -94,10 +94,27 @@ describe('Github.User', function() {
    });
 
    it('should show user\'s repos', function(done) {
-      // This is odd; userRepos times out on the test user, but user.repos does not.
       user.userRepos('aendrew', function(err, repos, xhr) {
          should.not.exist(err);
          xhr.should.be.instanceof(XMLHttpRequest);
+         repos.should.be.instanceof(Array);
+
+         done();
+      });
+   });
+
+   it('should show user\'s repos with options', function(done) {
+      var options = {
+         type: 'owner',
+         sort: 'updated',
+         per_page: 90, // jscs:ignore
+         page: 1
+      };
+
+      user.userRepos('aendrew', options, function(err, repos, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         repos.should.be.instanceof(Array);
 
          done();
       });

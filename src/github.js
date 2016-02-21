@@ -249,9 +249,26 @@
          // List user repositories
          // -------
 
-         this.userRepos = function (username, cb) {
-            // Github does not always honor the 1000 limit so we want to iterate over the data set.
-            _requestAllPages('/users/' + username + '/repos?type=all&per_page=100&sort=updated', cb);
+         this.userRepos = function (username, options, cb) {
+            if (typeof options === 'function') {
+               cb = options;
+               options = {};
+            }
+
+            var url = '/users/' + username + '/repos';
+            var params = [];
+
+            params.push('type=' + encodeURIComponent(options.type || 'all'));
+            params.push('sort=' + encodeURIComponent(options.sort || 'updated'));
+            params.push('per_page=' + encodeURIComponent(options.per_page || '100')); // jscs:ignore
+
+            if (options.page) {
+               params.push('page=' + encodeURIComponent(options.page));
+            }
+
+            url += '?' + params.join('&');
+
+            _requestAllPages(url, cb);
          };
 
          // List user starred repositories

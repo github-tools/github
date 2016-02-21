@@ -263,7 +263,8 @@ repo.unstar(owner, repository, function(err) {});
 var user = github.getUser();
 ```
 
-List repositories of the authenticated user, including private repositories and repositories in which the user is a collaborator and not an owner.
+List repositories of the authenticated user, including private repositories and repositories in which the user is a
+collaborator and not an owner.
 
 ```js
 user.repos(options, function(err, repos) {});
@@ -287,7 +288,8 @@ List unread notifications for the authenticated user.
 user.notifications(options, function(err, notifications) {});
 ```
 
-Show user information for a particular username. Also works for organizations. Pass in a falsy value (null, '', etc) for 'username' to retrieve user information for the currently authorized user.
+Show user information for a particular username. Also works for organizations. Pass in a falsy value (null, '', etc)
+for 'username' to retrieve user information for the currently authorized user.
 
 ```js
 user.show(username, function(err, user) {});
@@ -296,7 +298,7 @@ user.show(username, function(err, user) {});
 List public repositories for a particular user.
 
 ```js
-user.userRepos(username, function(err, repos) {});
+user.userRepos(username, options, function(err, repos) {});
 ```
 
 List starred repositories for a particular user.
