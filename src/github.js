@@ -43,6 +43,8 @@
    // -------------
 
    var Github = function (options) {
+      options = options || {};
+
       var API_URL = options.apiUrl || 'https://api.github.com';
 
       // HTTP Request Abstraction

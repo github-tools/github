@@ -23,6 +23,21 @@ describe('Github constructor', function() {
    });
 });
 
+describe('Github constructor without authentication data', function() {
+   it('should read public information', function(done) {
+      var github = new Github();
+      var gist = github.getGist('f1c0f84e53aa6b98ec03');
+
+      gist.read(function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.should.be.an('object');
+
+         done();
+      });
+   });
+});
+
 describe('Github constructor (failing case)', function() {
    before(function() {
       github = new Github({

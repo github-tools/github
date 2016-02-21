@@ -57,9 +57,17 @@ var github = new Github({
 });
 ```
 
-You can use either:
+Some information, such as public Gists, can be accessed without any authentication. For such use cases, you can create
+a Github instance as follows:
+
+```js
+var github = new Github();
+```
+
+In conclusion, you can use:
 * Authorised App Tokens (via client/secret pairs), used for bigger applications, created in web-flows/on the fly
 * Personal Access Tokens (simpler to set up), used on command lines, scripts etc, created in GitHub web UI
+* No authorization
 
 See these pages for more info:
 
