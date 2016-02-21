@@ -7,7 +7,7 @@ module.exports = function (config) {
       client: {
          captureConsole: true,
          mocha: {
-            timeout: 10000,
+            timeout: 30000,
             ui: 'bdd'
          }
       },
