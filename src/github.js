@@ -114,7 +114,7 @@
          (function iterate() {
             _request('GET', path, null, function (err, res, xhr) {
                if (err) {
-                  return cb(err, null, xhr);
+                  return cb(err);
                }
 
                if (!(res instanceof Array)) {
@@ -462,9 +462,11 @@
                   return cb(err);
                }
 
-               cb(null, heads.map(function (head) {
+               heads = heads.map(function (head) {
                   return head.ref.replace(/^refs\/heads\//, '');
-               }), xhr);
+               });
+
+               cb(null, heads, xhr);
             });
          };
 
@@ -536,12 +538,12 @@
                };
             }
 
-            _request('POST', repoPath + '/git/blobs', content, function (err, res) {
+            _request('POST', repoPath + '/git/blobs', content, function (err, res, xhr) {
                if (err) {
                   return cb(err);
                }
 
-               cb(null, res.sha);
+               cb(null, res.sha, xhr);
             });
          };
 
@@ -561,12 +563,12 @@
                ]
             };
 
-            _request('POST', repoPath + '/git/trees', data, function (err, res) {
+            _request('POST', repoPath + '/git/trees', data, function (err, res, xhr) {
                if (err) {
                   return cb(err);
                }
 
-               cb(null, res.sha);
+               cb(null, res.sha, xhr);
             });
          };
 
@@ -577,12 +579,12 @@
          this.postTree = function (tree, cb) {
             _request('POST', repoPath + '/git/trees', {
                tree: tree
-            }, function (err, res) {
+            }, function (err, res, xhr) {
                if (err) {
                   return cb(err);
                }
 
-               cb(null, res.sha);
+               cb(null, res.sha, xhr);
             });
          };
 
@@ -610,13 +612,14 @@
                   tree: tree
                };
 
-               _request('POST', repoPath + '/git/commits', data, function (err, res) {
+               _request('POST', repoPath + '/git/commits', data, function (err, res, xhr) {
                   if (err) {
                      return cb(err);
                   }
 
                   currentTree.sha = res.sha; // Update latest commit
-                  cb(null, res.sha);
+
+                  cb(null, res.sha, xhr);
                });
             });
          };
@@ -755,17 +758,7 @@
 
          this.read = function (branch, path, cb) {
             _request('GET', repoPath + '/contents/' + encodeURI(path) + (branch ? '?ref=' + branch : ''),
-               null, function (err, obj, xhr) {
-                  if (err && err.error === 404) {
-                     return cb('not found', null, null);
-                  }
-
-                  if (err) {
-                     return cb(err);
-                  }
-
-                  cb(null, obj, xhr);
-               }, true);
+               null, cb, true);
          };
 
          // Remove a file
