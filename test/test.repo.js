@@ -49,18 +49,20 @@ describe('Github.Repository', function() {
    });
 
    it('should show repo', function(done) {
-      repo.show(function(err, res) {
+      repo.show(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.full_name.should.equal('michael/github'); // jscs:ignore
+
          done();
       });
    });
 
    it('should get blob', function(done) {
       repo.getSha('master', 'README.md', function(err, sha) {
-         repo.getBlob(sha, function(err, content) {
+         repo.getBlob(sha, function(err, content, xhr) {
             should.not.exist(err);
-
+            xhr.should.be.instanceof(XMLHttpRequest);
             content.indexOf('# Github.js').should.be.above(-1);
 
             done();
@@ -69,8 +71,9 @@ describe('Github.Repository', function() {
    });
 
    it('should show repo contents', function(done) {
-      repo.contents('master', '', function(err, contents) {
+      repo.contents('master', '', function(err, contents, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          contents.should.be.instanceof(Array);
 
          var readme = contents.filter(function(content) {
@@ -85,9 +88,9 @@ describe('Github.Repository', function() {
    });
 
    it('should get tree', function(done) {
-      repo.getTree('master', function(err, tree) {
+      repo.getTree('master', function(err, tree, xhr) {
          should.not.exist(err);
-
+         xhr.should.be.instanceof(XMLHttpRequest);
          tree.should.be.instanceof(Array);
          tree.should.have.length.above(0);
 
@@ -96,8 +99,9 @@ describe('Github.Repository', function() {
    });
 
    it('should fork repo', function(done) {
-      repo.fork(function(err) {
+      repo.fork(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion.
          done();
@@ -105,8 +109,9 @@ describe('Github.Repository', function() {
    });
 
    it('should list forks of repo', function(done) {
-      repo.listForks(function(err) {
+      repo.listForks(function(err, forks, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion.
          done();
@@ -114,8 +119,9 @@ describe('Github.Repository', function() {
    });
 
    it('should list commits with no options', function(done) {
-      repo.getCommits(null, function(err, commits) {
+      repo.getCommits(null, function(err, commits, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          commits.should.be.instanceof(Array);
          commits.should.have.length.above(0);
          commits[0].should.have.property('commit');
@@ -136,8 +142,9 @@ describe('Github.Repository', function() {
          until: untilDate
       };
 
-      repo.getCommits(options, function(err, commits) {
+      repo.getCommits(options, function(err, commits, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          commits.should.be.instanceof(Array);
          commits.should.have.length.above(0);
          commits[0].should.have.property('commit');
@@ -149,13 +156,15 @@ describe('Github.Repository', function() {
    });
 
    it('should show repo contributors', function(done) {
-      repo.contributors(function(err, res) {
+      repo.contributors(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.should.be.instanceof(Array);
          res.should.have.length.above(1);
          should.exist(res[0].author);
          should.exist(res[0].total);
          should.exist(res[0].weeks);
+
          done();
       });
    });
@@ -163,41 +172,53 @@ describe('Github.Repository', function() {
    // @TODO repo.branch, repo.pull
 
    it('should list repo branches', function(done) {
-      repo.listBranches(function(err) {
+      repo.listBranches(function(err, branches, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
          done();
       });
    });
 
    it('should read repo', function(done) {
-      repo.read('master', 'README.md', function(err, res) {
+      repo.read('master', 'README.md', function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.indexOf('# Github.js').should.be.above(-1);
+
          done();
       });
    });
 
    it('should get commit from repo', function(done) {
-      repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit) {
+      repo.getCommit('master', '20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, commit, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          commit.message.should.equal('v0.10.4');
          commit.author.date.should.equal('2015-03-20T17:01:42Z');
+
          done();
       });
    });
 
    it('should get statuses for a SHA from a repo', function(done) {
-      repo.getStatuses('20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, statuses) {
+      repo.getStatuses('20fcff9129005d14cc97b9d59b8a3d37f4fb633b', function(err, statuses, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          statuses.length.should.equal(6);
          statuses.every(function(status) {
             return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
          }).should.equal(true);
+
          done();
       });
    });
 
    it('should get a SHA from a repo', function(done) {
-      repo.getSha('master', '.gitignore', function(err) {
+      repo.getSha('master', '.gitignore', function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
          done();
       });
    });
@@ -205,9 +226,11 @@ describe('Github.Repository', function() {
    it('should get a repo by fullname', function(done) {
       var repo2 = github.getRepo('michael/github');
 
-      repo2.show(function(err, res) {
+      repo2.show(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.full_name.should.equal('michael/github'); // jscs:ignore
+
          done();
       });
    });
@@ -215,6 +238,8 @@ describe('Github.Repository', function() {
    it('should check if the repo is starred', function(done) {
       repo.isStarred('michael', 'github', function(err) {
          err.error.should.equal(404);
+         err.request.should.be.instanceof(XMLHttpRequest);
+
          done();
       });
    });
@@ -237,9 +262,11 @@ describe('Creating new Github.Repository', function() {
    it('should create repo', function(done) {
       user.createRepo({
          name: repoTest
-      }, function(err, res) {
+      }, function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.name.should.equal(repoTest.toString());
+
          done();
       });
    });
@@ -262,8 +289,9 @@ describe('Creating new Github.Repository', function() {
          should.not.exist(err);
          repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
             should.not.exist(err);
-            repo.read('dev', 'TEST.md', function(err, res) {
+            repo.read('dev', 'TEST.md', function(err, res, xhr) {
                should.not.exist(err);
+               xhr.should.be.instanceof(XMLHttpRequest);
                res.should.equal('THIS IS AN UPDATED TEST');
 
                done();
@@ -275,9 +303,9 @@ describe('Creating new Github.Repository', function() {
    it('should compare two branches', function(done) {
       repo.branch('master', 'compare', function() {
          repo.write('compare', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function() {
-            repo.compare('master', 'compare', function(err, diff) {
+            repo.compare('master', 'compare', function(err, diff, xhr) {
                should.not.exist(err);
-
+               xhr.should.be.instanceof(XMLHttpRequest);
                diff.should.have.property('total_commits', 1);
                diff.should.have.deep.property('files[0].filename', 'TEST.md');
 
@@ -302,9 +330,9 @@ describe('Creating new Github.Repository', function() {
                   base: baseBranch,
                   head: headBranch
                },
-               function(err, pullRequest) {
+               function(err, pullRequest, xhr) {
                   should.not.exist(err);
-
+                  xhr.should.be.instanceof(XMLHttpRequest);
                   pullRequest.should.have.property('number').above(0);
                   pullRequest.should.have.property('title', pullRequestTitle);
                   pullRequest.should.have.property('body', pullRequestBody);
@@ -317,8 +345,9 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should get ref from repo', function(done) {
-      repo.getRef('heads/master', function(err) {
+      repo.getRef('heads/master', function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion
          done();
@@ -331,8 +360,9 @@ describe('Creating new Github.Repository', function() {
             ref: 'refs/heads/new-test-branch', sha: sha
          };
 
-         repo.createRef(refSpec, function(err) {
+         repo.createRef(refSpec, function(err, res, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
 
             // @TODO write better assertion
             done();
@@ -341,8 +371,9 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should delete ref on repo', function(done) {
-      repo.deleteRef('heads/new-test-branch', function(err) {
+      repo.deleteRef('heads/new-test-branch', function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion
          done();
@@ -350,8 +381,9 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should list tags on repo', function(done) {
-      repo.listTags(function(err) {
+      repo.listTags(function(err, tags, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion
          done();
@@ -368,13 +400,15 @@ describe('Creating new Github.Repository', function() {
          per_page: 10
       };
 
-      repo.listPulls(options, function(err, pull_list) {
+      repo.listPulls(options, function(err, pullRequests, xhr) {
          should.not.exist(err);
-         pull_list.should.be.instanceof(Array);
-         pull_list.should.have.length(10);
-         should.exist(pull_list[0].title);
-         should.exist(pull_list[0].body);
-         should.exist(pull_list[0].url);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         pullRequests.should.be.instanceof(Array);
+         pullRequests.should.have.length(10);
+         should.exist(pullRequests[0].title);
+         should.exist(pullRequests[0].body);
+         should.exist(pullRequests[0].url);
+
          done();
       });
    });
@@ -382,8 +416,9 @@ describe('Creating new Github.Repository', function() {
    it('should get pull requests on repo', function(done) {
       var repo = github.getRepo('michael', 'github');
 
-      repo.getPull(153, function(err) {
+      repo.getPull(153, function(err, pullRequest, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion
          done();
@@ -394,8 +429,10 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
          should.not.exist(err);
 
-         repo.remove('master', 'REMOVE-TEST.md', function(err) {
+         repo.remove('master', 'REMOVE-TEST.md', function(err, res, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
+
             done();
          });
       });
@@ -405,8 +442,10 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
          should.not.exist(err);
 
-         repo.delete('master', 'REMOVE-TEST.md', function(err) {
+         repo.delete('master', 'REMOVE-TEST.md', function(err, res, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
+
             done();
          });
       });
@@ -424,8 +463,9 @@ describe('Creating new Github.Repository', function() {
 
       repo.write('dev', 'TEST.md', 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
          should.not.exist(err);
-         repo.getCommit('dev', res.commit.sha, function(err, commit) {
+         repo.getCommit('dev', res.commit.sha, function(err, commit, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
             commit.author.name.should.equal('Author Name');
             commit.author.email.should.equal('author@example.com');
             commit.committer.name.should.equal('Committer Name');
@@ -437,8 +477,9 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should be able to write CJK unicode to repo', function(done) {
-      repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err) {
+      repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          // @TODO write better assertion
          done();
@@ -449,8 +490,9 @@ describe('Creating new Github.Repository', function() {
       repo.write('master', 'TEST_unicode.md', '\u2014', 'Long dash unicode', function(err) {
          should.not.exist(err);
 
-         repo.read('master', 'TEST_unicode.md', function(err, obj) {
+         repo.read('master', 'TEST_unicode.md', function(err, obj, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
             obj.should.equal('\u2014');
 
             done();
@@ -476,7 +518,9 @@ describe('Creating new Github.Repository', function() {
                // https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
                repo.deleteRef('heads/testing-14', function(err, res, xhr) {
                   should.not.exist(err);
+                  xhr.should.be.instanceof(XMLHttpRequest);
                   xhr.status.should.equal(204);
+
                   done();
                });
             });
@@ -487,40 +531,49 @@ describe('Creating new Github.Repository', function() {
    it('should be able to write an image to the repo', function(done) {
       repo.write('master', 'TEST_image.png', imageB64, 'Image test', {
          encode: false
-      }, function(err) {
+      }, function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
          done();
       });
    });
 
    it('should be able to write a blob to the repo', function(done) {
-      repo.postBlob('String test', function(err) { // Test strings
+      repo.postBlob('String test', function(err, res, xhr) { // Test strings
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
-         repo.postBlob(imageBlob, function(err) { // Test non-strings
+         repo.postBlob(imageBlob, function(err, res, xhr) { // Test non-strings
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
+
             done();
          });
       });
    });
 
    it('should star the repo', function(done) {
-      repo.star(testUser.USERNAME, repoTest, function(err) {
+      repo.star(testUser.USERNAME, repoTest, function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          repo.isStarred(testUser.USERNAME, repoTest, function(err) {
             should.not.exist(err);
+
             done();
          });
       });
    });
 
    it('should unstar the repo', function(done) {
-      repo.unstar(testUser.USERNAME, repoTest, function(err) {
+      repo.unstar(testUser.USERNAME, repoTest, function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          repo.isStarred(testUser.USERNAME, repoTest, function(err) {
             err.error.should.equal(404);
+
             done();
          });
       });
@@ -538,9 +591,11 @@ describe('deleting a Github.Repository', function() {
    });
 
    it('should delete the repo', function(done) {
-      repo.deleteRepo(function(err, res) {
+      repo.deleteRepo(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.should.be.true; // jshint ignore:line
+
          done();
       });
    });
@@ -560,7 +615,9 @@ describe('Repo returns commit errors correctly', function() {
       repo.commit('broken-parent-hash', 'broken-tree-hash', 'commit message', function(err) {
          should.exist(err);
          should.exist(err.request);
+         err.request.should.be.instanceof(XMLHttpRequest);
          err.error.should.equal(422);
+
          done();
       });
    });

@@ -16,18 +16,22 @@ describe('Github.Issue', function() {
    });
 
    it('should list issues', function(done) {
-      issues.list({}, function(err, issues) {
+      issues.list({}, function(err, issues, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          issues.should.have.length.above(0);
+
          done();
       });
    });
 
    it('should post issue comment', function(done) {
       issues.list({}, function(err, issuesList) {
-         issues.comment(issuesList[0], 'Comment test', function(err, res) {
+         issues.comment(issuesList[0], 'Comment test', function(err, res, xhr) {
             should.not.exist(err);
+            xhr.should.be.instanceof(XMLHttpRequest);
             res.body.should.equal('Comment test');
+
             done();
          });
       });

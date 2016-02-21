@@ -18,8 +18,9 @@ describe('Github.Gist', function() {
    });
 
    it('should read gist', function(done) {
-      gist.read(function(err, res) {
+      gist.read(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.should.have.property('description', 'This is a test gist');
          res.files['README.md'].should.have.property('content', 'Hello World');
 
@@ -28,8 +29,9 @@ describe('Github.Gist', function() {
    });
 
    it('should star', function(done) {
-      gist.star(function(err) {
+      gist.star(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          gist.isStarred(function(err) {
             should.not.exist(err);
@@ -58,11 +60,13 @@ describe('Creating new Github.Gist', function() {
          }
       };
 
-      gist.create(gistData, function(err, res) {
+      gist.create(gistData, function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          res.should.have.property('description', gistData.description);
          res.should.have.property('public', gistData.public);
          res.should.have.property('id').to.be.a('string');
+
          done();
       });
    });
@@ -90,8 +94,9 @@ describe('deleting a Github.Gist', function() {
    });
 
    it('should delete gist', function(done) {
-      gist.delete(function(err) {
+      gist.delete(function(err, res, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
 
          done();
       });

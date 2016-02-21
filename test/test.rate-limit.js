@@ -16,14 +16,16 @@ describe('Github.RateLimit', function() {
    });
 
    it('should get rate limit', function(done) {
-      rateLimit.getRateLimit(function(err, rateInfo) {
+      rateLimit.getRateLimit(function(err, rateInfo, xhr) {
          should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
          rateInfo.should.be.an('object');
          rateInfo.should.have.deep.property('rate.limit');
          rateInfo.rate.limit.should.be.a('number');
          rateInfo.should.have.deep.property('rate.remaining');
          rateInfo.rate.remaining.should.be.a('number');
          rateInfo.rate.remaining.should.be.at.most(rateInfo.rate.limit);
+
          done();
       });
    });
