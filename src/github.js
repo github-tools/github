@@ -389,13 +389,6 @@
             _request('DELETE', repoPath + '/git/refs/' + ref, options, cb);
          };
 
-         // Create a repo
-         // -------
-
-         this.createRepo = function (options, cb) {
-            _request('POST', '/user/repos', options, cb);
-         };
-
          // Delete a repo
          // --------
 
