@@ -386,6 +386,23 @@ To read all the issues of a given repository
 issues.list(options, function(err, issues) {});
 ```
 
+To create an issue
+
+```js
+var options = {
+  title: "Found a bug",
+  body: "I'm having a problem with this.",
+  assignee: "assignee_username",
+  milestone: 1,
+  labels: [
+    "Label1",
+    "Label2"
+  ]
+};
+
+issues.create(options, function(err, issue) {});
+```
+
 To comment in a issue
 
 ```js
