@@ -17,6 +17,21 @@ describe('Github.Issue', function() {
       issues = github.getIssues(testUser.USERNAME, 'TestRepo');
    });
 
+   it('should create issue', function(done) {
+      issues.create({
+         title: 'New issue',
+         body: 'New issue body'
+      }, function(err, issue, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         should.exist(issue.url);
+         issue.title.should.equal('New issue');
+         issue.body.should.equal('New issue body');
+
+         done();
+      });
+   });
+
    it('should list issues', function(done) {
       issues.list({}, function(err, issues, xhr) {
          should.not.exist(err);
