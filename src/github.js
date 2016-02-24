@@ -1041,6 +1041,17 @@
            _requestAllPages(path + '/events' + '?' + query.join("&"), cb);
          };
 
+         this.comments = function(options, cb) {
+           var query = [];
+
+           for (var key in options) {
+             if (options.hasOwnProperty(key)) {
+               query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
+             }
+           }
+           _requestAllPages(path + '/comments' + '?' + query.join("&"), cb);
+         };
+
          this.comment = function (issue, comment, cb) {
             _request('POST', issue.comments_url, {
                body: comment
