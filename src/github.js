@@ -315,6 +315,12 @@
          this.createRepo = function (options, cb) {
             _request('POST', '/user/repos', options, cb);
          };
+
+         // Create an Organization repo
+         // -------
+         this.createOrgRepo = function (orgname, options, cb) {
+            _request('POST', '/orgs/' + orgname + '/repos', options, cb);
+         };
       };
 
       // Repository API

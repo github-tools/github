@@ -320,6 +320,12 @@ Create a new repo for the authenticated user
 ```js
 user.createRepo({"name": "test"}, function(err, res) {});
 ```
+
+Create a new repo in specific organization for the authenticated user
+
+```js
+user.createOrgRepo(orgname,{"name": "test"}, function(err, res) {});
+```
 Repo description, homepage, private/public can also be set.
 For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
 
