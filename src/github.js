@@ -317,6 +317,14 @@
          };
       };
 
+      Github.Organization = function () {
+         // Create an Organization repo
+         // -------
+         this.createRepo = function (options, cb) {
+            _request('POST', '/orgs/' + options.orgname + '/repos', options, cb);
+         };
+      };
+
       // Repository API
       // =======
 
@@ -1128,6 +1136,10 @@
 
    Github.getUser = function () {
       return new Github.User();
+   };
+
+   Github.getOrg = function () {
+      return new Github.Organization();
    };
 
    Github.getGist = function (id) {
