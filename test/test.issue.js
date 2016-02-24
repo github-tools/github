@@ -54,6 +54,16 @@ describe('Github.Issue', function() {
       });
    });
 
+   it('should list comments', function(done) {
+      issues.comments(null, function(err, comments, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         comments.should.have.length.above(0);
+
+         done();
+      });
+   });
+
    it('should post issue comment', function(done) {
       issues.comment(issue, 'Comment test', function(err, res, xhr) {
          should.not.exist(err);
