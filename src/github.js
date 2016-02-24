@@ -458,6 +458,12 @@
             _request('GET', repoPath + '/pulls/' + number, null, cb);
          };
 
+         // List all collaborators of a repository
+         // -------
+         this.listCollaborators = function(cb) {
+           _request('GET', repoPath + "/collaborators", null, cb);
+         };
+
          // Retrieve the changes made between base and head
          // -------
 
