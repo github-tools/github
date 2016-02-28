@@ -271,8 +271,7 @@ repo.unstar(owner, repository, function(err) {});
 var organization = github.getOrg();
 ```
 
-
-Create a new organization repo for the authenticated user
+Create a new organization repository for the authenticated user
 
 ```js
 organization.createRepo({"orgname":"github-api-tests","name": "test"}, function(err, res) {});
