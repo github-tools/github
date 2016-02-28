@@ -17,7 +17,7 @@ describe('Github.Organization', function() {
    it('should create an public organisation repo', function(done) {
       var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
       var options ={
-          "orgname": "openaddresses",
+          "orgname": testUser.ORGANIZATION,
           "name": repoTest,
           "description": "test create repo",
           "homepage": "https://github.com/",
@@ -26,10 +26,11 @@ describe('Github.Organization', function() {
           "has_wiki": true,
           "has_downloads": true
       };
-      organization.createRepo(options, function(err, repos, xhr) {
+      organization.createRepo(options, function(err, res, xhr) {
          should.not.exist(err);
          xhr.should.be.instanceof(XMLHttpRequest);
          res.name.should.equal(repoTest.toString());
+         res.full_name.should.equal(testUser.ORGANIZATION+"/"+repoTest.toString());
 
          done();
       });
