@@ -276,6 +276,7 @@ Create a new organization repository for the authenticated user
 ```js
 organization.createRepo({"orgname":"github-api-tests","name": "test"}, function(err, res) {});
 ```
+Repo description, homepage, private/public can also be set. For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
 
 ## User API
 
@@ -333,7 +334,6 @@ Create a new repo for the authenticated user
 ```js
 user.createRepo({"name": "test"}, function(err, res) {});
 ```
-
 Repo description, homepage, private/public can also be set.
 For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
 
