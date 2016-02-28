@@ -315,11 +315,13 @@
          this.createRepo = function (options, cb) {
             _request('POST', '/user/repos', options, cb);
          };
+      };
 
+      Github.Organization = function () {
          // Create an Organization repo
          // -------
-         this.createOrgRepo = function (orgname, options, cb) {
-            _request('POST', '/orgs/' + orgname + '/repos', options, cb);
+         this.createRepo = function (options, cb) {
+            _request('POST', '/orgs/' + options.orgname + '/repos', options, cb);
          };
       };
 
@@ -1106,6 +1108,10 @@
 
    Github.getUser = function () {
       return new Github.User();
+   };
+
+   Github.getOrganization = function () {
+      return new Github.Organization();
    };
 
    Github.getGist = function (id) {
