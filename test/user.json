@@ -1,5 +1,6 @@
 {
    "USERNAME": "mikedeboertest",
    "PASSWORD": "test1324",
-   "REPO": "github"
+   "REPO": "github",
+   "ORGANIZATION": "github-api-tests"
 }
