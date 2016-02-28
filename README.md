@@ -22,12 +22,12 @@ bower install github-api
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/githubjs.svg)](https://saucelabs.com/u/githubjs)
 
-**Note**: Starting from version 0.10.8, Github.js supports **Internet Explorer 9**. However, the underlying 
+**Note**: Starting from version 0.10.8, Github.js supports **Internet Explorer 9**. However, the underlying
 methodology used under the hood to perform CORS requests (the `XDomainRequest` object),
 [has limitations](http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx).
-In particular, requests must be targeted to the same scheme as the hosting page. This means that if a page is at 
+In particular, requests must be targeted to the same scheme as the hosting page. This means that if a page is at
 http://example.com, your target URL must also begin with HTTP. Similarly, if your page is at https://example.com, then
-your target URL must also begin with HTTPS. For this reason, if your requests are sent to the GitHub API (the default), 
+your target URL must also begin with HTTPS. For this reason, if your requests are sent to the GitHub API (the default),
 which are served via HTTPS, your page must use HTTPS too.
 
 ## GitHub Tools
@@ -321,11 +321,6 @@ Create a new repo for the authenticated user
 user.createRepo({"name": "test"}, function(err, res) {});
 ```
 
-Create a new repo in specific organization for the authenticated user
-
-```js
-user.createOrgRepo(orgname,{"name": "test"}, function(err, res) {});
-```
 Repo description, homepage, private/public can also be set.
 For a full list of options see the docs [here](https://developer.github.com/v3/repos/#create)
 
@@ -340,6 +335,20 @@ List all gists of a particular user. If username is ommitted gists of the curren
 
 ```js
 user.userGists(username, function(err, gists) {});
+```
+
+## Organization API
+
+
+```js
+var organization = github.getOrganization();
+```
+
+
+Create a new organization repo for the authenticated user
+
+```js
+organization.createRepo(orgname,{"name": "test"}, function(err, res) {});
 ```
 
 ## Gist API
