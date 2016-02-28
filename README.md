@@ -348,7 +348,7 @@ var organization = github.getOrganization();
 Create a new organization repo for the authenticated user
 
 ```js
-organization.createRepo(orgname,{"name": "test"}, function(err, res) {});
+organization.createRepo({"orgname":"github-api-tests","name": "test"}, function(err, res) {});
 ```
 
 ## Gist API
