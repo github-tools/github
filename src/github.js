@@ -1110,7 +1110,7 @@
       return new Github.User();
    };
 
-   Github.getOrganization = function () {
+   Github.getOrg = function () {
       return new Github.Organization();
    };
 

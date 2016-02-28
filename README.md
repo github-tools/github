@@ -264,6 +264,20 @@ Unstar a repository.
 repo.unstar(owner, repository, function(err) {});
 ```
 
+## Organization API
+
+
+```js
+var organization = github.getOrg();
+```
+
+
+Create a new organization repo for the authenticated user
+
+```js
+organization.createRepo({"orgname":"github-api-tests","name": "test"}, function(err, res) {});
+```
+
 ## User API
 
 
@@ -335,20 +349,6 @@ List all gists of a particular user. If username is ommitted gists of the curren
 
 ```js
 user.userGists(username, function(err, gists) {});
-```
-
-## Organization API
-
-
-```js
-var organization = github.getOrganization();
-```
-
-
-Create a new organization repo for the authenticated user
-
-```js
-organization.createRepo({"orgname":"github-api-tests","name": "test"}, function(err, res) {});
 ```
 
 ## Gist API
