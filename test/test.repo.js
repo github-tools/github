@@ -2,7 +2,11 @@
 
 var Github = require('../src/github.js');
 var testUser = require('./user.json');
-var github, repo, user, imageB64, imageBlob;
+var RELEASE_TAG = 'foo';
+var RELEASE_NAME = 'My awesome release';
+var RELEASE_BODY = 'Foo bar bazzy baz';
+var STATUS_URL = 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+var github, repo, user, imageB64, imageBlob, sha, releaseId;
 
 if (typeof window === 'undefined') { // We're in NodeJS
    var fs = require('fs');
@@ -33,6 +37,7 @@ if (typeof window === 'undefined') { // We're in NodeJS
       // jscs:disable
       imageB64 = 'iVBORw0KGgoAAAANSUhEUgAAACsAAAAmCAAAAAB4qD3CAAABgElEQVQ4y9XUsUocURQGYN/pAyMWBhGtrEIMiFiooGuVIoYsSBAsRSQvYGFWC4uFhUBYsilXLERQsDA20YAguIbo5PQp3F3inVFTheSvZoavGO79z+mJP0/Pv2nPtlfLpfLq9tljNquO62S8mj1kmy/8nrHm/Xaz1930bt5n1+SzVmyrilItsod9ON0td1V59xR9hwV2HsMRsbfROLo4amzsRcQw5vO2CZPJEU5CM2cXYTCxg7CY2mwIVhK7AkNZYg9g4CqxVwNwkNg6zOTKMQP1xFZgKWeXoJLYdSjl7BysJ7YBIzk7Ap8TewLOE3oOTtIz6y/64bfQn55ZTIAPd2gNTOTurcbzp7z50v1y/Pq2Q7Wczca8vFjG6LvbMo92hiPL96xO+eYVPkVExMdONetFXZ+l+eP9cuV7RER8a9PZwrloTXv2tfv285ZOt4rnrTXlydxCu9sZmGrdN8eXC3ATERHXsHD5wC7ZL3HdsaX9R3bUzlb7YWvn/9ipf93+An8cHsx3W3WHAAAAAElFTkSuQmCC';
       imageBlob = new Blob();
+
       // jscs:enable
    }
 }
@@ -207,7 +212,7 @@ describe('Github.Repository', function() {
          xhr.should.be.instanceof(XMLHttpRequest);
          statuses.length.should.equal(6);
          statuses.every(function(status) {
-            return status.url === 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+            return status.url === STATUS_URL;
          }).should.equal(true);
 
          done();
@@ -534,6 +539,7 @@ describe('Creating new Github.Repository', function() {
       }, function(err, res, xhr) {
          should.not.exist(err);
          xhr.should.be.instanceof(XMLHttpRequest);
+         sha = res.commit.sha;
 
          done();
       });
@@ -576,6 +582,54 @@ describe('Creating new Github.Repository', function() {
 
             done();
          });
+      });
+   });
+
+   it('should create a release', function(done) {
+      var options = {
+         tag_name: RELEASE_TAG,
+         target_commitish: sha
+      };
+
+      repo.createRelease(options, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         releaseId = res.id;
+         done();
+      });
+   });
+
+   it('should edit a release', function(done) {
+      var options = {
+         name: RELEASE_NAME,
+         body: RELEASE_BODY
+      };
+
+      repo.editRelease(releaseId, options, function(err, res, xhr) {
+         should.not.exist(err);
+         res.name.should.equal(RELEASE_NAME);
+         res.body.should.equal(RELEASE_BODY);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         done();
+      });
+   });
+
+   it('should read a release', function(done) {
+      repo.getRelease(releaseId, function(err, res, xhr) {
+         should.not.exist(err);
+         res.name.should.equal(RELEASE_NAME);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         done();
+      });
+   });
+
+   it('should delete a release', function(done) {
+      repo.deleteRelease(releaseId, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         done();
       });
    });
 });
