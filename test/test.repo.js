@@ -5,9 +5,14 @@ var testUser = require('./user.json');
 var RELEASE_TAG = 'foo';
 var RELEASE_NAME = 'My awesome release';
 var RELEASE_BODY = 'Foo bar bazzy baz';
+var TEST_FILE_NAME = 'TEST.md';
+var TEST_FILE_CONTENTS = 'THIS IS A TEST';
+var PULL_REQUEST_TITLE = 'Test pull request';
+var PULL_REQUEST_BODY = 'This is a test pull request';
+var COMMENT_TEXT = 'This is a comment';
 var STATUS_URL = 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
 
-var github, repo, user, imageB64, imageBlob, sha, releaseId;
+var github, repo, user, imageB64, imageBlob, sha, releaseId, pullRequestId;
 
 if (typeof window === 'undefined') { // We're in NodeJS
    var fs = require('fs');
@@ -175,8 +180,7 @@ describe('Github.Repository', function() {
       });
    });
 
-   // @TODO repo.branch, repo.pull
-
+   // @TODO repo.branch
    it('should list repo branches', function(done) {
       repo.listBranches(function(err, branches, xhr) {
          should.not.exist(err);
@@ -278,12 +282,12 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should write to repo', function(done) {
-      repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
+      repo.write('master', TEST_FILE_NAME, TEST_FILE_CONTENTS, 'Creating test', function(err) {
          should.not.exist(err);
 
-         repo.read('master', 'TEST.md', function(err, res) {
+         repo.read('master', TEST_FILE_NAME, function(err, res) {
             should.not.exist(err);
-            res.should.equal('THIS IS A TEST');
+            res.should.equal(TEST_FILE_CONTENTS);
 
             done();
          });
@@ -293,9 +297,9 @@ describe('Creating new Github.Repository', function() {
    it('should write to repo branch', function(done) {
       repo.branch('master', 'dev', function(err) {
          should.not.exist(err);
-         repo.write('dev', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
+         repo.write('dev', TEST_FILE_NAME, 'THIS IS AN UPDATED TEST', 'Updating test', function(err) {
             should.not.exist(err);
-            repo.read('dev', 'TEST.md', function(err, res, xhr) {
+            repo.read('dev', TEST_FILE_NAME, function(err, res, xhr) {
                should.not.exist(err);
                xhr.should.be.instanceof(XMLHttpRequest);
                res.should.equal('THIS IS AN UPDATED TEST');
@@ -308,12 +312,12 @@ describe('Creating new Github.Repository', function() {
 
    it('should compare two branches', function(done) {
       repo.branch('master', 'compare', function() {
-         repo.write('compare', 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function() {
+         repo.write('compare', TEST_FILE_NAME, 'THIS IS AN UPDATED TEST', 'Updating test', function() {
             repo.compare('master', 'compare', function(err, diff, xhr) {
                should.not.exist(err);
                xhr.should.be.instanceof(XMLHttpRequest);
                diff.should.have.property('total_commits', 1);
-               diff.should.have.deep.property('files[0].filename', 'TEST.md');
+               diff.should.have.deep.property('files[0].filename', TEST_FILE_NAME);
 
                done();
             });
@@ -321,32 +325,113 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
-   it('should submit a pull request', function(done) {
+   it('should open a pull request', function(done) {
       var baseBranch = 'master';
       var headBranch = 'pull-request';
-      var pullRequestTitle = 'Test pull request';
-      var pullRequestBody = 'This is a test pull request';
 
       repo.branch(baseBranch, headBranch, function() {
-         repo.write(headBranch, 'TEST.md', 'THIS IS AN UPDATED TEST', 'Updating test', function() {
+         repo.write(headBranch, TEST_FILE_NAME, 'THIS IS AN UPDATED TEST', 'Updating test', function() {
             repo.createPullRequest(
                {
-                  title: pullRequestTitle,
-                  body: pullRequestBody,
+                  title: PULL_REQUEST_TITLE,
+                  body: PULL_REQUEST_BODY,
                   base: baseBranch,
                   head: headBranch
                },
                function(err, pullRequest, xhr) {
                   should.not.exist(err);
                   xhr.should.be.instanceof(XMLHttpRequest);
-                  pullRequest.should.have.property('number').above(0);
-                  pullRequest.should.have.property('title', pullRequestTitle);
-                  pullRequest.should.have.property('body', pullRequestBody);
+
+                  sha = pullRequest.head.sha;
+                  pullRequestId = pullRequest.number;
+                  pullRequestId.should.be.above(0);
+                  pullRequest.should.have.property('title', PULL_REQUEST_TITLE);
+                  pullRequest.should.have.property('body', PULL_REQUEST_BODY);
 
                   done();
                }
             );
          });
+      });
+   });
+
+   it('should get a pull request', function(done) {
+      repo.getPull(pullRequestId, function(err, pullRequest, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         pullRequest.should.have.property('title', PULL_REQUEST_TITLE);
+         pullRequest.should.have.property('body', PULL_REQUEST_BODY);
+
+         done();
+      });
+   });
+
+   it('should get files from a pull request', function(done) {
+      repo.getPullFiles(pullRequestId, function(err, files, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         files.should.have.length(1);
+
+         done();
+      });
+   });
+
+   it('should comment on a file from a pull request', function(done) {
+      var options = {
+         commit_id: sha,
+         body: COMMENT_TEXT,
+         position: 1,
+         path: TEST_FILE_NAME
+      };
+
+      repo.createFileComment(pullRequestId, options, function(err, comment, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         comment.body.should.equal(COMMENT_TEXT);
+
+         done();
+      });
+   });
+
+   it('should comment on a pull request', function(done) {
+      repo.createIssueComment(pullRequestId, COMMENT_TEXT, function(err, comment, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         comment.body.should.equal(COMMENT_TEXT);
+
+         done();
+      });
+   });
+
+   it('should comment on a commit', function(done) {
+      var options = {
+         body: COMMENT_TEXT,
+         position: 1,
+         path: TEST_FILE_NAME
+      };
+
+      repo.createCommitComment(sha, options, function(err, comment, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         comment.should.have.property('body', COMMENT_TEXT);
+
+         done();
+      });
+   });
+
+   it('should get comments on a pull request', function(done) {
+      repo.getPullComments(pullRequestId, function(err, comments, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         comments.should.have.length(1);
+
+         done();
       });
    });
 
@@ -432,7 +517,7 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should delete a file on the repo', function(done) {
-      repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
+      repo.write('master', 'REMOVE-TEST.md', TEST_FILE_CONTENTS, 'Remove test', function(err) {
          should.not.exist(err);
 
          repo.remove('master', 'REMOVE-TEST.md', function(err, res, xhr) {
@@ -445,7 +530,7 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should use repo.delete as an alias for repo.remove', function(done) {
-      repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
+      repo.write('master', 'REMOVE-TEST.md', TEST_FILE_CONTENTS, 'Remove test', function(err) {
          should.not.exist(err);
 
          repo.delete('master', 'REMOVE-TEST.md', function(err, res, xhr) {
@@ -467,7 +552,7 @@ describe('Creating new Github.Repository', function() {
          }
       };
 
-      repo.write('dev', 'TEST.md', 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
+      repo.write('dev', TEST_FILE_NAME, 'THIS IS A TEST BY AUTHOR AND COMMITTER', 'Updating', options, function(err, res) {
          should.not.exist(err);
          repo.getCommit('dev', res.commit.sha, function(err, commit, xhr) {
             should.not.exist(err);
@@ -483,7 +568,7 @@ describe('Creating new Github.Repository', function() {
    });
 
    it('should be able to write CJK unicode to repo', function(done) {
-      repo.write('master', '中文测试.md', 'THIS IS A TEST', 'Creating test', function(err, res, xhr) {
+      repo.write('master', '中文测试.md', TEST_FILE_CONTENTS, 'Creating test', function(err, res, xhr) {
          should.not.exist(err);
          xhr.should.be.instanceof(XMLHttpRequest);
 

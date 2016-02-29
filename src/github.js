@@ -11,7 +11,7 @@
  */
 'use strict';
 
-(function (root, factory) {
+(function(root, factory) {
    /* istanbul ignore next */
    if (typeof define === 'function' && define.amd) {
       define(
@@ -21,7 +21,7 @@
             'utf8',
             'axios'
          ],
-         function (Promise, Base64, Utf8, axios) {
+         function(Promise, Base64, Utf8, axios) {
             return (root.Github = factory(Promise, Base64, Utf8, axios));
          }
       );
@@ -42,7 +42,7 @@
    // Initial Setup
    // -------------
 
-   var Github = function (options) {
+   var Github = function(options) {
       options = options || {};
 
       var API_URL = options.apiUrl || 'https://api.github.com';
@@ -87,13 +87,13 @@
          }
 
          return axios(config)
-            .then(function (response) {
+            .then(function(response) {
                cb(
                   null,
                   response.data || true,
                   response.request
                );
-            }, function (response) {
+            }, function(response) {
                if (response.status === 304) {
                   cb(
                      null,
@@ -114,7 +114,7 @@
          var results = [];
 
          (function iterate() {
-            _request('GET', path, null, function (err, res, xhr) {
+            _request('GET', path, null, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -128,7 +128,7 @@
                var next = (xhr.getResponseHeader('link') || '')
                   .split(',')
                   .filter(function(link) {
-                     return /rel="next"/.test(link);
+                     return /rel='next'/.test(link);
                   })
                   .map(function(link) {
                      return (/<(.*)>/.exec(link) || [])[1];
@@ -148,8 +148,8 @@
       // User API
       // =======
 
-      Github.User = function () {
-         this.repos = function (options, cb) {
+      Github.User = function() {
+         this.repos = function(options, cb) {
             if (typeof options === 'function') {
                cb = options;
                options = {};
@@ -176,21 +176,21 @@
          // List user organizations
          // -------
 
-         this.orgs = function (cb) {
+         this.orgs = function(cb) {
             _request('GET', '/user/orgs', null, cb);
          };
 
          // List authenticated user's gists
          // -------
 
-         this.gists = function (cb) {
+         this.gists = function(cb) {
             _request('GET', '/gists', null, cb);
          };
 
          // List authenticated user's unread notifications
          // -------
 
-         this.notifications = function (options, cb) {
+         this.notifications = function(options, cb) {
             if (typeof options === 'function') {
                cb = options;
                options = {};
@@ -242,7 +242,7 @@
          // Show user information
          // -------
 
-         this.show = function (username, cb) {
+         this.show = function(username, cb) {
             var command = username ? '/users/' + username : '/user';
 
             _request('GET', command, null, cb);
@@ -251,7 +251,7 @@
          // List user repositories
          // -------
 
-         this.userRepos = function (username, options, cb) {
+         this.userRepos = function(username, options, cb) {
             if (typeof options === 'function') {
                cb = options;
                options = {};
@@ -276,7 +276,7 @@
          // List user starred repositories
          // -------
 
-         this.userStarred = function (username, cb) {
+         this.userStarred = function(username, cb) {
             // Github does not always honor the 1000 limit so we want to iterate over the data set.
             _requestAllPages('/users/' + username + '/starred?type=all&per_page=100', cb);
          };
@@ -284,14 +284,14 @@
          // List a user's gists
          // -------
 
-         this.userGists = function (username, cb) {
+         this.userGists = function(username, cb) {
             _request('GET', '/users/' + username + '/gists', null, cb);
          };
 
          // List organization repositories
          // -------
 
-         this.orgRepos = function (orgname, cb) {
+         this.orgRepos = function(orgname, cb) {
             // Github does not always honor the 1000 limit so we want to iterate over the data set.
             _requestAllPages('/orgs/' + orgname + '/repos?type=all&&page_num=1000&sort=updated&direction=desc', cb);
          };
@@ -299,20 +299,20 @@
          // Follow user
          // -------
 
-         this.follow = function (username, cb) {
+         this.follow = function(username, cb) {
             _request('PUT', '/user/following/' + username, null, cb);
          };
 
          // Unfollow user
          // -------
 
-         this.unfollow = function (username, cb) {
+         this.unfollow = function(username, cb) {
             _request('DELETE', '/user/following/' + username, null, cb);
          };
 
          // Create a repo
          // -------
-         this.createRepo = function (options, cb) {
+         this.createRepo = function(options, cb) {
             _request('POST', '/user/repos', options, cb);
          };
       };
@@ -320,7 +320,7 @@
       // Repository API
       // =======
 
-      Github.Repository = function (options) {
+      Github.Repository = function(options) {
          var repo = options.name;
          var user = options.user;
          var fullname = options.fullname;
@@ -347,7 +347,7 @@
                return cb(null, currentTree.sha);
             }
 
-            that.getRef('heads/' + branch, function (err, sha) {
+            that.getRef('heads/' + branch, function(err, sha) {
                currentTree.branch = branch;
                currentTree.sha = sha;
                cb(err, sha);
@@ -357,8 +357,8 @@
          // Get a particular reference
          // -------
 
-         this.getRef = function (ref, cb) {
-            _request('GET', repoPath + '/git/refs/' + ref, null, function (err, res, xhr) {
+         this.getRef = function(ref, cb) {
+            _request('GET', repoPath + '/git/refs/' + ref, null, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -371,11 +371,11 @@
          // --------
          //
          // {
-         //   "ref": "refs/heads/my-new-branch-name",
-         //   "sha": "827efc6d56897b048c772eb4087f854f46256132"
+         //   'ref': 'refs/heads/my-new-branch-name',
+         //   'sha': '827efc6d56897b048c772eb4087f854f46256132'
          // }
 
-         this.createRef = function (options, cb) {
+         this.createRef = function(options, cb) {
             _request('POST', repoPath + '/git/refs', options, cb);
          };
 
@@ -385,28 +385,28 @@
          // Repo.deleteRef('heads/gh-pages')
          // repo.deleteRef('tags/v1.0')
 
-         this.deleteRef = function (ref, cb) {
+         this.deleteRef = function(ref, cb) {
             _request('DELETE', repoPath + '/git/refs/' + ref, options, cb);
          };
 
          // Delete a repo
          // --------
 
-         this.deleteRepo = function (cb) {
+         this.deleteRepo = function(cb) {
             _request('DELETE', repoPath, options, cb);
          };
 
          // List all tags of a repository
          // -------
 
-         this.listTags = function (cb) {
+         this.listTags = function(cb) {
             _request('GET', repoPath + '/tags', null, cb);
          };
 
          // List all pull requests of a respository
          // -------
 
-         this.listPulls = function (options, cb) {
+         this.listPulls = function(options, cb) {
             options = options || {};
             var url = repoPath + '/pulls';
             var params = [];
@@ -454,27 +454,91 @@
          // Gets details for a specific pull request
          // -------
 
-         this.getPull = function (number, cb) {
+         this.getPull = function(number, cb) {
             _request('GET', repoPath + '/pulls/' + number, null, cb);
+         };
+
+         // Gets files for a specific pull request
+
+         this.getPullFiles = function(number, cb) {
+            _request('GET', repoPath + '/pulls/' + number + '/files', null, function(err, files, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+
+               cb(null, files, xhr);
+            });
+         };
+
+         this.getPullComments = function(number, cb) {
+            _request('GET', repoPath + '/issues/' + number + '/comments', null, function(err, comments, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+
+               cb(null, comments, xhr);
+            });
+         };
+
+         // Create a comment for a specific pull issue
+
+         this.createIssueComment = function(number, comment, cb) {
+            _request('POST', repoPath + '/issues/' + number + '/comments', {
+               body: comment
+            }, function(err, comment, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+
+               cb(null, comment, xhr);
+            });
+         };
+
+         /* Options:
+          *    commit_id: sha,
+          *    path: path,
+          *    position: position
+          *    body: comment,
+          */
+         this.createFileComment = function(number, options, cb) {
+            _request('POST', repoPath + '/pulls/' + number + '/comments', options, function(err, comment, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+
+               cb(null, comment, xhr);
+            });
+         };
+
+         // Create a commit comment
+         // see #createFileComment for options (w/o commit_id)
+         this.createCommitComment = function(sha, options, cb) {
+            _request('POST', repoPath + '/commits/' + sha + '/comments', options, function(err, comment, xhr) {
+               if (err) {
+                  return cb(err);
+               }
+
+               cb(null, comment, xhr);
+            });
          };
 
          // Retrieve the changes made between base and head
          // -------
 
-         this.compare = function (base, head, cb) {
+         this.compare = function(base, head, cb) {
             _request('GET', repoPath + '/compare/' + base + '...' + head, null, cb);
          };
 
          // List all branches of a repository
          // -------
 
-         this.listBranches = function (cb) {
-            _request('GET', repoPath + '/git/refs/heads', null, function (err, heads, xhr) {
+         this.listBranches = function(cb) {
+            _request('GET', repoPath + '/git/refs/heads', null, function(err, heads, xhr) {
                if (err) {
                   return cb(err);
                }
 
-               heads = heads.map(function (head) {
+               heads = heads.map(function(head) {
                   return head.ref.replace(/^refs\/heads\//, '');
                });
 
@@ -485,27 +549,27 @@
          // Retrieve the contents of a blob
          // -------
 
-         this.getBlob = function (sha, cb) {
+         this.getBlob = function(sha, cb) {
             _request('GET', repoPath + '/git/blobs/' + sha, null, cb, 'raw');
          };
 
          // For a given file path, get the corresponding sha (blob for files, tree for dirs)
          // -------
 
-         this.getCommit = function (branch, sha, cb) {
+         this.getCommit = function(branch, sha, cb) {
             _request('GET', repoPath + '/git/commits/' + sha, null, cb);
          };
 
          // For a given file path, get the corresponding sha (blob for files, tree for dirs)
          // -------
 
-         this.getSha = function (branch, path, cb) {
+         this.getSha = function(branch, path, cb) {
             if (!path || path === '') {
                return that.getRef('heads/' + branch, cb);
             }
 
             _request('GET', repoPath + '/contents/' + path + (branch ? '?ref=' + branch : ''),
-               null, function (err, pathContent, xhr) {
+               null, function(err, pathContent, xhr) {
                   if (err) {
                      return cb(err);
                   }
@@ -517,15 +581,15 @@
          // Get the statuses for a particular SHA
          // -------
 
-         this.getStatuses = function (sha, cb) {
+         this.getStatuses = function(sha, cb) {
             _request('GET', repoPath + '/statuses/' + sha, null, cb);
          };
 
          // Retrieve the tree a commit points to
          // -------
 
-         this.getTree = function (tree, cb) {
-            _request('GET', repoPath + '/git/trees/' + tree, null, function (err, res, xhr) {
+         this.getTree = function(tree, cb) {
+            _request('GET', repoPath + '/git/trees/' + tree, null, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -537,7 +601,7 @@
          // Post a new blob object, getting a blob SHA back
          // -------
 
-         this.postBlob = function (content, cb) {
+         this.postBlob = function(content, cb) {
             if (typeof content === 'string') {
                content = {
                   content: content,
@@ -550,7 +614,7 @@
                };
             }
 
-            _request('POST', repoPath + '/git/blobs', content, function (err, res, xhr) {
+            _request('POST', repoPath + '/git/blobs', content, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -562,7 +626,7 @@
          // Update an existing tree adding a new blob object getting a tree SHA back
          // -------
 
-         this.updateTree = function (baseTree, path, blob, cb) {
+         this.updateTree = function(baseTree, path, blob, cb) {
             var data = {
                base_tree: baseTree,
                tree: [
@@ -575,7 +639,7 @@
                ]
             };
 
-            _request('POST', repoPath + '/git/trees', data, function (err, res, xhr) {
+            _request('POST', repoPath + '/git/trees', data, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -588,10 +652,10 @@
          // with a new blob SHA getting a tree SHA back
          // -------
 
-         this.postTree = function (tree, cb) {
+         this.postTree = function(tree, cb) {
             _request('POST', repoPath + '/git/trees', {
                tree: tree
-            }, function (err, res, xhr) {
+            }, function(err, res, xhr) {
                if (err) {
                   return cb(err);
                }
@@ -604,10 +668,10 @@
          // and the new tree SHA, getting a commit SHA back
          // -------
 
-         this.commit = function (parent, tree, message, cb) {
+         this.commit = function(parent, tree, message, cb) {
             var user = new Github.User();
 
-            user.show(null, function (err, userData) {
+            user.show(null, function(err, userData) {
                if (err) {
                   return cb(err);
                }
@@ -624,7 +688,7 @@
                   tree: tree
                };
 
-               _request('POST', repoPath + '/git/commits', data, function (err, res, xhr) {
+               _request('POST', repoPath + '/git/commits', data, function(err, res, xhr) {
                   if (err) {
                      return cb(err);
                   }
@@ -639,7 +703,7 @@
          // Update the reference of your head to point to the new commit SHA
          // -------
 
-         this.updateHead = function (head, commit, cb) {
+         this.updateHead = function(head, commit, cb) {
             _request('PATCH', repoPath + '/git/refs/heads/' + head, {
                sha: commit
             }, cb);
@@ -648,25 +712,25 @@
          // Show repository information
          // -------
 
-         this.show = function (cb) {
+         this.show = function(cb) {
             _request('GET', repoPath, null, cb);
          };
 
          // Show repository contributors
          // -------
 
-         this.contributors = function (cb, retry) {
+         this.contributors = function(cb, retry) {
             retry = retry || 1000;
             var that = this;
 
-            _request('GET', repoPath + '/stats/contributors', null, function (err, data, xhr) {
+            _request('GET', repoPath + '/stats/contributors', null, function(err, data, xhr) {
                if (err) {
                   return cb(err);
                }
 
                if (xhr.status === 202) {
                   setTimeout(
-                     function () {
+                     function() {
                         that.contributors(cb, retry);
                      },
                      retry
@@ -680,7 +744,7 @@
          // Get contents
          // --------
 
-         this.contents = function (ref, path, cb) {
+         this.contents = function(ref, path, cb) {
             path = encodeURI(path);
             _request('GET', repoPath + '/contents' + (path ? '/' + path : ''), {
                ref: ref
@@ -690,28 +754,28 @@
          // Fork repository
          // -------
 
-         this.fork = function (cb) {
+         this.fork = function(cb) {
             _request('POST', repoPath + '/forks', null, cb);
          };
 
          // List forks
          // --------
 
-         this.listForks = function (cb) {
+         this.listForks = function(cb) {
             _request('GET', repoPath + '/forks', null, cb);
          };
 
          // Branch repository
          // --------
 
-         this.branch = function (oldBranch, newBranch, cb) {
+         this.branch = function(oldBranch, newBranch, cb) {
             if (arguments.length === 2 && typeof arguments[1] === 'function') {
                cb = newBranch;
                newBranch = oldBranch;
                oldBranch = 'master';
             }
 
-            this.getRef('heads/' + oldBranch, function (err, ref) {
+            this.getRef('heads/' + oldBranch, function(err, ref) {
                if (err && cb) {
                   return cb(err);
                }
@@ -726,49 +790,49 @@
          // Create pull request
          // --------
 
-         this.createPullRequest = function (options, cb) {
+         this.createPullRequest = function(options, cb) {
             _request('POST', repoPath + '/pulls', options, cb);
          };
 
          // List hooks
          // --------
 
-         this.listHooks = function (cb) {
+         this.listHooks = function(cb) {
             _request('GET', repoPath + '/hooks', null, cb);
          };
 
          // Get a hook
          // --------
 
-         this.getHook = function (id, cb) {
+         this.getHook = function(id, cb) {
             _request('GET', repoPath + '/hooks/' + id, null, cb);
          };
 
          // Create a hook
          // --------
 
-         this.createHook = function (options, cb) {
+         this.createHook = function(options, cb) {
             _request('POST', repoPath + '/hooks', options, cb);
          };
 
          // Edit a hook
          // --------
 
-         this.editHook = function (id, options, cb) {
+         this.editHook = function(id, options, cb) {
             _request('PATCH', repoPath + '/hooks/' + id, options, cb);
          };
 
          // Delete a hook
          // --------
 
-         this.deleteHook = function (id, cb) {
+         this.deleteHook = function(id, cb) {
             _request('DELETE', repoPath + '/hooks/' + id, null, cb);
          };
 
          // Read file at given path
          // -------
 
-         this.read = function (branch, path, cb) {
+         this.read = function(branch, path, cb) {
             _request('GET', repoPath + '/contents/' + encodeURI(path) + (branch ? '?ref=' + branch : ''),
                null, cb, true);
          };
@@ -776,8 +840,8 @@
          // Remove a file
          // -------
 
-         this.remove = function (branch, path, cb) {
-            that.getSha(branch, path, function (err, sha) {
+         this.remove = function(branch, path, cb) {
+            that.getSha(branch, path, function(err, sha) {
                if (err) {
                   return cb(err);
                }
@@ -797,11 +861,11 @@
          // Move a file to a new location
          // -------
 
-         this.move = function (branch, path, newPath, cb) {
-            updateTree(branch, function (err, latestCommit) {
-               that.getTree(latestCommit + '?recursive=true', function (err, tree) {
+         this.move = function(branch, path, newPath, cb) {
+            updateTree(branch, function(err, latestCommit) {
+               that.getTree(latestCommit + '?recursive=true', function(err, tree) {
                   // Update Tree
-                  tree.forEach(function (ref) {
+                  tree.forEach(function(ref) {
                      if (ref.path === path) {
                         ref.path = newPath;
                      }
@@ -811,8 +875,8 @@
                      }
                   });
 
-                  that.postTree(tree, function (err, rootTree) {
-                     that.commit(latestCommit, rootTree, 'Deleted ' + path, function (err, commit) {
+                  that.postTree(tree, function(err, rootTree) {
+                     that.commit(latestCommit, rootTree, 'Deleted ' + path, function(err, commit) {
                         that.updateHead(branch, commit, cb);
                      });
                   });
@@ -823,13 +887,13 @@
          // Write file contents to a given branch and path
          // -------
 
-         this.write = function (branch, path, content, message, options, cb) {
+         this.write = function(branch, path, content, message, options, cb) {
             if (typeof options === 'function') {
                cb = options;
                options = {};
             }
 
-            that.getSha(branch, encodeURI(path), function (err, sha) {
+            that.getSha(branch, encodeURI(path), function(err, sha) {
                var writeOptions = {
                   message: message,
                   content: typeof options.encode === 'undefined' || options.encode ? b64encode(content) : content,
@@ -855,7 +919,7 @@
          // until: ISO 8601 date - only commits before this date will be returned
          // -------
 
-         this.getCommits = function (options, cb) {
+         this.getCommits = function(options, cb) {
             options = options || {};
             var url = repoPath + '/commits';
             var params = [];
@@ -960,72 +1024,72 @@
       // Gists API
       // =======
 
-      Github.Gist = function (options) {
+      Github.Gist = function(options) {
          var id = options.id;
          var gistPath = '/gists/' + id;
 
          // Read the gist
          // --------
 
-         this.read = function (cb) {
+         this.read = function(cb) {
             _request('GET', gistPath, null, cb);
          };
 
          // Create the gist
          // --------
          // {
-         //  "description": "the description for this gist",
-         //    "public": true,
-         //    "files": {
-         //      "file1.txt": {
-         //        "content": "String file contents"
+         //  'description': 'the description for this gist',
+         //    'public': true,
+         //    'files': {
+         //      'file1.txt': {
+         //        'content': 'String file contents'
          //      }
          //    }
          // }
 
-         this.create = function (options, cb) {
+         this.create = function(options, cb) {
             _request('POST', '/gists', options, cb);
          };
 
          // Delete the gist
          // --------
 
-         this.delete = function (cb) {
+         this.delete = function(cb) {
             _request('DELETE', gistPath, null, cb);
          };
 
          // Fork a gist
          // --------
 
-         this.fork = function (cb) {
+         this.fork = function(cb) {
             _request('POST', gistPath + '/fork', null, cb);
          };
 
          // Update a gist with the new stuff
          // --------
 
-         this.update = function (options, cb) {
+         this.update = function(options, cb) {
             _request('PATCH', gistPath, options, cb);
          };
 
          // Star a gist
          // --------
 
-         this.star = function (cb) {
+         this.star = function(cb) {
             _request('PUT', gistPath + '/star', null, cb);
          };
 
          // Untar a gist
          // --------
 
-         this.unstar = function (cb) {
+         this.unstar = function(cb) {
             _request('DELETE', gistPath + '/star', null, cb);
          };
 
          // Check if a gist is starred
          // --------
 
-         this.isStarred = function (cb) {
+         this.isStarred = function(cb) {
             _request('GET', gistPath + '/star', null, cb);
          };
       };
@@ -1033,14 +1097,14 @@
       // Issues API
       // ==========
 
-      Github.Issue = function (options) {
+      Github.Issue = function(options) {
          var path = '/repos/' + options.user + '/' + options.repo + '/issues';
 
          this.create = function(options, cb) {
             _request('POST', path, options, cb);
          };
 
-         this.list = function (options, cb) {
+         this.list = function(options, cb) {
             var query = [];
 
             for(var key in options) {
@@ -1052,17 +1116,17 @@
             _requestAllPages(path + '?' + query.join('&'), cb);
          };
 
-         this.comment = function (issue, comment, cb) {
+         this.comment = function(issue, comment, cb) {
             _request('POST', issue.comments_url, {
                body: comment
             }, cb);
          };
 
-         this.edit = function (issue, options, cb) {
+         this.edit = function(issue, options, cb) {
             _request('PATCH', path + '/' + issue, options, cb);
          };
 
-         this.get = function (issue, cb) {
+         this.get = function(issue, cb) {
             _request('GET', path + '/' + issue, null, cb);
          };
       };
@@ -1070,23 +1134,23 @@
       // Search API
       // ==========
 
-      Github.Search = function (options) {
+      Github.Search = function(options) {
          var path = '/search/';
          var query = '?q=' + options.query;
 
-         this.repositories = function (options, cb) {
+         this.repositories = function(options, cb) {
             _request('GET', path + 'repositories' + query, options, cb);
          };
 
-         this.code = function (options, cb) {
+         this.code = function(options, cb) {
             _request('GET', path + 'code' + query, options, cb);
          };
 
-         this.issues = function (options, cb) {
+         this.issues = function(options, cb) {
             _request('GET', path + 'issues' + query, options, cb);
          };
 
-         this.users = function (options, cb) {
+         this.users = function(options, cb) {
             _request('GET', path + 'users' + query, options, cb);
          };
       };
@@ -1106,14 +1170,14 @@
    // Top Level API
    // -------
 
-   Github.getIssues = function (user, repo) {
+   Github.getIssues = function(user, repo) {
       return new Github.Issue({
          user: user,
          repo: repo
       });
    };
 
-   Github.getRepo = function (user, repo) {
+   Github.getRepo = function(user, repo) {
       if (!repo) {
          return new Github.Repository({
             fullname: user
@@ -1126,17 +1190,17 @@
       }
    };
 
-   Github.getUser = function () {
+   Github.getUser = function() {
       return new Github.User();
    };
 
-   Github.getGist = function (id) {
+   Github.getGist = function(id) {
       return new Github.Gist({
          id: id
       });
    };
 
-   Github.getSearch = function (query) {
+   Github.getSearch = function(query) {
       return new Github.Search({
          query: query
       });
