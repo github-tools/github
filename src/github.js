@@ -78,7 +78,7 @@ function Github(options) {
                cb(
                   null,
                   response.data || true,
-                  response.request
+                  response
                );
             } else {
                cb({

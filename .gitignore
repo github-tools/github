@@ -2,8 +2,7 @@
 .idea
 node_modules/
 coverage/
-dist/*.js
-dist/*.map
 
+.zuulrc
 npm-debug.log
 sauce.json

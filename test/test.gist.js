@@ -1,11 +1,14 @@
 'use strict';
 
 var Github = require('../src/github.js');
-var testUser = require('./user.json');
-var github;
+
+var expect = require('must');
+var testUser = require('./fixtures/user.json');
+var testGist = require('./fixtures/gist.json');
+var assertSuccessful = require('./helpers').assertSuccessful;
 
 describe('Github.Gist', function() {
-   var gist;
+   var gist, gistId, github;
 
    before(function() {
       github = new Github({
@@ -13,92 +16,68 @@ describe('Github.Gist', function() {
          password: testUser.PASSWORD,
          auth: 'basic'
       });
-
-      gist = github.getGist('f1c0f84e53aa6b98ec03');
    });
 
-   it('should read gist', function(done) {
-      gist.read(function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         res.should.have.property('description', 'This is a test gist');
-         res.files['README.md'].should.have.property('content', 'Hello World');
-
-         done();
+   describe('reading', function() {
+      before(function() {
+         gist = github.getGist('f1c0f84e53aa6b98ec03');
       });
-   });
 
-   it('should star', function(done) {
-      gist.star(function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         gist.isStarred(function(err) {
-            should.not.exist(err);
+      it('should read a gist', function(done) {
+         gist.read(assertSuccessful(done, function(err, gist) {
+            expect(gist).to.have.own('description', testGist.description);
+            expect(gist.files).to.have.keys(Object.keys(testGist.files));
+            expect(gist.files['README.md']).to.have.own('content', testGist.files['README.md'].content);
 
             done();
-         });
-      });
-   });
-});
-
-describe('Creating new Github.Gist', function() {
-   var gist;
-
-   before(function() {
-      gist = github.getGist();
-   });
-
-   it('should create gist', function(done) {
-      var gistData = {
-         description: 'This is a test gist',
-         public: true,
-         files: {
-            'README.md': {
-               content: 'Hello World'
-            }
-         }
-      };
-
-      gist.create(gistData, function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         res.should.have.property('description', gistData.description);
-         res.should.have.property('public', gistData.public);
-         res.should.have.property('id').to.be.a('string');
-
-         done();
-      });
-   });
-});
-
-describe('deleting a Github.Gist', function() {
-   var gist;
-
-   before(function(done) {
-      var gistData = {
-         description: 'This is a test gist',
-         public: true,
-         files: {
-            'README.md': {
-               content: 'Hello World'
-            }
-         }
-      };
-
-      github.getGist().create(gistData, function(err, res) {
-         gist = github.getGist(res.id);
-
-         done();
+         }));
       });
    });
 
-   it('should delete gist', function(done) {
-      gist.delete(function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
+   describe('creating/modifiying', function() {
+      before(function() {
+         gist = github.getGist();
+      });
 
-         done();
+      // 200ms between tests so that Github has a chance to settle
+      beforeEach(function(done) {
+         setTimeout(done, 200);
+      });
+
+      it('should create gist', function(done) {
+         gist.create(testGist, assertSuccessful(done, function(err, gist) {
+            expect(gist).to.have.own('id');
+            expect(gist).to.have.own('public', testGist.public);
+            expect(gist).to.have.own('description', testGist.description);
+            gistId = gist.id;
+
+            done();
+         }));
+      });
+
+      it('should star a gist', function(done) {
+         gist = github.getGist(gistId);
+         gist.star(assertSuccessful(done, function() {
+            gist.isStarred(assertSuccessful(done, function(err, result) {
+               expect(result).to.be(true);
+               done();
+            }));
+         }));
+      });
+   });
+
+   describe('deleting', function() {
+      before(function() {
+         gist = github.getGist(gistId);
+      });
+
+      // 200ms between tests so that Github has a chance to settle
+      beforeEach(function(done) {
+         setTimeout(done, 200);
+      });
+
+      it('should delete gist', function(done) {
+         gist.delete(assertSuccessful(done));
       });
    });
 });
