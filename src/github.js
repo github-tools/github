@@ -76,19 +76,19 @@ var Promise = require('es6-promise');
                cb(
                   null,
                   response.data || true,
-                  response.request
+                  response
                );
             }, function (response) {
                if (response.status === 304) {
                   cb(
                      null,
                      response.data || true,
-                     response.request
+                     response
                   );
                } else {
                   cb({
                      path: path,
-                     request: response.request,
+                     request: response,
                      error: response.status
                   });
                }
@@ -110,7 +110,7 @@ var Promise = require('es6-promise');
 
                results.push.apply(results, res);
 
-               var next = (xhr.getResponseHeader('link') || '')
+               var next = (xhr.headers.link || '')
                   .split(',')
                   .filter(function(link) {
                      return /rel="next"/.test(link);

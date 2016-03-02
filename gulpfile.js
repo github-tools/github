@@ -1,19 +1,22 @@
 'use strict';
 
 var gulp = require('gulp');
-var jshint = require('gulp-jshint');
+
+var babel = require('gulp-babel');
 var jscs = require('gulp-jscs');
+var jshint = require('gulp-jshint');
+var mocha = require('gulp-mocha');
 var rename = require('gulp-rename');
-var browserify = require('browserify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var uglify = require('gulp-uglify');
-var sourcemaps = require('gulp-sourcemaps');
-var del = require('del');
 var stylish = require('gulp-jscs-stylish');
+
+var browserify = require('browserify');
+var buffer = require('vinyl-buffer');
+var del = require('del');
 var path = require('path');
 var karma = require('karma');
-var babel = require('gulp-babel');
+var source = require('vinyl-source-stream');
+var sourcemaps = require('gulp-sourcemaps');
+var uglify = require('gulp-uglify');
 
 function runTests(singleRun, isCI, done) {
    var reporters = ['mocha'];
@@ -92,17 +95,24 @@ gulp.task('lint', function() {
    .pipe(gulp.dest('.'));
 });
 
-gulp.task('test', function(done) {
-   runTests(true, false, done);
+gulp.task('test:mocha', function() {
+   var srcOpts = {
+      read: false
+   };
+   var mochaOpts = {
+      timeout: 30000,
+      slow: 5000
+   };
+
+   return gulp.src('test/test.*.js', srcOpts)
+      .pipe(mocha(mochaOpts))
+      ;
 });
 
-gulp.task('test:ci', function(done) {
+gulp.task('test:browser', function(done) {
    runTests(true, true, done);
 });
 
-gulp.task('test:auto', function(done) {
-   runTests(false, false, done);
-});
 gulp.task('clean', function () {
    return del('dist/*');
 });

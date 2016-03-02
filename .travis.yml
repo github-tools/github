@@ -3,10 +3,9 @@ language: node_js
 sudo: false
 
 node_js:
-  - "4.1"
-  - "4.0"
+  - "5.7"
+  - "4.3"
   - "0.12"
-  - "0.11"
   - "0.10"
 
 cache:
@@ -18,6 +17,5 @@ before_install:
 
 script:
   - gulp lint
-  - gulp test:ci
-  - mocha test/
-  - npm run-script codecov
+  - gulp test:mocha
+  # - zuul -- some tests

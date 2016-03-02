@@ -1,10 +1,21 @@
 'use strict';
 
 var Github = require('../src/github.js');
-var testUser = require('./user.json');
-var github, user;
+
+var expect = require('must');
+var testUser = require('./fixtures/user.json');
+var assertSuccessful = require('./helpers').assertSuccessful;
+
+function assertArray(done) {
+   return assertSuccessful(done, function(err, result) {
+      expect(result).to.be.an.array();
+      done();
+   });
+}
 
 describe('Github.User', function() {
+   var github, user;
+
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
@@ -14,17 +25,11 @@ describe('Github.User', function() {
       user = github.getUser();
    });
 
-   it('should get user.repos', function(done) {
-      user.repos(function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         repos.should.be.instanceof(Array);
-
-         done();
-      });
+   it('should get user repos', function(done) {
+      user.repos(assertArray(done));
    });
 
-   it('should get user.repos with options', function(done) {
+   it('should get user repos with options', function(done) {
       var options = {
          type: 'owner',
          sort: 'updated',
@@ -32,43 +37,22 @@ describe('Github.User', function() {
          page: 10
       };
 
-      user.repos(options, function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         repos.should.be.instanceof(Array);
-
-         done();
-      });
+      user.repos(options, assertArray(done));
    });
 
-   it('should get user.orgs', function(done) {
-      user.orgs(function(err, orgs, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+   it('should get user orgs', function(done) {
+      user.orgs(assertArray(done));
    });
 
-   it('should get user.gists', function(done) {
-      user.gists(function(err, gists, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+   it('should get user gists', function(done) {
+      user.gists(assertArray(done));
    });
 
-   it('should get user.notifications', function(done) {
-      user.notifications(function(err, notifications, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+   it('should get user notifications', function(done) {
+      user.notifications(assertArray(done));
    });
 
-   it('should get user.notifications with options', function(done) {
+   it('should get user notifications with options', function(done) {
       var options = {
          all: true,
          participating: true,
@@ -76,31 +60,15 @@ describe('Github.User', function() {
          before: '2015-02-01T00:00:00Z'
       };
 
-      user.notifications(options, function(err, notifications, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.notifications(options, assertArray(done));
    });
 
    it('should show user', function(done) {
-      user.show('ingalls', function(err, info, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.show('ingalls', assertSuccessful(done));
    });
 
    it('should show user\'s repos', function(done) {
-      user.userRepos('aendrew', function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         repos.should.be.instanceof(Array);
-
-         done();
-      });
+      user.userRepos('aendrew', assertArray(done));
    });
 
    it('should show user\'s repos with options', function(done) {
@@ -111,77 +79,26 @@ describe('Github.User', function() {
          page: 1
       };
 
-      user.userRepos('aendrew', options, function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         repos.should.be.instanceof(Array);
-
-         done();
-      });
+      user.userRepos('aendrew', options, assertArray(done));
    });
 
    it('should show user\'s starred repos', function(done) {
-      user.userStarred(testUser.USERNAME, function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.userStarred(testUser.USERNAME, assertArray(done));
    });
 
    it('should show user\'s gists', function(done) {
-      user.userGists(testUser.USERNAME, function(err, gists, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.userGists(testUser.USERNAME, assertArray(done));
    });
 
    it('should show user\'s organisation repos', function(done) {
-      user.orgRepos('openaddresses', function(err, repos, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.orgRepos('openaddresses', assertArray(done));
    });
 
    it('should follow user', function(done) {
-      user.follow('ingalls', function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
+      user.follow('ingalls', assertSuccessful(done));
    });
 
    it('should unfollow user', function(done) {
-      user.unfollow('ingalls', function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-
-         done();
-      });
-   });
-
-   it('should create a repo', function(done) {
-      var repoTest = Math.floor(Math.random() * (100000 - 0)) + 0;
-      var github = new Github({
-         username: testUser.USERNAME,
-         password: testUser.PASSWORD,
-         auth: 'basic'
-      });
-      var user = github.getUser();
-
-      user.createRepo({
-         name: repoTest
-      }, function (err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         res.name.should.equal(repoTest.toString());
-
-         done();
-      });
+      user.unfollow('ingalls', assertSuccessful(done));
    });
 });
