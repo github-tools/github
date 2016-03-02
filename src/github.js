@@ -527,14 +527,24 @@ var Promise = require('es6-promise');
          this.postBlob = function (content, cb) {
             if (typeof content === 'string') {
                content = {
-                  content: content,
+                  content: Utf8.encode(content),
                   encoding: 'utf-8'
                };
             } else {
-               content = {
-                  content: b64encode(content),
-                  encoding: 'base64'
-               };
+               if (typeof Buffer !== 'undefined' && content instanceof Buffer) {
+                  // in NodeJS
+                  content = {
+                     content: content.toString('base64'),
+                     encoding: 'base64'
+                  };
+               } else if (typeof Blob !== 'undefined' && content instanceof Blob) {
+                  content = {
+                     content: b64encode(content),
+                     encoding: 'base64'
+                  };
+               } else {
+                  throw new Error('Unknown content passed to postBlob. Must be string or Buffer (node) or Blob (web)');
+               }
             }
 
             _request('POST', repoPath + '/git/blobs', content, function (err, res, xhr) {
