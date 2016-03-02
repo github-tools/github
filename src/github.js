@@ -95,7 +95,7 @@ var Promise = require('es6-promise');
             });
       };
 
-      var _requestAllPages = Github._requestAllPages = function _requestAllPages(path, cb) {
+      var _requestAllPages = Github._requestAllPages = function _requestAllPages(path, singlePage, cb) {
          var results = [];
 
          (function iterate() {
@@ -120,7 +120,7 @@ var Promise = require('es6-promise');
                   })
                   .pop();
 
-               if (!next) {
+               if (!next || singlePage) {
                   cb(err, results, xhr);
                } else {
                   path = next;
@@ -155,7 +155,7 @@ var Promise = require('es6-promise');
 
             url += '?' + params.join('&');
 
-            _requestAllPages(url, cb);
+            _requestAllPages(url, !!options.page, cb);
          };
 
          // List user organizations
@@ -255,7 +255,7 @@ var Promise = require('es6-promise');
 
             url += '?' + params.join('&');
 
-            _requestAllPages(url, cb);
+            _requestAllPages(url, !!options.page, cb);
          };
 
          // List user starred repositories
@@ -263,7 +263,8 @@ var Promise = require('es6-promise');
 
          this.userStarred = function (username, cb) {
             // Github does not always honor the 1000 limit so we want to iterate over the data set.
-            _requestAllPages('/users/' + username + '/starred?type=all&per_page=100', cb);
+            var request = '/users/' + username + '/starred?type=all&per_page=100';
+            _requestAllPages(request, false, cb);
          };
 
          // List a user's gists
@@ -278,7 +279,8 @@ var Promise = require('es6-promise');
 
          this.orgRepos = function (orgname, cb) {
             // Github does not always honor the 1000 limit so we want to iterate over the data set.
-            _requestAllPages('/orgs/' + orgname + '/repos?type=all&&page_num=1000&sort=updated&direction=desc', cb);
+            var request = '/orgs/' + orgname + '/repos?type=all&&page_num=100&sort=updated&direction=desc';
+            _requestAllPages(request, false, cb);
          };
 
          // Follow user
@@ -1028,13 +1030,11 @@ var Promise = require('es6-promise');
          this.list = function (options, cb) {
             var query = [];
 
-            for(var key in options) {
-               if (options.hasOwnProperty(key)) {
-                  query.push(encodeURIComponent(key) + '=' + encodeURIComponent(options[key]));
-               }
-            }
+            Object.keys(options).forEach(function(option) {
+               query.push(encodeURIComponent(option) + '=' + encodeURIComponent(options[option]));
+            });
 
-            _requestAllPages(path + '?' + query.join('&'), cb);
+            _requestAllPages(path + '?' + query.join('&'), !!options.page, cb);
          };
 
          this.comment = function (issue, comment, cb) {
