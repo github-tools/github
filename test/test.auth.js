@@ -44,7 +44,27 @@ describe('Github', function() {
       it('should read public information', function(done) {
          var gist = github.getGist('f1c0f84e53aa6b98ec03');
 
-         gist.read(assertSuccessful(done));
+         gist.read(function(err, res, xhr) {
+            try {
+               expect(err).not.to.exist();
+               expect(res).to.exist();
+               expect(xhr).to.be.an.object();
+
+               done();
+            } catch(e) {
+               try {
+                  if (err && err.request.headers['x-ratelimit-remaining'] === '0') {
+                     done();
+
+                     return;
+                  }
+               } catch(e2) {
+                  done(e);
+               }
+
+               done(e);
+            }
+         });
       });
    });
 
