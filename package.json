@@ -19,6 +19,7 @@
     "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
+    "gulp-istanbul": "^0.10.3",
     "gulp-jscs": "^3.0.2",
     "gulp-jscs-stylish": "^1.3.0",
     "gulp-jshint": "^2.0.0",
@@ -29,24 +30,16 @@
     "istanbul": "^0.4.2",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
-    "karma": "^0.13.19",
-    "karma-browserify": "^4.4.2",
-    "karma-coverage": "^0.5.3",
-    "karma-json-fixtures-preprocessor": "0.0.6",
-    "karma-mocha": "^0.2.1",
-    "karma-mocha-reporter": "^1.1.5",
-    "karma-phantomjs-launcher": "^0.2.3",
-    "karma-sauce-launcher": "^0.3.0",
     "mocha": "^2.3.4",
     "must": "^0.13.1",
-    "phantomjs": "^2.1.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
     "test": "gulp test && gulp lint",
     "lint": "gulp lint",
-    "codecov": "cat coverage/*/lcov.info | codecov"
+    "codecov": "node_modules/.bin/codecov",
+    "show-coverage-html": "open coverage/lcov-report/index.html"
   },
   "repository": {
     "type": "git",
