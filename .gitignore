@@ -1,6 +1,8 @@
 .DS_Store
 .idea
 node_modules/
-npm-debug.log
 coverage/
+
+.zuulrc
+npm-debug.log
 sauce.json

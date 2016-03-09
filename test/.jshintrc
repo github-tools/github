@@ -1,0 +1,9 @@
+{
+   "browser": true,
+   "mocha": true,
+   "node": true,
+   "globals": {
+     "require": false,
+     "define": false
+   }
+}

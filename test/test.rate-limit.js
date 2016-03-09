@@ -1,10 +1,14 @@
 'use strict';
 
 var Github = require('../src/github.js');
-var testUser = require('./user.json');
-var github, rateLimit;
+
+var expect = require('must');
+var testUser = require('./fixtures/user.json');
+var assertSuccessful = require('./helpers').assertSuccessful;
 
 describe('Github.RateLimit', function() {
+   var github, rateLimit;
+
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
@@ -16,17 +20,17 @@ describe('Github.RateLimit', function() {
    });
 
    it('should get rate limit', function(done) {
-      rateLimit.getRateLimit(function(err, rateInfo, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         rateInfo.should.be.an('object');
-         rateInfo.should.have.deep.property('rate.limit');
-         rateInfo.rate.limit.should.be.a('number');
-         rateInfo.should.have.deep.property('rate.remaining');
-         rateInfo.rate.remaining.should.be.a('number');
-         rateInfo.rate.remaining.should.be.at.most(rateInfo.rate.limit);
+      rateLimit.getRateLimit(assertSuccessful(done, function(err, rateInfo) {
+         var rate = rateInfo.rate;
+
+         expect(rate).to.be.an.object();
+         expect(rate).to.have.own('limit');
+         expect(rate).to.have.own('remaining');
+         expect(rate.limit).to.be.a.number();
+         expect(rate.remaining).to.be.a.number();
+         expect(rate.remaining).to.be.at.most(rateInfo.rate.limit);
 
          done();
-      });
+      }));
    });
 });
