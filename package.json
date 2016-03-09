@@ -1,63 +1,63 @@
 {
-  "name": "github-api",
-  "version": "0.11.2",
-  "description": "A higher-level wrapper around the Github API.",
-  "main": "src/github.js",
-  "dependencies": {
-    "axios": "https://github.com/github-tools/axios.git",
-    "base-64": "^0.1.0",
-    "es6-promise": "^3.0.2",
-    "utf8": "^2.1.1"
-  },
-  "devDependencies": {
-    "babel-plugin-transform-es2015-modules-umd": "^6.5.0",
-    "babel-preset-es2015": "^6.5.0",
-    "babelify": "^7.2.0",
-    "browserify": "^13.0.0",
-    "browserify-istanbul": "^0.2.1",
-    "codecov": "^1.0.1",
-    "del": "^2.2.0",
-    "gulp": "^3.9.0",
-    "gulp-babel": "^6.1.2",
-    "gulp-istanbul": "^0.10.3",
-    "gulp-jscs": "^3.0.2",
-    "gulp-jscs-stylish": "^1.3.0",
-    "gulp-jshint": "^2.0.0",
-    "gulp-mocha": "^2.2.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.5.1",
-    "istanbul": "^0.4.2",
-    "jshint": "^2.9.1",
-    "jshint-stylish": "^2.1.0",
-    "mocha": "^2.3.4",
-    "must": "^0.13.1",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
-  },
-  "scripts": {
-    "test": "gulp test && gulp lint",
-    "lint": "gulp lint",
-    "codecov": "node_modules/.bin/codecov",
-    "show-coverage-html": "open coverage/lcov-report/index.html"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/michael/github.git"
-  },
-  "keywords": [
-    "github",
-    "api"
-  ],
-  "contributors": [
-    "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
-    "Aurelio De Rosa <a.derosa@audero.it> (http://www.audero.it/)",
-    "Michael Aufreiter (http://substance.io)"
-  ],
-  "license": "BSD-3-Clause-Clear",
-  "readmeFilename": "README.md",
-  "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
-  "bugs": {
-    "url": "https://github.com/michael/github/issues"
-  }
+   "name": "github-api",
+   "version": "0.11.2",
+   "description": "A higher-level wrapper around the Github API.",
+   "main": "src/github.js",
+   "dependencies": {
+      "axios": "https://github.com/github-tools/axios.git",
+      "base-64": "^0.1.0",
+      "es6-promise": "^3.0.2",
+      "utf8": "^2.1.1"
+   },
+   "devDependencies": {
+      "babel-plugin-transform-es2015-modules-umd": "^6.5.0",
+      "babel-preset-es2015": "^6.5.0",
+      "babelify": "^7.2.0",
+      "browserify": "^13.0.0",
+      "browserify-istanbul": "^0.2.1",
+      "codecov": "^1.0.1",
+      "del": "^2.2.0",
+      "gulp": "^3.9.0",
+      "gulp-babel": "^6.1.2",
+      "gulp-istanbul": "^0.10.3",
+      "gulp-jscs": "^3.0.2",
+      "gulp-jscs-stylish": "^1.3.0",
+      "gulp-jshint": "^2.0.0",
+      "gulp-mocha": "^2.2.0",
+      "gulp-rename": "^1.2.2",
+      "gulp-sourcemaps": "^1.6.0",
+      "gulp-uglify": "^1.5.1",
+      "istanbul": "^0.4.2",
+      "jshint": "^2.9.1",
+      "jshint-stylish": "^2.1.0",
+      "mocha": "^2.3.4",
+      "must": "^0.13.1",
+      "vinyl-buffer": "^1.0.0",
+      "vinyl-source-stream": "^1.1.0"
+   },
+   "scripts": {
+      "test": "gulp test:mocha",
+      "lint": "gulp lint",
+      "codecov": "node_modules/.bin/codecov",
+      "show-coverage-html": "open coverage/lcov-report/index.html"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git://github.com/michael/github.git"
+   },
+   "keywords": [
+      "github",
+      "api"
+   ],
+   "contributors": [
+      "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
+      "Aurelio De Rosa <a.derosa@audero.it> (http://www.audero.it/)",
+      "Michael Aufreiter (http://substance.io)"
+   ],
+   "license": "BSD-3-Clause-Clear",
+   "readmeFilename": "README.md",
+   "gitHead": "aa8aa3c8cd5ce5240373d4fd1d06a7ab4af41a36",
+   "bugs": {
+      "url": "https://github.com/michael/github/issues"
+   }
 }
