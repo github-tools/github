@@ -1072,7 +1072,7 @@
 
       Github.Search = function (options) {
          var path = '/search/';
-         var query = '?q=' + options.query;
+         var query = ['q=' + options.query];
 
          function getQueryFromOptions(options) {
             var localQuery = query.slice(0);
