@@ -677,6 +677,15 @@
             });
          };
 
+         // Show repository collaborators
+         // -------
+
+         this.collaborators = function (username, cb) {
+            var command = repoPath + '/collaborators' + (username ? '/' + username : '')
+
+            _request('GET', command, null, cb);
+         };
+
          // Get contents
          // --------
 

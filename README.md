@@ -246,6 +246,13 @@ Get contributors list with additions, deletions, and commit counts.
 repo.contributors(function(err, data) {});
 ```
 
+Check if user is a collaborator on the repository. Pass in a falsy value (null, '', etc) for
+'username' to retreive full list of collaborators.
+
+```js
+repo.collaborators(username, function(err, data) {});
+```
+
 Check if a repository is starred.
 
 ```js

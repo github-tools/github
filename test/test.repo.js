@@ -174,6 +174,31 @@ describe('Github.Repository', function() {
       });
    });
 
+   it('should show repo collaborators', function(done) {
+      repo.collaborators(null, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.should.be.instanceof(Array);
+         res.should.have.length.above(1);
+         should.exist(res[0].login);
+         should.exist(res[0].id);
+         should.exist(res[0].permissions);
+
+         done();
+      });
+   });
+
+   it('should test whether user is collaborator', function(done) {
+      repo.collaborators('michael', function(err, res, xhr) {
+         should.not.exist(err);
+         should.not.exist(res);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         xhr.status.should.equal(204);
+
+         done();
+      });
+   });
+
    // @TODO repo.branch, repo.pull
 
    it('should list repo branches', function(done) {
