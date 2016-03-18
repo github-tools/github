@@ -276,6 +276,30 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should show repo collaborators', function(done) {
+      repo.collaborators(function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         res.should.be.instanceof(Array);
+         res.should.have.length(1);
+         res[0].login.should.equal(testUser.USERNAME);
+         should.exist(res[0].id);
+         should.exist(res[0].permissions);
+
+         done();
+      });
+   });
+
+   it('should test whether user is collaborator', function(done) {
+      repo.isCollaborator(testUser.USERNAME, function(err, res, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+         xhr.status.should.equal(204);
+
+         done();
+      });
+   });
+
    it('should write to repo', function(done) {
       repo.write('master', 'TEST.md', 'THIS IS A TEST', 'Creating test', function(err) {
          should.not.exist(err);

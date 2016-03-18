@@ -685,6 +685,20 @@
             });
          };
 
+         // Show repository collaborators
+         // -------
+
+         this.collaborators = function (cb) {
+            _request('GET', repoPath + '/collaborators', null, cb);
+         };
+
+         // Check whether user is a collaborator on the repository
+         // -------
+
+         this.isCollaborator = function (username, cb) {
+            _request('GET', repoPath + '/collaborators/' + username, null, cb);
+         };
+
          // Get contents
          // --------
 
