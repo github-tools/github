@@ -175,7 +175,7 @@ describe('Github.Repository', function() {
    });
 
    it('should show repo collaborators', function(done) {
-      repo.collaborators(null, function(err, res, xhr) {
+      repo.collaborators(function(err, res, xhr) {
          should.not.exist(err);
          xhr.should.be.instanceof(XMLHttpRequest);
          res.should.be.instanceof(Array);
@@ -189,7 +189,7 @@ describe('Github.Repository', function() {
    });
 
    it('should test whether user is collaborator', function(done) {
-      repo.collaborators('michael', function(err, res, xhr) {
+      repo.isCollaborator('michael', function(err, res, xhr) {
          should.not.exist(err);
          should.not.exist(res);
          xhr.should.be.instanceof(XMLHttpRequest);

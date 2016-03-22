@@ -680,10 +680,15 @@
          // Show repository collaborators
          // -------
 
-         this.collaborators = function (username, cb) {
-            var command = repoPath + '/collaborators' + (username ? '/' + username : '')
+         this.collaborators = function (cb) {
+            _request('GET', repoPath + '/collaborators', null, cb);
+         };
 
-            _request('GET', command, null, cb);
+         // Check whether user is a collaborator on the repository
+         // -------
+
+         this.isCollaborator = function (username, cb) {
+            _request('GET', repoPath + '/collaborators/' + username, null, cb);
          };
 
          // Get contents
