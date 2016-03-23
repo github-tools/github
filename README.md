@@ -256,8 +256,32 @@ Unstar a repository.
 repo.unstar(owner, repository, function(err) {});
 ```
 
-## User API
+## Organization API
 
+
+```js
+var org = github.getOrg();
+```
+
+List all organization repos
+
+```js
+org.listRepos(organization_name, function(err, data) {});
+```
+
+List all organization members
+
+```js
+org.listMembers(organization_name, function(err, data) {});
+```
+
+Check if a user is a member of the organization
+
+```js
+org.checkMembership(organization_name, username, function(err, data) {});
+```
+
+## User API
 
 ```js
 var user = github.getUser();
