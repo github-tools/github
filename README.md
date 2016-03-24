@@ -255,7 +255,7 @@ repo.collaborators(function(err, data) {});
 Check if user is a collaborator on the repository.
 
 ```js
-repo.isCollaborator(username, function(err, data) {});
+repo.isCollaborator(username, function(err) {});
 ```
 
 Check if a repository is starred.
