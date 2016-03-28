@@ -191,7 +191,7 @@ repo.move('master', 'path/to/file', 'path/to/new_file', function(err) {});
 Remove a file.
 
 ```js
-repo.remove('master', 'path/to/file', function(err) {});
+repo.remove('master', 'path/to/file', function(err, data) {});
 ```
 
 Get information about a particular commit.
