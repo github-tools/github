@@ -1089,7 +1089,32 @@
          };
       };
 
-      // Search API
+       // Milestones API
+       // ==========
+
+      Github.Milestone = function (options) {
+          var path = '/repos/' + options.user + '/' + options.repo + '/milestones';
+
+          this.list = function (options, cb) {
+              var query = [];
+
+              for (var key in options) {
+                  if (options.hasOwnProperty(key)) {
+                      query.push(encodeURIComponent(key) + '=' + encodeURIComponent(options[key]));
+                  }
+              }
+
+              _requestAllPages(path + '?' + query.join('&'), cb);
+          };
+
+          this.comment = function (issue, comment, cb) {
+              _request('POST', issue.comments_url, {
+                  body: comment
+              }, cb);
+          };
+      };
+
+       // Search API
       // ==========
 
       Github.Search = function (options) {
@@ -1133,6 +1158,13 @@
          user: user,
          repo: repo
       });
+   };
+
+   Github.getMilestones = function (user, repo) {
+       return new Github.Milestone({
+           user: user,
+           repo: repo
+       });
    };
 
    Github.getRepo = function (user, repo) {
