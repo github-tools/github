@@ -1094,22 +1094,32 @@
 
       Github.Search = function (options) {
          var path = '/search/';
-         var query = '?q=' + options.query;
+         var query = ['q=' + options.query];
+
+         function getQueryFromOptions(options) {
+            var localQuery = query.slice(0);
+            for (var key in options) {
+               if (options.hasOwnProperty(key)) {
+                  localQuery.push(encodeURIComponent(key) + '=' + encodeURIComponent(options[key]));
+               }
+            }
+            return localQuery.join('&');
+         }
 
          this.repositories = function (options, cb) {
-            _request('GET', path + 'repositories' + query, options, cb);
+            _requestAllPages(path + 'repositories?' + getQueryFromOptions(options), cb);
          };
 
          this.code = function (options, cb) {
-            _request('GET', path + 'code' + query, options, cb);
+            _requestAllPages(path + 'code?' + getQueryFromOptions(options), cb);
          };
 
          this.issues = function (options, cb) {
-            _request('GET', path + 'issues' + query, options, cb);
+            _requestAllPages(path + 'issues?' + getQueryFromOptions(options), cb);
          };
 
          this.users = function (options, cb) {
-            _request('GET', path + 'users' + query, options, cb);
+            _requestAllPages(path + 'users?' + getQueryFromOptions(options), cb);
          };
       };
 
