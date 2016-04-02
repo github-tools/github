@@ -466,6 +466,23 @@
             _request('GET', repoPath + '/pulls/' + number, null, cb);
          };
 
+         // Merge a specific pull request
+         // -------
+
+         this.mergePull = function(pull, message, cb) {
+            if (typeof message === 'function') {
+               cb = message;
+               message = '';
+            }
+
+            var data = {
+               sha: pull.sha || pull.head.sha,
+               commit_message: message
+            };
+
+            _request('PUT', repoPath + '/pulls/' + pull.number + '/merge', data, cb);
+         };
+
          // Retrieve the changes made between base and head
          // -------
 

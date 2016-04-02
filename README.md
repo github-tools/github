@@ -141,6 +141,23 @@ var pullRequestID = 123;
 repo.getPull(pullRequestID, function(err, pullRequestInfo) {});
 ```
 
+Merge a Pull Request.
+
+```js
+var pullRequestID = 123;
+
+repo.mergePull({
+   number: pullRequestID,
+   // pull request head sha is required to merge a pull request safely
+   sha: 'f4c3e6d8045ea567cccdc0802e1769a85c6b690c'
+}, optionalMessage, function(err, mergeResult){});
+
+// or simply:
+repo.getPull(pullRequestID, function(err, pullRequestInfo) {
+   repo.mergePull(pullRequestInfo, function(err, mergeResult){});
+});
+```
+
 Create Pull Request.
 
 ```js

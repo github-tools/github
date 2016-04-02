@@ -454,6 +454,42 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should merge pull requests on repo', function(done) {
+
+      var baseBranch = 'master';
+      var headBranch = 'pull-request';
+      var pullRequestTitle = 'Test pull request';
+      var pullRequestBody = 'This is a test pull request to be merged';
+
+      repo.branch(baseBranch, headBranch, function() {
+         repo.write(headBranch, 'TEST.md', 'THIS IS AN UPDATED TEST THAT WILL GET MERGED', 'Updating test', function() {
+            repo.createPullRequest(
+               {
+                  title: pullRequestTitle,
+                  body: pullRequestBody,
+                  base: baseBranch,
+                  head: headBranch
+               },
+               function(err, pullRequest, xhr) {
+                  should.not.exist(err);
+                  xhr.should.be.instanceof(XMLHttpRequest);
+
+                  repo.mergePull(pullRequest, function(err, mergedPullRequest, xhr) {
+                     should.not.exist(err);
+                     xhr.should.be.instanceof(XMLHttpRequest);
+
+                     should.exist(mergedPullRequest.sha);
+                     should(mergedPullRequest.merged).equal(true);
+                     should.exist(mergedPullRequest.message);
+
+                     done();
+                  });
+               }
+            );
+         });
+      });
+   });
+
    it('should delete a file on the repo', function(done) {
       repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
          should.not.exist(err);
