@@ -454,6 +454,18 @@ describe('Creating new Github.Repository', function() {
       });
    });
 
+   it('should list collaborators of repo', function(done) {
+      var repo = github.getRepo('michael', 'github');
+
+      repo.listCollaborators(function(err, collabs, xhr) {
+         should.not.exist(err);
+         xhr.should.be.instanceof(XMLHttpRequest);
+
+         // @TODO write better assertion
+         done();
+      });
+   });
+
    it('should delete a file on the repo', function(done) {
       repo.write('master', 'REMOVE-TEST.md', 'THIS IS A TEST', 'Remove test', function(err) {
          should.not.exist(err);

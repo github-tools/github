@@ -466,6 +466,12 @@
             _request('GET', repoPath + '/pulls/' + number, null, cb);
          };
 
+         // List all collaborators of a repository
+         // -------
+         this.listCollaborators = function(cb) {
+           _request('GET', repoPath + "/collaborators", null, cb);
+         };
+
          // Retrieve the changes made between base and head
          // -------
 
@@ -1072,6 +1078,28 @@
             }
 
             _requestAllPages(path + '?' + query.join('&'), cb);
+         };
+
+         this.events = function(options, cb) {
+           var query = [];
+
+           for (var key in options) {
+             if (options.hasOwnProperty(key)) {
+               query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
+             }
+           }
+           _requestAllPages(path + '/events' + '?' + query.join("&"), cb);
+         };
+
+         this.comments = function(options, cb) {
+           var query = [];
+
+           for (var key in options) {
+             if (options.hasOwnProperty(key)) {
+               query.push(encodeURIComponent(key) + "=" + encodeURIComponent(options[key]));
+             }
+           }
+           _requestAllPages(path + '/comments' + '?' + query.join("&"), cb);
          };
 
          this.comment = function (issue, comment, cb) {
