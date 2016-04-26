@@ -1,10 +1,8 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
-
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful} from './helpers/callbacks';
 
 function assertArray(done) {
    return assertSuccessful(done, function(err, result) {
@@ -13,8 +11,9 @@ function assertArray(done) {
    });
 }
 
-describe('Github.User', function() {
-   var github, user;
+describe('User', function() {
+   let github;
+   let user;
 
    before(function() {
       github = new Github({
@@ -30,14 +29,14 @@ describe('Github.User', function() {
    });
 
    it('should get user repos with options', function(done) {
-      var options = {
+      const filterOpts = {
          type: 'owner',
          sort: 'updated',
          per_page: 90, // jscs:ignore
          page: 10
       };
 
-      user.repos(options, assertArray(done));
+      user.repos(filterOpts, assertArray(done));
    });
 
    it('should get user orgs', function(done) {
@@ -53,14 +52,14 @@ describe('Github.User', function() {
    });
 
    it('should get user notifications with options', function(done) {
-      var options = {
+      const filterOpts = {
          all: true,
          participating: true,
          since: '2015-01-01T00:00:00Z',
          before: '2015-02-01T00:00:00Z'
       };
 
-      user.notifications(options, assertArray(done));
+      user.notifications(filterOpts, assertArray(done));
    });
 
    it('should show user', function(done) {
@@ -72,14 +71,14 @@ describe('Github.User', function() {
    });
 
    it('should show user\'s repos with options', function(done) {
-      var options = {
+      const filterOpts = {
          type: 'owner',
          sort: 'updated',
          per_page: 90, // jscs:ignore
          page: 1
       };
 
-      user.userRepos('aendrew', options, assertArray(done));
+      user.userRepos('aendrew', filterOpts, assertArray(done));
    });
 
    it('should show user\'s starred repos', function(done) {

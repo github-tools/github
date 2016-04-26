@@ -1,14 +1,14 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import testGist from './fixtures/gist.json';
+import {assertSuccessful} from './helpers/callbacks';
 
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var testGist = require('./fixtures/gist.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
-
-describe('Github.Gist', function() {
-   var gist, gistId, github;
+describe('Gist', function() {
+   let gist;
+   let gistId;
+   let github;
 
    before(function() {
       github = new Github({

@@ -1,14 +1,12 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
-
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
-var assertFailure = require('./helpers').assertFailure;
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful, assertFailure} from './helpers/callbacks';
 
 describe('Github', function() {
-   var github, user;
+   let github;
+   let user;
 
    describe('with authentication', function() {
       before(function() {
@@ -42,7 +40,7 @@ describe('Github', function() {
       });
 
       it('should read public information', function(done) {
-         var gist = github.getGist('f1c0f84e53aa6b98ec03');
+         let gist = github.getGist('f1c0f84e53aa6b98ec03');
 
          gist.read(function(err, res, xhr) {
             try {
@@ -51,14 +49,13 @@ describe('Github', function() {
                expect(xhr).to.be.an.object();
 
                done();
-            } catch(e) {
+            } catch (e) {
                try {
                   if (err && err.request.headers['x-ratelimit-remaining'] === '0') {
                      done();
-
                      return;
                   }
-               } catch(e2) {
+               } catch (e2) {
                   done(e);
                }
 
@@ -86,8 +83,8 @@ describe('Github', function() {
 
       it('should fail authentication and return err', function(done) {
          user.notifications(assertFailure(done, function(err) {
-            expect(err.error).to.be.equal(401, 'Return 401 status for bad auth');
-            expect(err.request.data.message).to.equal('Bad credentials');
+            expect(err.status).to.be.equal(401, 'Return 401 status for bad auth');
+            expect(err.response.data.message).to.equal('Bad credentials');
 
             done();
          }));

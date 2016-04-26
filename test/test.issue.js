@@ -1,13 +1,13 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful} from './helpers/callbacks';
 
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
-
-describe('Github.Issue', function() {
-   var github, remoteIssues, remoteIssue;
+describe('Issue', function() {
+   let github;
+   let remoteIssues;
+   let remoteIssue;
 
    before(function() {
       github = new Github({
@@ -45,15 +45,15 @@ describe('Github.Issue', function() {
       });
 
       it('should create issue', function(done) {
-         var issue = {
+         const newIssue = {
             title: 'New issue',
             body: 'New issue body'
          };
 
-         remoteIssues.create(issue, assertSuccessful(done, function(err, issue) {
+         remoteIssues.create(newIssue, assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('url');
-            expect(issue).to.have.own('title', issue.title);
-            expect(issue).to.have.own('body', issue.body);
+            expect(issue).to.have.own('title', newIssue.title);
+            expect(issue).to.have.own('body', newIssue.body);
 
             done();
          }));
@@ -68,7 +68,7 @@ describe('Github.Issue', function() {
       });
 
       it('should edit issues title', function(done) {
-         var newProps = {
+         const newProps = {
             title: 'Edited title'
          };
 

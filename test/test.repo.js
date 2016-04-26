@@ -1,24 +1,24 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import loadImage from './fixtures/imageBlob';
+import {assertSuccessful, assertFailure} from './helpers/callbacks';
 
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var loadImage = require('./fixtures/imageBlob');
-var assertSuccessful = require('./helpers').assertSuccessful;
-var assertFailure = require('./helpers').assertFailure;
-
-describe('Github.Repository', function() {
-   var github, remoteRepo, user, imageB64, imageBlob;
-   var testRepoName = Math.floor(Math.random() * 100000).toString();
-   var v10_4sha = '20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
-   var statusUrl = 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+describe('Repository', function() {
+   let github;
+   let remoteRepo;
+   let user;
+   let imageB64;
+   let imageBlob;
+   const testRepoName = Math.floor(Math.random() * 100000).toString();
+   const v10SHA = '20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+   const statusUrl = 'https://api.github.com/repos/michael/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
 
    before(function(done) {
       github = new Github({
          username: testUser.USERNAME,
-         password: testUser.PASSWORD,
-         auth: 'basic'
+         password: testUser.PASSWORD
       });
 
       loadImage(function(b64, blob) {
@@ -42,8 +42,8 @@ describe('Github.Repository', function() {
       });
 
       it('should get blob', function(done) {
-         remoteRepo.getSha('master', 'README.md', assertSuccessful(done, function(err, sha) {
-            remoteRepo.getBlob(sha, assertSuccessful(done, function(err, content) {
+         remoteRepo.getSha('master', 'README.md', assertSuccessful(done, function(err, response) {
+            remoteRepo.getBlob(response.sha, assertSuccessful(done, function(err, content) {
                expect(content).to.be.include('# Github.js');
 
                done();
@@ -55,7 +55,7 @@ describe('Github.Repository', function() {
          remoteRepo.contents('master', '', assertSuccessful(done, function(err, contents) {
             expect(contents).to.be.an.array();
 
-            var readme = contents.filter(function(content) {
+            const readme = contents.filter(function(content) {
                return content.path === 'README.md';
             });
 
@@ -67,7 +67,8 @@ describe('Github.Repository', function() {
       });
 
       it('should get tree', function(done) {
-         remoteRepo.getTree('master', assertSuccessful(done, function(err, tree) {
+         remoteRepo.getTree('master', assertSuccessful(done, function(err, response) {
+            let {tree} = response;
             expect(tree).to.be.an.array();
             expect(tree.length).to.be.above(0);
 
@@ -100,26 +101,26 @@ describe('Github.Repository', function() {
       });
 
       it('should list commits with all options', function(done) {
-         var sinceDate = new Date(2015, 0, 1);
-         var untilDate = new Date(2016, 0, 20);
-         var options = {
+         const since = new Date(2015, 0, 1);
+         const until = new Date(2016, 0, 20);
+         const options = {
             sha: 'master',
             path: 'test',
             author: 'AurelioDeRosa',
-            since: sinceDate,
-            until: untilDate
+            since,
+            until
          };
 
          remoteRepo.getCommits(options, assertSuccessful(done, function(err, commits) {
             expect(commits).to.be.an.array();
             expect(commits.length).to.be.above(0);
 
-            var commit = commits[0];
-            var commitDate = new Date(commit.commit.author.date);
+            const commit = commits[0];
+            const commitDate = new Date(commit.commit.author.date);
 
             expect(commit).to.have.own('commit');
             expect(commit.author).to.have.own('login', 'AurelioDeRosa');
-            expect(commitDate.getTime()).to.be.between(sinceDate.getTime(), untilDate.getTime());
+            expect(commitDate.getTime()).to.be.between(since.getTime(), until.getTime());
             done();
          }));
       });
@@ -129,26 +130,11 @@ describe('Github.Repository', function() {
             expect(contributors).to.be.an.array();
             expect(contributors.length).to.be.above(1);
 
-            var contributor = contributors[0];
+            const contributor = contributors[0];
 
             expect(contributor).to.have.own('author');
             expect(contributor).to.have.own('total');
             expect(contributor).to.have.own('weeks');
-
-            done();
-         }));
-      });
-
-      it('should show repo collaborators', function(done) {
-         remoteRepo.collaborators(assertSuccessful(done, function(err, collaborators) {
-            expect(collaborators).to.be.an.array();
-            expect(collaborators).to.have.length(1);
-
-            var collaborator = collaborators[0];
-
-            expect(collaborator).to.have.own('login', testUser.USERNAME);
-            expect(collaborator).to.have.own('id');
-            expect(collaborator).to.have.own('permissions');
 
             done();
          }));
@@ -169,7 +155,7 @@ describe('Github.Repository', function() {
       });
 
       it('should get commit from repo', function(done) {
-         remoteRepo.getCommit('master', v10_4sha, assertSuccessful(done, function(err, commit) {
+         remoteRepo.getCommit('master', v10SHA, assertSuccessful(done, function(err, commit) {
             expect(commit.message).to.equal('v0.10.4');
             expect(commit.author.date).to.equal('2015-03-20T17:01:42Z');
 
@@ -178,11 +164,11 @@ describe('Github.Repository', function() {
       });
 
       it('should get statuses for a SHA from a repo', function(done) {
-         remoteRepo.getStatuses(v10_4sha, assertSuccessful(done, function(err, statuses) {
+         remoteRepo.getStatuses(v10SHA, assertSuccessful(done, function(err, statuses) {
             expect(statuses).to.be.an.array();
             expect(statuses.length).to.equal(6);
 
-            var correctUrls = statuses.every(function(status) {
+            const correctUrls = statuses.every(function(status) {
                return status.url === statusUrl;
             });
 
@@ -197,7 +183,7 @@ describe('Github.Repository', function() {
       });
 
       it('should get a repo by fullname', function(done) {
-         var repoByName = github.getRepo('michael/github');
+         const repoByName = github.getRepo('michael/github');
 
          repoByName.show(assertSuccessful(done, function(err, repo) {
             expect(repo).to.have.own('full_name', 'michael/github');
@@ -206,13 +192,9 @@ describe('Github.Repository', function() {
          }));
       });
 
-      it('should test whether user is collaborator', function(done) {
-         remoteRepo.isCollaborator(testUser.USERNAME, assertSuccessful(done));
-      });
-
       it('should check if the repo is starred', function(done) {
-         remoteRepo.isStarred('michael', 'github', assertFailure(done, function(err) {
-            expect(err.error).to.be(404);
+         remoteRepo.isStarred('michael', 'github', assertSuccessful(done, function(err, result) {
+            expect(result).to.equal(false);
 
             done();
          }));
@@ -220,27 +202,28 @@ describe('Github.Repository', function() {
    });
 
    describe('creating/modifiying', function() {
-      var fileName = 'test.md';
+      const fileName = 'test.md';
 
-      var initialText = 'This is a test.';
-      var initialMessage = 'Test file create.';
+      const initialText = 'This is a test.';
+      const initialMessage = 'This is my 44 character long commit message.';
 
-      var updatedText = 'This file has been updated.';
-      var updatedMessage = 'Test file update.';
+      const updatedText = 'This file has been updated.';
+      const updatedMessage = 'This is my 51 character long update commit message.';
 
-      var fileToDelete = 'tmp.md';
-      var deleteMessage = 'Removing file';
+      const fileToDelete = 'tmp.md';
+      const deleteMessage = 'This is my 51 character long delete commit message.';
 
-      var unicodeFileName = '\u4E2D\u6587\u6D4B\u8BD5.md';
-      var unicodeText = '\u00A1\u00D3i de m\u00ED, que verg\u00FCenza!';
-      var unicodeMessage = 'Such na\u00EFvet\u00E9\u2026';
+      const unicodeFileName = '\u4E2D\u6587\u6D4B\u8BD5.md';
+      const unicodeText = '\u00A1\u00D3i de m\u00ED, que verg\u00FCenza!';
+      const unicodeMessage = 'Such na\u00EFvet\u00E9\u2026';
 
-      var imageFileName = 'image.png';
+      const imageFileName = 'image.png';
 
-      var releaseTag = 'foo';
-      var releaseName = 'My awesome release';
-      var releaseBody = 'Foo bar bazzy baz';
-      var sha, releaseId;
+      const releaseTag = 'foo';
+      const releaseName = 'My awesome release';
+      const releaseBody = 'This is my 49 character long release description.';
+      let sha;
+      let releaseId;
 
       before(function() {
          user = github.getUser();
@@ -253,7 +236,7 @@ describe('Github.Repository', function() {
       });
 
       it('should create repo', function(done) {
-         var repoDef = {
+         const repoDef = {
             name: testRepoName
          };
 
@@ -262,6 +245,25 @@ describe('Github.Repository', function() {
 
             done();
          }));
+      });
+
+      it('should show repo collaborators', function(done) {
+         remoteRepo.collaborators(assertSuccessful(done, function(err, collaborators) {
+            expect(collaborators).to.be.an.array();
+            expect(collaborators).to.have.length(1);
+
+            const collaborator = collaborators[0];
+
+            expect(collaborator).to.have.own('login', testUser.USERNAME);
+            expect(collaborator).to.have.own('id');
+            expect(collaborator).to.have.own('permissions');
+
+            done();
+         }));
+      });
+
+      it('should test whether user is collaborator', function(done) {
+         remoteRepo.isCollaborator(testUser.USERNAME, assertSuccessful(done));
       });
 
       it('should write to repo', function(done) {
@@ -274,14 +276,21 @@ describe('Github.Repository', function() {
          }));
       });
 
-      it('should write to repo branch', function(done) {
-         remoteRepo.branch('master', 'dev', assertSuccessful(done, function() {
-            remoteRepo.write('dev', fileName, updatedText, updatedMessage, assertSuccessful(done, function() {
-               remoteRepo.read('dev', fileName, assertSuccessful(done, function(err, fileText) {
-                  expect(fileText).to.be(updatedText);
+      it('should create a new branch', function(done) {
+         remoteRepo.branch('master', 'dev', assertSuccessful(done, function(err, branch) {
+            expect(branch).to.have.property('ref', 'refs/heads/dev');
+            expect(branch.object).to.have.property('sha');
 
-                  done();
-               }));
+            done();
+         }));
+      });
+
+      it('should write to repo branch', function(done) {
+         remoteRepo.write('dev', fileName, updatedText, updatedMessage, assertSuccessful(done, function() {
+            remoteRepo.read('dev', fileName, assertSuccessful(done, function(err, fileText) {
+               expect(fileText).to.be(updatedText);
+
+               done();
             }));
          }));
       });
@@ -300,24 +309,19 @@ describe('Github.Repository', function() {
       });
 
       it('should submit a pull request', function(done) {
-         var baseBranch = 'master';
-         var headBranch = 'pull-request';
-         var pullRequestTitle = 'Test pull request';
-         var pullRequestBody = 'This is a test pull request';
-         var pr = {
-            title: pullRequestTitle,
-            body: pullRequestBody,
-            base: baseBranch,
-            head: headBranch
-         };
+         const base = 'master';
+         const head = 'pull-request';
+         const title = 'Test pull request';
+         const body = 'This is a test pull request';
+         const prSpec = {title, body, base, head};
 
-         remoteRepo.branch(baseBranch, headBranch, assertSuccessful(done, function() {
-            remoteRepo.write(headBranch, fileName, updatedText, updatedMessage, assertSuccessful(done, function() {
-               remoteRepo.createPullRequest(pr, assertSuccessful(done, function(err, pullRequest) {
+         remoteRepo.branch(base, head, assertSuccessful(done, function() {
+            remoteRepo.write(head, fileName, updatedText, updatedMessage, assertSuccessful(done, function() {
+               remoteRepo.createPullRequest(prSpec, assertSuccessful(done, function(err, pullRequest) {
                   expect(pullRequest).to.have.own('number');
                   expect(pullRequest.number).to.be.above(0);
-                  expect(pullRequest).to.have.own('title', pullRequestTitle);
-                  expect(pullRequest).to.have.own('body', pullRequestBody);
+                  expect(pullRequest).to.have.own('title', title);
+                  expect(pullRequest).to.have.own('body', body);
 
                   done();
                }));
@@ -330,12 +334,12 @@ describe('Github.Repository', function() {
       });
 
       it('should create ref on repo', function(done) {
-         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, sha) {
-            var refSpec = {
-               ref: 'refs/heads/new-test-branch', sha: sha
+         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
+            let newRef = {
+               ref: 'refs/heads/new-test-branch',
+               sha: refSpec.object.sha
             };
-
-            remoteRepo.createRef(refSpec, assertSuccessful(done));
+            remoteRepo.createRef(newRef, assertSuccessful(done));
          }));
       });
 
@@ -348,15 +352,15 @@ describe('Github.Repository', function() {
       });
 
       it('should list pulls on repo', function(done) {
-         var options = {
+         const filterOpts = {
             state: 'all',
             sort: 'updated',
             direction: 'desc',
             page: 1,
-            per_page: 10
+            per_page: 10 // jscs:ignore
          };
 
-         remoteRepo.listPulls(options, assertSuccessful(done, function(err, pullRequests) {
+         remoteRepo.listPulls(filterOpts, assertSuccessful(done, function(err, pullRequests) {
             expect(pullRequests).to.be.an.array();
             expect(pullRequests).to.have.length(1);
 
@@ -365,7 +369,7 @@ describe('Github.Repository', function() {
       });
 
       it('should get pull requests on repo', function(done) {
-         var repo = github.getRepo('michael', 'github');
+         const repo = github.getRepo('michael', 'github');
 
          repo.getPull(153, assertSuccessful(done, function(err, pr) {
             expect(pr).to.have.own('title');
@@ -382,28 +386,20 @@ describe('Github.Repository', function() {
          }));
       });
 
-      it('should use repo.delete as an alias for repo.remove', function(done) {
-         remoteRepo.write('master', fileToDelete, initialText, deleteMessage, assertSuccessful(done, function() {
-            remoteRepo.delete('master', fileToDelete, assertSuccessful(done));
-         }));
-      });
-
       it('should write author and committer to repo', function(done) {
-         var options = {
-            author: {
-               name: 'Author Name', email: 'author@example.com'
-            },
-            committer: {
-               name: 'Committer Name', email: 'committer@example.com'
-            }
+         const options = {
+            author: {name: 'Author Name', email: 'author@example.com'},
+            committer: {name: 'Committer Name', email: 'committer@example.com'}
          };
 
          remoteRepo.write('dev', fileName, initialText, initialMessage, options, assertSuccessful(done, function(e, r) {
             remoteRepo.getCommit('dev', r.commit.sha, assertSuccessful(done, function(err, commit) {
-               expect(commit.author.name).to.be('Author Name');
-               expect(commit.author.email).to.be('author@example.com');
-               expect(commit.committer.name).to.be('Committer Name');
-               expect(commit.committer.email).to.be('committer@example.com');
+               const author = commit.author;
+               const committer = commit.committer;
+               expect(author.name).to.be('Author Name');
+               expect(author.email).to.be('author@example.com');
+               expect(committer.name).to.be('Committer Name');
+               expect(committer.email).to.be('committer@example.com');
 
                done();
             }));
@@ -425,12 +421,13 @@ describe('Github.Repository', function() {
       });
 
       it('should pass a regression test for _request (#14)', function(done) {
-         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, sha) {
-            var refSpec = {
-               ref: 'refs/heads/testing-14', sha: sha
+         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
+            let newRef = {
+               ref: 'refs/heads/testing-14',
+               sha: refSpec.object.sha
             };
 
-            remoteRepo.createRef(refSpec, assertSuccessful(done, function() {
+            remoteRepo.createRef(newRef, assertSuccessful(done, function() {
                // Triggers GET:
                // https://api.github.com/repos/michael/cmake_cdt7_stalled/git/refs/heads/prose-integration
                remoteRepo.getRef('heads/master', assertSuccessful(done, function() {
@@ -447,7 +444,7 @@ describe('Github.Repository', function() {
       });
 
       it('should be able to write an image to the repo', function(done) {
-         var opts = {
+         const opts = {
             encode: false
          };
 
@@ -475,9 +472,8 @@ describe('Github.Repository', function() {
 
       it('should unstar the repo', function(done) {
          remoteRepo.unstar(testUser.USERNAME, testRepoName, assertSuccessful(done, function() {
-            remoteRepo.isStarred(testUser.USERNAME, testRepoName, assertFailure(done, function(err) {
-               expect(err.error).to.be(404);
-
+            remoteRepo.isStarred(testUser.USERNAME, testRepoName, assertSuccessful(done, function(_, isStarred) {
+               expect(isStarred).to.be(false);
                done();
             }));
          }));
@@ -485,31 +481,30 @@ describe('Github.Repository', function() {
 
       it('should fail on broken commit', function(done) {
          remoteRepo.commit('broken-parent-hash', 'broken-tree-hash', initialMessage, assertFailure(done, function(err) {
-            expect(err.error).to.be(422);
-
+            expect(err.status).to.be(422);
             done();
          }));
       });
 
       it('should create a release', function(done) {
-         var options = {
-            tag_name: releaseTag,
-            target_commitish: sha
+         const releaseDef = {
+            tag_name: releaseTag, // jscs:ignore
+            target_commitish: sha // jscs:ignore
          };
 
-         remoteRepo.createRelease(options, assertSuccessful(done, function(err, res) {
+         remoteRepo.createRelease(releaseDef, assertSuccessful(done, function(err, res) {
             releaseId = res.id;
             done();
          }));
       });
 
       it('should edit a release', function(done) {
-         var options = {
+         const releaseDef = {
             name: releaseName,
             body: releaseBody
          };
 
-         remoteRepo.editRelease(releaseId, options, assertSuccessful(done, function(err, release) {
+         remoteRepo.editRelease(releaseId, releaseDef, assertSuccessful(done, function(err, release) {
             expect(release).to.have.own('name', releaseName);
             expect(release).to.have.own('body', releaseBody);
 

@@ -1,12 +1,9 @@
-'use strict';
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful} from './helpers/callbacks';
 
-var Github = require('../src/github.js');
-
-var testUser = require('./fixtures/user.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
-
-describe('Github.Search', function() {
-   var github;
+describe('Search', function() {
+   let github;
 
    before(function() {
       github = new Github({
@@ -17,29 +14,37 @@ describe('Github.Search', function() {
    });
 
    it('should search repositories', function(done) {
-      var search = github.getSearch('tetris+language:assembly&sort=stars&order=desc');
-      var options = null;
+      let search = github.search({
+         q: 'tetris language:assembly',
+         sort: 'stars',
+         order: 'desc'
+      });
+      let options = undefined;
 
       search.repositories(options, assertSuccessful(done));
    });
 
    it('should search code', function(done) {
-      var search = github.getSearch('addClass+in:file+language:js+repo:jquery/jquery');
-      var options = null;
+      let search = github.search({q: 'addClass in:file language:js repo:jquery/jquery'});
+      let options = undefined;
 
       search.code(options, assertSuccessful(done));
    });
 
    it('should search issues', function(done) {
-      var search = github.getSearch('windows+label:bug+language:python+state:open&sort=created&order=asc');
-      var options = null;
+      let search = github.search({
+         q: 'windows label:bug language:python state:open',
+         sort: 'created',
+         order: 'asc'
+      });
+      let options = undefined;
 
       search.issues(options, assertSuccessful(done));
    });
 
    it('should search users', function(done) {
-      var search = github.getSearch('tom+repos:%3E42+followers:%3E1000');
-      var options = null;
+      let search = github.search({q: 'tom repos:>42 followers:>1000'});
+      let options = undefined;
 
       search.users(options, assertSuccessful(done));
    });

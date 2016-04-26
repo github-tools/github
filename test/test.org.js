@@ -1,24 +1,29 @@
-'use strict';
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
+import expect from 'must';
 
-var Github = require('../src/github.js');
-var testUser = require('./user.json');
-var github, organization;
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful} from './helpers/callbacks';
 
-describe('Github.Organization', function() {
+describe('Organization', function() {
+   let github;
+   let organization;
+
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
+
       organization = github.getOrg();
    });
 
    it('should create an organisation repo', function(done) {
-      var repoTest = Math.floor(Math.random() * 100000);
-      var options = {
+      const testRepoName = Math.floor(Math.random() * 100000).toString();
+      const options = {
          orgname: testUser.ORGANIZATION,
-         name: repoTest,
+         name: testRepoName,
          description: 'test create organization repo',
          homepage: 'https://github.com/',
          private: false,
@@ -27,13 +32,10 @@ describe('Github.Organization', function() {
          has_downloads: true
       };
 
-      organization.createRepo(options, function(err, res, xhr) {
-         should.not.exist(err);
-         xhr.should.be.instanceof(XMLHttpRequest);
-         res.name.should.equal(repoTest.toString());
-         res.full_name.should.equal(testUser.ORGANIZATION + '/' + repoTest.toString());
-
+      organization.createRepo(options, assertSuccessful(done, function(err, repo) {
+         expect(repo.name).to.equal(testRepoName);
+         expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`);
          done();
-      });
+      }));
    });
 });

@@ -1,13 +1,12 @@
-'use strict';
+import expect from 'must';
 
-var Github = require('../src/github.js');
+import Github from '../src/Github';
+import testUser from './fixtures/user.json';
+import {assertSuccessful} from './helpers/callbacks';
 
-var expect = require('must');
-var testUser = require('./fixtures/user.json');
-var assertSuccessful = require('./helpers').assertSuccessful;
-
-describe('Github.RateLimit', function() {
-   var github, rateLimit;
+describe('RateLimit', function() {
+   let github;
+   let rateLimit;
 
    before(function() {
       github = new Github({
@@ -21,7 +20,7 @@ describe('Github.RateLimit', function() {
 
    it('should get rate limit', function(done) {
       rateLimit.getRateLimit(assertSuccessful(done, function(err, rateInfo) {
-         var rate = rateInfo.rate;
+         const rate = rateInfo.rate;
 
          expect(rate).to.be.an.object();
          expect(rate).to.have.own('limit');
