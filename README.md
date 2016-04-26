@@ -10,13 +10,10 @@ Github.js provides a minimal higher-level wrapper around Github's API. It was co
 [Prose][prose], a content editor for GitHub.
 
 ## Installation
-Github.js is available from `npm` or `bower`.
+Github.js is available from `npm` or (soon) [cdnjs][cdnjs].
 
 ```
 npm install github-api
-```
-```
-bower install github-api
 ```
 
 ## Compatibility
@@ -40,6 +37,7 @@ as well. In the meantime, we recommend you to take a look at other projects of t
 
 **TODO**
 
+[cdnjs]: https://cdnjs.com/
 [codecov]: https://codecov.io/github/michael/github?branch=master
 [travis-ci]: https://travis-ci.org/michael/github
 [gitter]: https://gitter.im/michael/github
