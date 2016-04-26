@@ -1,142 +1,16 @@
 {
-   "disallowDanglingUnderscores": false,
-   "disallowIdentifierNames": [],
-   "disallowImplicitTypeConversion": [],
-   "disallowKeywordsOnNewLine": [
-      "catch",
-      "else"
-   ],
-   "disallowKeywords": [
-      "void",
-      "with"
-   ],
-   "disallowMixedSpacesAndTabs": true,
-   "disallowMultipleLineBreaks": true,
-   "disallowMultipleLineStrings": true,
-   "disallowMultipleSpaces": true,
-   "disallowMultipleVarDecl": "exceptUndefined",
-   "disallowNewlineBeforeBlockStatements": true,
-   "disallowPaddingNewlinesBeforeKeywords": [
-      "case",
-      "typeof"
-   ],
-   "disallowPaddingNewlinesInBlocks": true,
-   "disallowQuotedKeysInObjects": true,
-   "disallowSpaceAfterKeywords": [
-      "catch",
-      "for",
-      "switch",
-      "while"
-   ],
-   "disallowSpaceAfterObjectKeys": true,
-   "disallowSpaceAfterPrefixUnaryOperators": true,
-   "disallowSpaceBeforePostfixUnaryOperators": true,
-   "disallowSpacesInCallExpression": true,
-   "disallowSpacesInsideParentheses": true,
-   "disallowTrailingComma": true,
-   "disallowTrailingWhitespace": true,
-   "disallowYodaConditions": true,
+	"preset": "google",
+
+	"disallowVar": true,
+	"jsDoc": {
+		"checkParamExistence": true,
+		"checkParamNames": true,
+		"checkTypes": true,
+		"requireParamTypes": true,
+		"requireHyphenBeforeDescription": true,
+	},
    "maximumLineLength": 120,
-   "requireBlocksOnNewline": true,
-   "requireCamelCaseOrUpperCaseIdentifiers": false,
-   "requireCapitalizedComments": {
-      "allExcept": [
-         "exported",
-         "global",
-         "jshint"
-      ]
-   },
-   "requireCapitalizedConstructors": true,
-   "requireCommaBeforeLineBreak": true,
-   "requireCurlyBraces": [
-      "catch",
-      "do",
-      "else",
-      "for",
-      "if",
-      "try",
-      "while"
-   ],
-   "requireDollarBeforejQueryAssignment": true,
-   "requireDotNotation": true,
-   "requireKeywordsOnNewLine": [
-      "break",
-      "case",
-      "default"
-   ],
-   "requireLineBreakAfterVariableAssignment": true,
-   "requireOperatorBeforeLineBreak": true,
-   "requirePaddingNewLineAfterVariableDeclaration": true,
-   "requirePaddingNewLinesAfterBlocks": {
-      "allExcept": [
-         "inArrayExpressions",
-         "inCallExpressions",
-         "inProperties"
-      ]
-   },
-   "requirePaddingNewLinesAfterUseStrict": true,
-   "requirePaddingNewLinesBeforeExport": true,
-   "requirePaddingNewlinesBeforeKeywords": [
-      "do",
-      "for",
-      "function",
-      "if",
-      "return",
-      "switch",
-      "try",
-      "void",
-      "while",
-      "with"
-   ],
-   "requirePaddingNewLinesBeforeLineComments": {
-      "allExcept": "firstAfterCurly"
-   },
-   "requirePaddingNewLinesInObjects": true,
-   "requireParenthesesAroundIIFE": true,
-   "requireSemicolons": true,
-   "requireSpaceAfterBinaryOperators": true,
-   "requireSpaceAfterKeywords": [
-      "case",
-      "do",
-      "else",
-      "if",
-      "return",
-      "try",
-      "typeof"
-   ],
    "requireSpaceAfterLineComment": true,
-   "requireSpaceBeforeBinaryOperators": true,
-   "requireSpaceBeforeBlockStatements": true,
-   "requireSpaceBeforeKeywords": [
-      "catch",
-      "else"
-   ],
-   "requireSpaceBeforeObjectValues": true,
-   "requireSpaceBetweenArguments": true,
-   "requireSpacesInAnonymousFunctionExpression": {
-      "beforeOpeningCurlyBrace": true
-   },
-   "requireSpacesInConditionalExpression": true,
-   "requireSpacesInForStatement": true,
-   "requireSpacesInFunctionDeclaration": {
-      "beforeOpeningCurlyBrace": true
-   },
-   "requireSpacesInFunctionExpression": {
-      "beforeOpeningCurlyBrace": true
-   },
-   "requireSpacesInFunction": {
-      "beforeOpeningCurlyBrace": true
-   },
-   "requireSpacesInNamedFunctionExpression": {
-      "beforeOpeningCurlyBrace": true
-   },
    "safeContextKeyword": ["that"],
-   "validateAlignedFunctionParameters": true,
    "validateIndentation": 3,
-   "validateLineBreaks": "LF",
-   "validateNewlineAfterArrayElements": {
-      "maximum": 3
-   },
-   "validateParameterSeparator": ", ",
-   "validateQuoteMarks": "'"
 }

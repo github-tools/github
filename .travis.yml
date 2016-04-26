@@ -13,9 +13,9 @@ cache:
     - node_modules
 
 before_install:
-  - npm i -g npm@^3.3.0
+  - npm install -g npm@latest
 
 script:
   - gulp lint
   - gulp test:mocha
-  - npm run codecov
+  # - npm run codecov # disabled temporarialy while I work out how to generate accurate coverage of ES2015 code

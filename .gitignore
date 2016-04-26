@@ -1,8 +1,11 @@
+docs/
+dist/
+coverage/
+node_modules/
+.nyc_output/
+
 .DS_Store
 .idea
-node_modules/
-coverage/
-
 .zuulrc
 npm-debug.log
 sauce.json
