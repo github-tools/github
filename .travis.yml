@@ -23,5 +23,6 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+  email: clayreimann@gmail.com
   api_key:
     secure: TZHqJ9Kh2Qf0GAVDjEOQ01Ez6rGMYHKwVLOKTbnb7nSzF7iiGNT4UwzvYawm0T9p1k7X1WOqW3l7OEbIwoKl7/9azT4BBJm7qUMRfB9Zio5cL3rKubJVz7+LEEIW4iBeDWLanhUDgy9BO2JKCt8bfp/U2tltgXtu9Fm/UFPALI8=
