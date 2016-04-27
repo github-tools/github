@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Gist.html">Gist</a><ul class='methods'><li data-type='method'><a href="Gist.html#create">create</a></li><li data-type='method'><a href="Gist.html#delete">delete</a></li><li data-type='method'><a href="Gist.html#fork">fork</a></li><li data-type='method'><a href="Gist.html#isStarred">isStarred</a></li><li data-type='method'><a href="Gist.html#read">read</a></li><li data-type='method'><a href="Gist.html#star">star</a></li><li data-type='method'><a href="Gist.html#unstar">unstar</a></li><li data-type='method'><a href="Gist.html#update">update</a></li></ul></li><li><a href="GitHub.html">GitHub</a><ul class='methods'><li data-type='method'><a href="GitHub.html#getGist">getGist</a></li><li data-type='method'><a href="GitHub.html#getIssues">getIssues</a></li><li data-type='method'><a href="GitHub.html#getOrganization">getOrganization</a></li><li data-type='method'><a href="GitHub.html#getRateLimit">getRateLimit</a></li><li data-type='method'><a href="GitHub.html#getRepo">getRepo</a></li><li data-type='method'><a href="GitHub.html#getUser">getUser</a></li><li data-type='method'><a href="GitHub.html#search">search</a></li></ul></li><li><a href="Issue.html">Issue</a><ul class='methods'><li data-type='method'><a href="Issue.html#createIssue">createIssue</a></li><li data-type='method'><a href="Issue.html#createIssueComment">createIssueComment</a></li><li data-type='method'><a href="Issue.html#editIssue">editIssue</a></li><li data-type='method'><a href="Issue.html#getIssue">getIssue</a></li><li data-type='method'><a href="Issue.html#listIssues">listIssues</a></li></ul></li><li><a href="Organization.html">Organization</a><ul class='methods'><li data-type='method'><a href="Organization.html#createRepo">createRepo</a></li><li data-type='method'><a href="Organization.html#getRepos">getRepos</a></li></ul></li><li><a href="RateLimit.html">RateLimit</a><ul class='methods'><li data-type='method'><a href="RateLimit.html#getRateLimit">getRateLimit</a></li></ul></li><li><a href="Repository.html">Repository</a><ul class='methods'><li data-type='method'><a href="Repository.html#commit">commit</a></li><li data-type='method'><a href="Repository.html#compareBranches">compareBranches</a></li><li data-type='method'><a href="Repository.html#createBlob">createBlob</a></li><li data-type='method'><a href="Repository.html#createBranch">createBranch</a></li><li data-type='method'><a href="Repository.html#createHook">createHook</a></li><li data-type='method'><a href="Repository.html#createPullRequest">createPullRequest</a></li><li data-type='method'><a href="Repository.html#createRef">createRef</a></li><li data-type='method'><a href="Repository.html#createRelease">createRelease</a></li><li data-type='method'><a href="Repository.html#createTree">createTree</a></li><li data-type='method'><a href="Repository.html#deleteFile">deleteFile</a></li><li data-type='method'><a href="Repository.html#deleteHook">deleteHook</a></li><li data-type='method'><a href="Repository.html#deleteRef">deleteRef</a></li><li data-type='method'><a href="Repository.html#deleteRelease">deleteRelease</a></li><li data-type='method'><a href="Repository.html#deleteRepo">deleteRepo</a></li><li data-type='method'><a href="Repository.html#fork">fork</a></li><li data-type='method'><a href="Repository.html#getBlob">getBlob</a></li><li data-type='method'><a href="Repository.html#getCollaborators">getCollaborators</a></li><li data-type='method'><a href="Repository.html#getCommit">getCommit</a></li><li data-type='method'><a href="Repository.html#getContents">getContents</a></li><li data-type='method'><a href="Repository.html#getContributors">getContributors</a></li><li data-type='method'><a href="Repository.html#getDetails">getDetails</a></li><li data-type='method'><a href="Repository.html#getHook">getHook</a></li><li data-type='method'><a href="Repository.html#getPullRequest">getPullRequest</a></li><li data-type='method'><a href="Repository.html#getRef">getRef</a></li><li data-type='method'><a href="Repository.html#getRelease">getRelease</a></li><li data-type='method'><a href="Repository.html#getSha">getSha</a></li><li data-type='method'><a href="Repository.html#getTree">getTree</a></li><li data-type='method'><a href="Repository.html#isCollaborator">isCollaborator</a></li><li data-type='method'><a href="Repository.html#isStarred">isStarred</a></li><li data-type='method'><a href="Repository.html#listBranches">listBranches</a></li><li data-type='method'><a href="Repository.html#listCommits">listCommits</a></li><li data-type='method'><a href="Repository.html#listForks">listForks</a></li><li data-type='method'><a href="Repository.html#listHooks">listHooks</a></li><li data-type='method'><a href="Repository.html#listPullRequests">listPullRequests</a></li><li data-type='method'><a href="Repository.html#listStatuses">listStatuses</a></li><li data-type='method'><a href="Repository.html#listTags">listTags</a></li><li data-type='method'><a href="Repository.html#star">star</a></li><li data-type='method'><a href="Repository.html#unstar">unstar</a></li><li data-type='method'><a href="Repository.html#updateHead">updateHead</a></li><li data-type='method'><a href="Repository.html#updateHook">updateHook</a></li><li data-type='method'><a href="Repository.html#updateRelease">updateRelease</a></li><li data-type='method'><a href="Repository.html#updateTree">updateTree</a></li><li data-type='method'><a href="Repository.html#writeFile">writeFile</a></li></ul></li><li><a href="Requestable.html">Requestable</a><ul class='methods'><li data-type='method'><a href="Requestable.html#_dateToISO">_dateToISO</a></li><li data-type='method'><a href="Requestable.html#_getOptionsWithDefaults">_getOptionsWithDefaults</a></li><li data-type='method'><a href="Requestable.html#_request">_request</a></li><li data-type='method'><a href="Requestable.html#_request204or404">_request204or404</a></li><li data-type='method'><a href="Requestable.html#_requestAllPages">_requestAllPages</a></li></ul></li><li><a href="Search.html">Search</a><ul class='methods'><li data-type='method'><a href="Search.html#forCode">forCode</a></li><li data-type='method'><a href="Search.html#forIssues">forIssues</a></li><li data-type='method'><a href="Search.html#forRepositories">forRepositories</a></li><li data-type='method'><a href="Search.html#forUsers">forUsers</a></li></ul></li><li><a href="User.html">User</a><ul class='methods'><li data-type='method'><a href="User.html#createRepo">createRepo</a></li><li data-type='method'><a href="User.html#follow">follow</a></li><li data-type='method'><a href="User.html#getGists">getGists</a></li><li data-type='method'><a href="User.html#getNotifications">getNotifications</a></li><li data-type='method'><a href="User.html#getOrgs">getOrgs</a></li><li data-type='method'><a href="User.html#getProfile">getProfile</a></li><li data-type='method'><a href="User.html#getRepos">getRepos</a></li><li data-type='method'><a href="User.html#getStarredRepos">getStarredRepos</a></li><li data-type='method'><a href="User.html#unfollow">unfollow</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>Github.js</h1><p><a href="https://www.npmjs.com/package/github-api"><img src="https://img.shields.io/npm/dm/github-api.svg?maxAge=2592000" alt="Downloads per month"></a>
+<a href="https://www.npmjs.com/package/github-api"><img src="https://img.shields.io/npm/v/github-api.svg?maxAge=2592000" alt="Latest version"></a>
+<a href="https://gitter.im/michael/github"><img src="https://img.shields.io/gitter/room/michael/github.js.svg?maxAge=2592000" alt="Gitter"></a>
+<a href="https://travis-ci.org/michael/github"><img src="https://img.shields.io/travis/michael/github.svg?maxAge=2592000" alt="Travis"></a>
+<a href="https://codecov.io/github/michael/github?branch=master"><img src="https://img.shields.io/codecov/c/github/michael/github.svg?maxAge=2592000" alt="Codecov"></a></p>
+<p>Github.js provides a minimal higher-level wrapper around Github's API. It was concieved in the context of
+<a href="http://prose.io">Prose</a>, a content editor for GitHub.</p>
+<h2>Installation</h2><p>Github.js is available from <code>npm</code> or (soon) <a href="https://cdnjs.com/">cdnjs</a>.</p>
+<pre class="prettyprint source"><code>npm install github-api</code></pre><h2>Compatibility</h2><p>Github.js is tested on Node:</p>
+<ul>
+<li>0.10</li>
+<li>0.12</li>
+<li>4.x</li>
+<li>5.x</li>
+</ul>
+<h2>GitHub Tools</h2><p>The team behind Github.js has created a whole organization, called <a href="https://github.com/github-tools">GitHub Tools</a>,
+dedicated to GitHub and its API. In the near future this repository could be moved under the GitHub Tools organization
+as well. In the meantime, we recommend you to take a look at other projects of the organization.</p>
+<h2>Samples</h2><pre class="prettyprint source lang-javascript"><code>/*
+   Data can be retrieved from the API either using callbacks (as in versions &lt; 1.0)
+   or using a new promise-based API. For now the promise-based API just returns the
+   raw HTTP request promise; this might change in the next version.
+ */
+var GitHub = require('github-api');
+
+// unauthenticated client
+var gh = new GitHub();
+var gist = gh.getGist(); // not a gist yet
+gist.create({
+   public: true,
+   description: 'My first gist',
+   files: {
+      &quot;file1.txt&quot;: {
+         contents: &quot;Aren't gists great!&quot;
+      }
+   }
+}).then(function(httpResponse) {
+   // Promises!
+   var gist = httpResponse.data;
+   gist.read(function(err, gist, xhr) {
+      // if no error occurred then err == null
+
+      // gist == httpResponse.data
+
+      // xhr == httpResponse
+   });
+});</code></pre><pre class="prettyprint source lang-javascript"><code>var GitHub = require('github-api');
+
+// basic auth
+var gh = new GitHub({
+   username: 'FOO',
+   password: 'NotFoo'
+});
+
+var me = gh.getUser();
+me.getNotification(function(err, notifcations) {
+   // do some stuff
+});
+
+var clayreimann = gh.getUser('clayreimann');
+clayreimann.getStarredRepos()
+   .then(function(httpPromise) {
+      var repos = httpPromise.data;
+   });</code></pre><pre class="prettyprint source lang-javascript"><code>var GitHub = require('github-api');
+
+// token auth
+var gh = new GitHub({
+   token: 'MY_OAUTH_TOKEN'
+});
+
+var yahoo = gh.getOrganization('yahoo');
+yahoo.getRepos(function(err, repos) {
+   // look at all the repos!
+})</code></pre></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Gist.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Gist.js.html">Gist.js</a>, <a href="Gist.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        GitHub.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="GitHub.js.html">GitHub.js</a>, <a href="GitHub.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Issue.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Issue.js.html">Issue.js</a>, <a href="Issue.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Organization.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Organization.js.html">Organization.js</a>, <a href="Organization.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        RateLimit.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="RateLimit.js.html">RateLimit.js</a>, <a href="RateLimit.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Repository.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Repository.js.html">Repository.js</a>, <a href="Repository.js.html#line2">line 2</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Requestable.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Search.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Search.js.html">Search.js</a>, <a href="Search.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        User.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-copyright">Copyright:</dt>
+    <dd class="tag-copyright"><ul class="dummy"><li>2013 Michael Aufreiter (Development Seed) and 2016 Yahoo Inc.</li></ul></dd>
+    
+
+    
+    <dt class="tag-license">License:</dt>
+    <dd class="tag-license"><ul class="dummy"><li>Licensed under <a href="https://spdx.org/licenses/BSD-3-Clause-Clear.html">BSD-3-Clause-Clear</a>.
+            Github.js is freely distributable.</li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="User.js.html">User.js</a>, <a href="User.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Apr 27 2016 13:18:19 GMT-0500 (CDT) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
