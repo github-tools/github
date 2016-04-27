@@ -1,13 +1,13 @@
-// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 import expect from 'must';
 
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
-import {assertSuccessful} from './helpers/callbacks';
+import {assertSuccessful, assertArray} from './helpers/callbacks';
+import getTestRepoName from './helpers/getTestRepoName';
 
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers
 describe('Organization', function() {
    let github;
-   let organization;
 
    before(function() {
       github = new Github({
@@ -16,26 +16,44 @@ describe('Organization', function() {
          auth: 'basic'
       });
 
-      organization = github.getOrg();
    });
 
-   it('should create an organisation repo', function(done) {
-      const testRepoName = Math.floor(Math.random() * 100000).toString();
-      const options = {
-         orgname: testUser.ORGANIZATION,
-         name: testRepoName,
-         description: 'test create organization repo',
-         homepage: 'https://github.com/',
-         private: false,
-         has_issues: true,
-         has_wiki: true,
-         has_downloads: true
-      };
+   describe('reading', function() {
+      let organization;
 
-      organization.createRepo(options, assertSuccessful(done, function(err, repo) {
-         expect(repo.name).to.equal(testRepoName);
-         expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`);
-         done();
-      }));
+      before(function() {
+         organization = github.getOrganization('openaddresses');
+      });
+
+      it('should show user\'s organisation repos', function(done) {
+         organization.getRepos(assertArray(done));
+      });
+   });
+
+   describe('creating/updating', function() {
+      let organization;
+      const testRepoName = getTestRepoName();
+
+      before(function() {
+         organization = github.getOrganization(testUser.ORGANIZATION);
+      });
+
+      it('should create an organisation repo', function(done) {
+         const options = {
+            name: testRepoName,
+            description: 'test create organization repo',
+            homepage: 'https://github.com/',
+            private: false,
+            has_issues: true,
+            has_wiki: true,
+            has_downloads: true
+         };
+
+         organization.createRepo(options, assertSuccessful(done, function(err, repo) {
+            expect(repo.name).to.equal(testRepoName);
+            expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`);
+            done();
+         }));
+      });
    });
 });

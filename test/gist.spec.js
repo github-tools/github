@@ -1,6 +1,6 @@
 import expect from 'must';
 
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import testGist from './fixtures/gist.json';
 import {assertSuccessful} from './helpers/callbacks';

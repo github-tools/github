@@ -1,4 +1,4 @@
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful} from './helpers/callbacks';
 
@@ -21,14 +21,14 @@ describe('Search', function() {
       });
       let options = undefined;
 
-      search.repositories(options, assertSuccessful(done));
+      search.forRepositories(options, assertSuccessful(done));
    });
 
    it('should search code', function(done) {
       let search = github.search({q: 'addClass in:file language:js repo:jquery/jquery'});
       let options = undefined;
 
-      search.code(options, assertSuccessful(done));
+      search.forCode(options, assertSuccessful(done));
    });
 
    it('should search issues', function(done) {
@@ -39,13 +39,13 @@ describe('Search', function() {
       });
       let options = undefined;
 
-      search.issues(options, assertSuccessful(done));
+      search.forIssues(options, assertSuccessful(done));
    });
 
    it('should search users', function(done) {
       let search = github.search({q: 'tom repos:>42 followers:>1000'});
       let options = undefined;
 
-      search.users(options, assertSuccessful(done));
+      search.forUsers(options, assertSuccessful(done));
    });
 });

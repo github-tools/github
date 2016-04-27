@@ -1,13 +1,13 @@
 import expect from 'must';
 
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful} from './helpers/callbacks';
 
 describe('Issue', function() {
    let github;
    let remoteIssues;
-   let remoteIssue;
+   let remoteIssueId;
 
    before(function() {
       github = new Github({
@@ -21,17 +21,17 @@ describe('Issue', function() {
 
    describe('reading', function() {
       it('should list issues', function(done) {
-         remoteIssues.list({}, assertSuccessful(done, function(err, issues) {
+         remoteIssues.listIssues({}, assertSuccessful(done, function(err, issues) {
             expect(issues).to.be.an.array();
-            remoteIssue = issues[0];
+            remoteIssueId = issues[0].number;
 
             done();
          }));
       });
 
       it('should get issue', function(done) {
-         remoteIssues.get(remoteIssue.number, assertSuccessful(done, function(err, issue) {
-            expect(issue).to.have.own('number', remoteIssue.number);
+         remoteIssues.getIssue(remoteIssueId, assertSuccessful(done, function(err, issue) {
+            expect(issue).to.have.own('number', remoteIssueId);
 
             done();
          }));
@@ -50,7 +50,7 @@ describe('Issue', function() {
             body: 'New issue body'
          };
 
-         remoteIssues.create(newIssue, assertSuccessful(done, function(err, issue) {
+         remoteIssues.createIssue(newIssue, assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('url');
             expect(issue).to.have.own('title', newIssue.title);
             expect(issue).to.have.own('body', newIssue.body);
@@ -60,7 +60,7 @@ describe('Issue', function() {
       });
 
       it('should post issue comment', function(done) {
-         remoteIssues.comment(remoteIssue, 'Comment test', assertSuccessful(done, function(err, issue) {
+         remoteIssues.createIssueComment(remoteIssueId, 'Comment test', assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('body', 'Comment test');
 
             done();
@@ -72,7 +72,7 @@ describe('Issue', function() {
             title: 'Edited title'
          };
 
-         remoteIssues.edit(remoteIssue.number, newProps, assertSuccessful(done, function(err, issue) {
+         remoteIssues.editIssue(remoteIssueId, newProps, assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('title', newProps.title);
 
             done();

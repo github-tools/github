@@ -6,14 +6,14 @@ import stylish from 'gulp-jscs-stylish';
 import babel from 'gulp-babel';
 import rename from 'gulp-rename';
 
-import browserify  from 'browserify';
-import buffer  from 'vinyl-buffer';
-import del  from 'del';
-import path  from 'path';
+import browserify from 'browserify';
+import buffer from 'vinyl-buffer';
+import del from 'del';
+import path from 'path';
 import {Promise}  from 'es6-promise';
-import source  from 'vinyl-source-stream';
-import sourcemaps  from 'gulp-sourcemaps';
-import uglify  from 'gulp-uglify';
+import source from 'vinyl-source-stream';
+import sourcemaps from 'gulp-sourcemaps';
+import uglify from 'gulp-uglify';
 
 const ALL_SOURCES = [
    path.join(__dirname, '/*.js'),
@@ -37,51 +37,69 @@ gulp.task('clean', function() {
    return Promise.all([del('dist/'), del('coverage/')]);
 });
 
-const browserifyConfig = {
+gulp.task('build', [
+   'build:bundled:min',
+   'build:external:min',
+   'build:bundled:debug',
+   'build:external:debug',
+   'build:components'
+]);
+
+const bundledConfig = {
    debug: true,
-   entries: 'src/Github.js',
-   standalone: 'Github'
+   entries: 'lib/GitHub.js',
+   standalone: 'GitHub'
 };
-gulp.task('build', function() {
-   browserify(browserifyConfig)
-      .transform('babelify')
-      .bundle()
-      .pipe(source('Github.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({
-         loadMaps: true
-      }))
-      .pipe(uglify())
-      .pipe(rename({
-         extname: '.bundle.min.js'
-      }))
-      .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('dist'))
-      ;
-
-   browserify(browserifyConfig)
-      .transform('babelify')
-      .bundle()
-      .pipe(source('Github.js'))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({
-         loadMaps: true
-      }))
-      .pipe(rename({
-         extname: '.bundle.js'
-      }))
-      .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest('dist'))
-      ;
-
-   return gulp.src('src/*.js')
-      .pipe(babel())
+const externalConfig = {
+   debug: true,
+   entries: 'lib/GitHub.js',
+   standalone: 'GitHub',
+   external: [
+      'axios',
+      'js-base64',
+      'es6-promise',
+      'debug',
+      'utf8'
+   ],
+   bundleExternal: false
+};
+gulp.task('build:bundled:min', function() {
+   return buildBundle(bundledConfig, '.bundle.min.js', true);
+});
+gulp.task('build:external:min', function() {
+   return buildBundle(externalConfig, '.min.js', true);
+});
+gulp.task('build:bundled:debug', function() {
+   return buildBundle(bundledConfig, '.bundle.js', false);
+});
+gulp.task('build:external:debug', function() {
+   return buildBundle(externalConfig, '.js', false);
+});
+gulp.task('build:components', function() {
+   return gulp.src('lib/*.js')
       .pipe(sourcemaps.init())
+      .pipe(babel())
       .pipe(sourcemaps.write('.'))
       .pipe(gulp.dest('dist/components'))
       ;
 });
 
-gulp.task('default', ['clean'], function() {
-   gulp.start('lint', 'test:mocha', 'build');
-});
+function buildBundle(options, extname, minify) {
+   let stream = browserify(options)
+      .transform('babelify')
+      .bundle()
+      .pipe(source('GitHub.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({
+         loadMaps: true
+      }));
+
+   if (minify) {
+      stream = stream.pipe(uglify());
+   }
+
+   return stream.pipe(rename({extname}))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'))
+      ;
+}

@@ -17,15 +17,11 @@ npm install github-api
 ```
 
 ## Compatibility
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/githubjs.svg)](https://saucelabs.com/u/githubjs)
-
-**Note**: Starting from version 0.10.8, Github.js supports **Internet Explorer 9**. However, the underlying methodology
-used under the hood to perform CORS requests (the `XDomainRequest` object), [has limitations](xhr-link).
-In particular, requests must be targeted to the same scheme as the hosting page. This means that if a page is at
-http://example.com, your target URL must also begin with HTTP. Similarly, if your page is at https://example.com, then
-your target URL must also begin with HTTPS. For this reason, if your requests are sent to the GitHub API (the default),
-which are served via HTTPS, your page must use HTTPS too.
+Github.js is tested on Node:
+* 0.10
+* 0.12
+* 4.x
+* 5.x
 
 ## GitHub Tools
 
@@ -33,9 +29,74 @@ The team behind Github.js has created a whole organization, called [GitHub Tools
 dedicated to GitHub and its API. In the near future this repository could be moved under the GitHub Tools organization
 as well. In the meantime, we recommend you to take a look at other projects of the organization.
 
-## Example
+## Samples
 
-**TODO**
+```javascript
+/*
+   Data can be retrieved from the API either using callbacks (as in versions < 1.0)
+   or using a new promise-based API. For now the promise-based API just returns the
+   raw HTTP request promise; this might change in the next version.
+ */
+var GitHub = require('github-api');
+
+// unauthenticated client
+var gh = new GitHub();
+var gist = gh.getGist(); // not a gist yet
+gist.create({
+   public: true,
+   description: 'My first gist',
+   files: {
+      "file1.txt": {
+         contents: "Aren't gists great!"
+      }
+   }
+}).then(function(httpResponse) {
+   // Promises!
+   var gist = httpResponse.data;
+   gist.read(function(err, gist, xhr) {
+      // if no error occurred then err == null
+
+      // gist == httpResponse.data
+
+      // xhr == httpResponse
+   });
+});
+```
+
+```javascript
+var GitHub = require('github-api');
+
+// basic auth
+var gh = new GitHub({
+   username: 'FOO',
+   password: 'NotFoo'
+});
+
+var me = gh.getUser();
+me.getNotification(function(err, notifcations) {
+   // do some stuff
+});
+
+var clayreimann = gh.getUser('clayreimann');
+clayreimann.getStarredRepos()
+   .then(function(httpPromise) {
+      var repos = httpPromise.data;
+   });
+```
+
+```javascript
+var GitHub = require('github-api');
+
+// token auth
+var gh = new GitHub({
+   token: 'MY_OAUTH_TOKEN'
+});
+
+var yahoo = gh.getOrganization('yahoo');
+yahoo.getRepos(function(err, repos) {
+   // look at all the repos!
+})
+```
 
 [cdnjs]: https://cdnjs.com/
 [codecov]: https://codecov.io/github/michael/github?branch=master

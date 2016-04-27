@@ -1,6 +1,6 @@
 import expect from 'must';
 
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful, assertFailure} from './helpers/callbacks';
 
@@ -25,7 +25,7 @@ describe('Github', function() {
       });
 
       it('should authenticate and return no errors', function(done) {
-         user.notifications(assertSuccessful(done));
+         user.getNotifications(assertSuccessful(done));
       });
    });
 
@@ -82,7 +82,7 @@ describe('Github', function() {
       });
 
       it('should fail authentication and return err', function(done) {
-         user.notifications(assertFailure(done, function(err) {
+         user.getNotifications(assertFailure(done, function(err) {
             expect(err.status).to.be.equal(401, 'Return 401 status for bad auth');
             expect(err.response.data.message).to.equal('Bad credentials');
 

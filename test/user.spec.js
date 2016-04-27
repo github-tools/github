@@ -1,15 +1,6 @@
-import expect from 'must';
-
-import Github from '../src/Github';
+import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
-import {assertSuccessful} from './helpers/callbacks';
-
-function assertArray(done) {
-   return assertSuccessful(done, function(err, result) {
-      expect(result).to.be.an.array();
-      done();
-   });
-}
+import {assertSuccessful, assertArray} from './helpers/callbacks';
 
 describe('User', function() {
    let github;
@@ -25,7 +16,7 @@ describe('User', function() {
    });
 
    it('should get user repos', function(done) {
-      user.repos(assertArray(done));
+      user.getRepos(assertArray(done));
    });
 
    it('should get user repos with options', function(done) {
@@ -36,19 +27,19 @@ describe('User', function() {
          page: 10
       };
 
-      user.repos(filterOpts, assertArray(done));
+      user.getRepos(filterOpts, assertArray(done));
    });
 
    it('should get user orgs', function(done) {
-      user.orgs(assertArray(done));
+      user.getOrgs(assertArray(done));
    });
 
    it('should get user gists', function(done) {
-      user.gists(assertArray(done));
+      user.getGists(assertArray(done));
    });
 
    it('should get user notifications', function(done) {
-      user.notifications(assertArray(done));
+      user.getNotifications(assertArray(done));
    });
 
    it('should get user notifications with options', function(done) {
@@ -59,38 +50,15 @@ describe('User', function() {
          before: '2015-02-01T00:00:00Z'
       };
 
-      user.notifications(filterOpts, assertArray(done));
+      user.getNotifications(filterOpts, assertArray(done));
    });
 
-   it('should show user', function(done) {
-      user.show('ingalls', assertSuccessful(done));
-   });
-
-   it('should show user\'s repos', function(done) {
-      user.userRepos('aendrew', assertArray(done));
-   });
-
-   it('should show user\'s repos with options', function(done) {
-      const filterOpts = {
-         type: 'owner',
-         sort: 'updated',
-         per_page: 90, // jscs:ignore
-         page: 1
-      };
-
-      user.userRepos('aendrew', filterOpts, assertArray(done));
+   it('should get the user\'s profile', function(done) {
+      user.getProfile(assertSuccessful(done));
    });
 
    it('should show user\'s starred repos', function(done) {
-      user.userStarred(testUser.USERNAME, assertArray(done));
-   });
-
-   it('should show user\'s gists', function(done) {
-      user.userGists(testUser.USERNAME, assertArray(done));
-   });
-
-   it('should show user\'s organisation repos', function(done) {
-      user.orgRepos('openaddresses', assertArray(done));
+      user.getStarredRepos(assertArray(done));
    });
 
    it('should follow user', function(done) {

@@ -5,12 +5,12 @@ const STANDARD_DELAY = 200; // 200ms between nested calls to the API so things s
 export function assertSuccessful(done, cb) {
    return function successCallback(err, res, xhr) {
       try {
-         expect(err).not.to.exist();
+         expect(err).not.to.exist(err ? err.response.data : 'No error');
          expect(res).to.exist();
          expect(xhr).to.be.an.object();
 
          if (cb) {
-            setTimeout(function() {
+            setTimeout(function delay() {
                cb(err, res, xhr);
             }, STANDARD_DELAY);
          } else {
@@ -30,7 +30,7 @@ export function assertFailure(done, cb) {
          expect(err.request).to.exist();
 
          if (cb) {
-            setTimeout(function() {
+            setTimeout(function delay() {
                cb(err);
             }, STANDARD_DELAY);
          } else {
@@ -40,4 +40,11 @@ export function assertFailure(done, cb) {
          done(e);
       }
    };
+}
+
+export function assertArray(done) {
+   return assertSuccessful(done, function isArray(err, result) {
+      expect(result).to.be.an.array();
+      done();
+   });
 }
