@@ -8,7 +8,7 @@ Github.js is a javascript library that exposes GitHub's API to node and browser 
 
 ## Documentation
 
-* [v1.0.0](/docs/1.0.0/index.html)
+* [v1.0.0](/github/docs/1.0.0/index.html)
 
 ## Examples
 
