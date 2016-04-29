@@ -108,4 +108,4 @@ yahoo.getRepos(function(err, repos) {
 [npm-package]: https://www.npmjs.com/package/github-api
 [prose]: http://prose.io
 [xhr-link]: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
-[docs]: http://clayreimann.me/github/
+[docs]: http://michael.github.io/github/
