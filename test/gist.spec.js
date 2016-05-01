@@ -64,6 +64,15 @@ describe('Gist', function() {
             }));
          }));
       });
+
+      it('should comment a gist', function(done) {
+         gist = github.getGist(gistId);
+         gist.comment("Comment test", assertSuccessful(done, function() {
+            expect(issue).to.have.own('body', 'Comment test');
+
+            done();
+         }));
+      });
    });
 
    describe('deleting', function() {
