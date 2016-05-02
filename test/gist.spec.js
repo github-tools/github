@@ -9,6 +9,7 @@ describe('Gist', function() {
    let gist;
    let gistId;
    let github;
+   let commentId;
 
    before(function() {
       github = new Github({
