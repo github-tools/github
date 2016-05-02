@@ -96,7 +96,7 @@ describe('Gist', function() {
       });
 
       it('should edit comment', function(done) {
-         const newComment = "new comment test"
+         const newComment = 'new comment test';
          gist.editComment(commentId, newComment, assertSuccessful(done, function(err, comment) {
             expect(comment).to.have.own('body', newComment);
             done();
