@@ -9,6 +9,7 @@ describe('Gist', function() {
    let gist;
    let gistId;
    let github;
+   let commentId;
 
    before(function() {
       github = new Github({
@@ -63,6 +64,40 @@ describe('Gist', function() {
                done();
             }));
          }));
+      });
+
+      it('should create a comment a gist', function(done) {
+         gist.createComment("Comment test", assertSuccessful(done, function(err, comment) {
+            expect(comment).to.have.own('body', 'Comment test');
+            commentId = comment.id
+            done();
+         }));
+      });
+
+      it('should list comments', function(done) {
+         gist.listComments(assertSuccessful(done, function(err, comments) {
+            expect(comments).to.be.an.array();
+            done();
+         }));
+      });
+
+      it('should get comment', function(done) {
+         gist.getComment(commentId, assertSuccessful(done, function(err, issue) {
+            expect(issue).to.have.own('id', commentId);
+            done();
+         }));
+      });
+
+      it('should edit comment', function(done) {
+         const newComment = 'new comment test';
+         gist.editComment(commentId, newComment, assertSuccessful(done, function(err, comment) {
+            expect(comment).to.have.own('body', newComment);
+            done();
+         }));
+      });
+
+      it('should delete comment', function(done) {
+         gist.deleteComment(commentId, assertSuccessful(done));
       });
    });
 
