@@ -66,13 +66,6 @@ describe('Gist', function() {
          }));
       });
 
-   });
-
-   describe('comments', function() {
-      before(function() {
-         gist = github.getGist('f1c0f84e53aa6b98ec03');
-      });
-
       it('should create a comment a gist', function(done) {
          gist.createComment("Comment test", assertSuccessful(done, function(err, comment) {
             expect(comment).to.have.own('body', 'Comment test');
@@ -82,7 +75,7 @@ describe('Gist', function() {
       });
 
       it('should list comments', function(done) {
-         gist.listComments({}, assertSuccessful(done, function(err, comments) {
+         gist.listComments(assertSuccessful(done, function(err, comments) {
             expect(comments).to.be.an.array();
             done();
          }));
