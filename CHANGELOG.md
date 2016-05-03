@@ -1,6 +1,22 @@
-## Change Log
+# Change Log
 
-### 1.0.0
+### Features
+
+### Fixes
+
+## 1.1.0 - 2015/05/03
+### Features
+Added methods for commenting on Gists:
+* `Gist.listComments`
+* `Gist.getComment`
+* `Gist.editComment`
+* `Gist.deleteComment`
+* `Gist.createComment`
+
+### Fixes
+* `Repository.deleteFile` now correctly returns a promise.
+
+## 1.0.0 - 2015/04/27
 Complete rewrite in ES2015.
 
 * Promise-ified the API
@@ -8,7 +24,7 @@ Complete rewrite in ES2015.
 * Modularized codebase
 * Refactored tests to run primarily in mocha
 
-#### Breaking changes
+### Breaking changes
 Most of the breaking changes are just methods that got renamed. The changes to `User` and `Organization` are deeper
 changes that now scope a particular `User` or `Organization` to the entity they were instantiated with. You will need
 separate `User`s to query data about different user accounts.
