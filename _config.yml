@@ -8,4 +8,6 @@
 # Site settings
 title: GitHub.js
 description: > # Github.js is a library that allows easy access to GitHub's REST API.
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: https://michael.github.io
+baseurl: /github
+git_repo: https://github.com/michael/github
