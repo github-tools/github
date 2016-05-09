@@ -517,6 +517,13 @@ describe('Repository', function() {
          }));
       });
 
+      it('should read all releases', function(done) {
+         remoteRepo.getReleases(assertSuccessful(done, function(err, releases) {
+            expect(releases).to.be.an.array();
+            done();
+         }));
+      });
+
       it('should read a release', function(done) {
          remoteRepo.getRelease(releaseId, assertSuccessful(done, function(err, release) {
             expect(release).to.have.own('name', releaseName);
