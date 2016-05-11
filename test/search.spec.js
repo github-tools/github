@@ -33,7 +33,7 @@ describe('Search', function() {
 
    it('should search issues', function(done) {
       let search = github.search({
-         q: 'windows label:bug language:python state:open',
+         q: 'windows pip label:bug language:python state:open ',
          sort: 'created',
          order: 'asc'
       });
