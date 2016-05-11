@@ -8,6 +8,7 @@ import getTestRepoName from './helpers/getTestRepoName';
 describe('Organization', function() {
    let github;
    const ORG_NAME = 'github-tools';
+   const MEMBER_NAME = 'clayreimann';
 
    before(function() {
       github = new Github({
@@ -34,9 +35,17 @@ describe('Organization', function() {
             .then(function({data: members}) {
                expect(members).to.be.an.array();
 
-               let hasClayReimann = members.reduce((found, member) => member.login === 'clayreimann' || found, false);
+               let hasClayReimann = members.reduce((found, member) => member.login === MEMBER_NAME || found, false);
                expect(hasClayReimann).to.be.true();
 
+               done();
+            }).catch(done);
+      });
+
+      it('should test for membership', function(done) {
+         organization.isMember(MEMBER_NAME)
+            .then(function(isMember) {
+               expect(isMember).to.be.true();
                done();
             }).catch(done);
       });
