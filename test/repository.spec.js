@@ -518,7 +518,7 @@ describe('Repository', function() {
       });
 
       it('should read all releases', function(done) {
-         remoteRepo.getReleases(assertSuccessful(done, function(err, releases) {
+         remoteRepo.listReleases(assertSuccessful(done, function(err, releases) {
             expect(releases).to.be.an.array();
             done();
          }));
