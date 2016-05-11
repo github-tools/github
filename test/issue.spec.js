@@ -8,6 +8,7 @@ describe('Issue', function() {
    let github;
    let remoteIssues;
    let remoteIssueId;
+   let remoteIssueCommentId;
 
    before(function() {
       github = new Github({
@@ -38,7 +39,7 @@ describe('Issue', function() {
       });
    });
 
-   describe('creating/modifiying', function() {
+   describe('creating/modifiying/editing/deleting', function() {
       // 200ms between tests so that Github has a chance to settle
       beforeEach(function(done) {
          setTimeout(done, 200);
@@ -62,6 +63,38 @@ describe('Issue', function() {
       it('should post issue comment', function(done) {
          remoteIssues.createIssueComment(remoteIssueId, 'Comment test', assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('body', 'Comment test');
+
+            done();
+         }));
+      });
+
+      it('should list issue comments', function(done) {
+         remoteIssues.listIssueComments(remoteIssueId, assertSuccessful(done, function(err, comments) {
+            expect(comments).to.be.an.array();
+            expect(comments[0]).to.have.own('body', 'Comment test');
+            remoteIssueCommentId = comments[0].id
+            done();
+         }));
+      });
+
+      it('should get a single issue comment', function(done) {
+         remoteIssues.getIssueComment(remoteIssueCommentId, assertSuccessful(done, function(err, comment) {
+            expect(comment).to.have.own('body', 'Comment test');
+            done();
+         }));
+      });
+
+      it('should edit issue comment', function(done) {
+         remoteIssues.editIssueComment(remoteIssueCommentId, 'Comment test edited', assertSuccessful(done, function(err, comment) {
+            expect(comment).to.have.own('body', 'Comment test edited');
+
+            done();
+         }));
+      });
+
+      it('should delete issue comment', function(done) {
+         remoteIssues.deleteIssueComment(remoteIssueCommentId, assertSuccessful(done, function(err, response) {
+            expect(response).to.be.true;
 
             done();
          }));
