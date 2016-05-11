@@ -16,11 +16,9 @@
     "build": "gulp build",
     "test": "mocha --opts ./mocha.opts test/*.spec.js",
     "test-verbose": "DEBUG=github* npm test",
-    "test-browser": "",
     "lint": "gulp lint",
-    "generate-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
-    "codecov": "node_modules/.bin/codecov",
-    "show-coverage-html": "open coverage/lcov-report/index.html"
+    "make-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
+    "release": "./release.sh"
   },
   "babel": {
     "presets": [

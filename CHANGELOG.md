@@ -1,8 +1,27 @@
 # Change Log
 
+## master
 ### Features
 
 ### Fixes
+
+## 1.2.0 - 2015/05/11
+### Features
+* Search API now returns all pages of results
+* Added `Repository.listReleases`
+
+Added functions for querying organization membership
+* `Organization.listMembers`
+* `Organization.isMember`
+
+Added functions for issue comments
+* `Issue.listComments`
+* `Issue.getComment`
+* `Issue.editComment`
+* `Issue.deleteComment`
+
+### Fixes
+* all functions now return a Promise
 
 ## 1.1.0 - 2015/05/03
 ### Features

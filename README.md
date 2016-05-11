@@ -9,22 +9,29 @@
 Github.js provides a minimal higher-level wrapper around Github's API. It was concieved in the context of
 [Prose][prose], a content editor for GitHub.
 
-## Docs
-Read the [docs][docs]
+## [Read the docs][docs]
 
 ## Installation
-Github.js is available from `npm` or (soon) [cdnjs][cdnjs].
+Github.js is available from `npm` or [npmcdn][npmcdn].
 
-```
+```shell
 npm install github-api
+```
+
+```html
+<!-- just github-api source (5.3kb) -->
+<script src="//npmcdn.com/github-api/dist/GitHub.min.js"></script>
+
+<!-- standalone (20.3kb) -->
+<script src="//npmcdn.com/github-api/dist/GitHub.bundle.min.js"></script>
 ```
 
 ## Compatibility
 Github.js is tested on Node:
-* 0.10
-* 0.12
-* 4.x
 * 5.x
+* 4.x
+* 0.12
+* 0.10
 
 ## GitHub Tools
 
@@ -101,11 +108,11 @@ yahoo.getRepos(function(err, repos) {
 })
 ```
 
-[cdnjs]: https://cdnjs.com/
 [codecov]: https://codecov.io/github/michael/github?branch=master
-[travis-ci]: https://travis-ci.org/michael/github
-[gitter]: https://gitter.im/michael/github
-[npm-package]: https://www.npmjs.com/package/github-api
-[prose]: http://prose.io
-[xhr-link]: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
 [docs]: http://michael.github.io/github/
+[gitter]: https://gitter.im/michael/github
+[npm-package]: https://www.npmjs.com/package/github-api/
+[npmcdn]: https://npmcdn.com/github-api/
+[prose]: http://prose.io
+[travis-ci]: https://travis-ci.org/michael/github
+[xhr-link]: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
