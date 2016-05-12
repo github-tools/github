@@ -1,6 +1,9 @@
 #!/bin/bash
 # This is the automated release script
 
+# make sure all our dependencies are installed so we can publish docs
+npm install
+
 # bump the version
 echo "npm version $1"
 npm version $1
