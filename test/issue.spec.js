@@ -7,8 +7,6 @@ import {assertSuccessful} from './helpers/callbacks';
 describe('Issue', function() {
    let github;
    let remoteIssues;
-   let remoteIssueId;
-   let remoteIssueCommentId;
 
    before(function() {
       github = new Github({
@@ -21,6 +19,9 @@ describe('Issue', function() {
    });
 
    describe('reading', function() {
+      let remoteIssueId;
+      let milestoneId;
+
       it('should list issues', function(done) {
          remoteIssues.listIssues({}, assertSuccessful(done, function(err, issues) {
             expect(issues).to.be.an.array();
@@ -37,9 +38,31 @@ describe('Issue', function() {
             done();
          }));
       });
+
+      it('should get all milestones', function(done) {
+         remoteIssues.listMilestones()
+            .then(({data: milestones}) => {
+               expect(milestones).to.be.an.array();
+               milestoneId = milestones[0].number;
+
+               done();
+            }).catch(done);
+      });
+
+      it('should get a single milestone', function(done) {
+         remoteIssues.getMilestone(milestoneId)
+            .then(({data: milestone}) => {
+               expect(milestone).to.have.own('title', 'Default Milestone');
+               done();
+            }).catch(done);
+      });
    });
 
-   describe('creating/modifiying/editing/deleting', function() {
+   describe('creating/editing/deleting', function() {
+      let createdIssueId;
+      let issueCommentId;
+      let createdMilestoneId;
+
       // 200ms between tests so that Github has a chance to settle
       beforeEach(function(done) {
          setTimeout(done, 200);
@@ -52,6 +75,7 @@ describe('Issue', function() {
          };
 
          remoteIssues.createIssue(newIssue, assertSuccessful(done, function(err, issue) {
+            createdIssueId = issue.number;
             expect(issue).to.have.own('url');
             expect(issue).to.have.own('title', newIssue.title);
             expect(issue).to.have.own('body', newIssue.body);
@@ -60,8 +84,21 @@ describe('Issue', function() {
          }));
       });
 
+      it('should edit issue', function(done) {
+         const newProps = {
+            title: 'Edited title',
+            state: 'closed'
+         };
+
+         remoteIssues.editIssue(createdIssueId, newProps, assertSuccessful(done, function(err, issue) {
+            expect(issue).to.have.own('title', newProps.title);
+
+            done();
+         }));
+      });
+
       it('should post issue comment', function(done) {
-         remoteIssues.createIssueComment(remoteIssueId, 'Comment test', assertSuccessful(done, function(err, issue) {
+         remoteIssues.createIssueComment(createdIssueId, 'Comment test', assertSuccessful(done, function(err, issue) {
             expect(issue).to.have.own('body', 'Comment test');
 
             done();
@@ -69,47 +106,72 @@ describe('Issue', function() {
       });
 
       it('should list issue comments', function(done) {
-         remoteIssues.listIssueComments(remoteIssueId, assertSuccessful(done, function(err, comments) {
+         remoteIssues.listIssueComments(createdIssueId, assertSuccessful(done, function(err, comments) {
             expect(comments).to.be.an.array();
             expect(comments[0]).to.have.own('body', 'Comment test');
-            remoteIssueCommentId = comments[0].id
+            issueCommentId = comments[0].id;
             done();
          }));
       });
 
       it('should get a single issue comment', function(done) {
-         remoteIssues.getIssueComment(remoteIssueCommentId, assertSuccessful(done, function(err, comment) {
+         remoteIssues.getIssueComment(issueCommentId, assertSuccessful(done, function(err, comment) {
             expect(comment).to.have.own('body', 'Comment test');
             done();
          }));
       });
 
       it('should edit issue comment', function(done) {
-         remoteIssues.editIssueComment(remoteIssueCommentId, 'Comment test edited', assertSuccessful(done, function(err, comment) {
-            expect(comment).to.have.own('body', 'Comment test edited');
+         remoteIssues.editIssueComment(issueCommentId, 'Comment test edited',
+            assertSuccessful(done, function(err, comment) {
+               expect(comment).to.have.own('body', 'Comment test edited');
 
-            done();
-         }));
+               done();
+            }));
       });
 
       it('should delete issue comment', function(done) {
-         remoteIssues.deleteIssueComment(remoteIssueCommentId, assertSuccessful(done, function(err, response) {
+         remoteIssues.deleteIssueComment(issueCommentId, assertSuccessful(done, function(err, response) {
             expect(response).to.be.true;
 
             done();
          }));
       });
 
-      it('should edit issues title', function(done) {
-         const newProps = {
-            title: 'Edited title'
+      it('should create a milestone', function(done) {
+         let milestone = {
+            title: 'v42',
+            description: 'The ultimate version'
          };
 
-         remoteIssues.editIssue(remoteIssueId, newProps, assertSuccessful(done, function(err, issue) {
-            expect(issue).to.have.own('title', newProps.title);
+         remoteIssues.createMilestone(milestone)
+            .then(({data: createdMilestone}) => {
+               expect(createdMilestone).to.have.own('number');
+               expect(createdMilestone).to.have.own('title', milestone.title);
 
-            done();
-         }));
+               createdMilestoneId = createdMilestone.number;
+               done();
+            }).catch(done);
+      });
+      it('should update a milestone', function(done) {
+         let milestone = {
+            description: 'Version 6 * 7'
+         };
+
+         remoteIssues.editMilestone(createdMilestoneId, milestone)
+            .then(({data: createdMilestone}) => {
+               expect(createdMilestone).to.have.own('number', createdMilestoneId);
+               expect(createdMilestone).to.have.own('describe', milestone.description);
+
+               done();
+            }).catch(done);
+      });
+      it('should delete a milestone', function(done) {
+         remoteIssues.deleteMilestone(createdMilestoneId)
+            .then(({status}) => {
+               expect(status).to.equal(204);
+               done();
+            }).catch(done);
       });
    });
 });

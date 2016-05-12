@@ -2,6 +2,11 @@
 
 ## master
 ### Features
+Added Milestone API
+* `Issue.listMilestones`
+* `Issue.getMilestone`
+* `Issue.editMilestone`
+* `Issue.deleteMilestone`
 
 ### Fixes
 
