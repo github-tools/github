@@ -5,6 +5,10 @@
 
 ### Fixes
 
+## 1.2.1
+### Fixes
+* `Repository`: Replace invalid references to `postTree` with `createTree`
+
 ## 1.2.0 - 2015/05/11
 ### Features
 * Search API now returns all pages of results
