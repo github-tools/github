@@ -161,7 +161,7 @@ describe('Issue', function() {
          remoteIssues.editMilestone(createdMilestoneId, milestone)
             .then(({data: createdMilestone}) => {
                expect(createdMilestone).to.have.own('number', createdMilestoneId);
-               expect(createdMilestone).to.have.own('describe', milestone.description);
+               expect(createdMilestone).to.have.own('description', milestone.description);
 
                done();
             }).catch(done);

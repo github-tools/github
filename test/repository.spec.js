@@ -254,6 +254,9 @@ describe('Repository', function() {
 
       it('should show repo collaborators', function(done) {
          remoteRepo.getCollaborators(assertSuccessful(done, function(err, collaborators) {
+            if (!(collaborators instanceof Array)) {
+               console.log(collaborator); // eslint-disable-line
+            }
             expect(collaborators).to.be.an.array();
             expect(collaborators).to.have.length(1);
 
