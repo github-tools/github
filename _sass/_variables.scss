@@ -4,4 +4,13 @@ $orange: #F2AE72;
 $salmon: #D96459;
 $red: #8C4646;
 
-$textcolor: #222;
+
+$white: darken(white, 2.5%);
+$light-gray: darken(white, 5%);
+$upper-mid-gray: darken(white, 15%);
+$gray: darken(white, 30%);
+$lower-mid-gray: darken(white, 50%);
+$dark-gray: darken(white, 70%);
+$black: darken(white, 95%);
+
+$textcolor: $black;
