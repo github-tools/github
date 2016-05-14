@@ -284,13 +284,16 @@ describe('Repository', function() {
          }));
       });
 
-      it('should move file', function(done) {
-         remoteRepo.writeFile('master', 'old_loc.txt', initialText, initialMessage, assertSuccessful(done, function() {
-            remoteRepo.move('master', 'old_loc.txt', 'new_loc.txt', assertSuccessful(done, function() {
-               remoteRepo.getContents('master', 'new_loc.txt', 'raw', assertSuccessful(done, function(err, fileText) {
-                  expect(fileText).to.be(initialText);
+      it('should rename files', function(done) {
+         remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
+            remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
+               remoteRepo.getContents('master', fileName, 'raw', assertFailure(done, function(err) {
+                  expect(err.status).to.be(404);
+                  remoteRepo.getContents('master', 'new_name', 'raw', assertSuccessful(done, function(err, fileText) {
+                     expect(fileText).to.be(initialText);
 
-                  done();
+                     done();
+                  }));
                }));
             }));
          }));
