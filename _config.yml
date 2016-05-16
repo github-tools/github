@@ -11,3 +11,5 @@ description: > # Github.js is a library that allows easy access to GitHub's REST
 url: https://michael.github.io
 baseurl: /github
 git_repo: https://github.com/michael/github
+exclude:
+  - lib/gh-board
