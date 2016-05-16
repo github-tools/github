@@ -24,7 +24,7 @@ describe('Markdown', function() {
         }
 
         markdown.render(options, assertSuccessful(done, function(err, html) {
-            expect(html).must.be('<p>Hello world github/linguist#1 <strong>cool</strong>, and #1!</p>');
+            expect(html).must.be('<p>Hello world github/linguist#1 <strong>cool</strong>, and #1!</p>\n');
             done();
         }));
     });
@@ -32,11 +32,11 @@ describe('Markdown', function() {
     it('should convert markdown to html as GFM', function(done) {
         const options = {
             text: 'Hello world github/linguist#1 **cool**, and #1!',
-            mode: 'gmf',
+            mode: 'gfm',
             context: 'github/gollum'
         }
         markdown.render(options, assertSuccessful(done, function(err, html) {
-            expect(html).must.be('<p>Hello world <a href="http://github.com/github/linguist/issues/1" class="issue-link" title="This is a simple issue">github/linguist#1</a> <strong>cool</strong>, and <a href="http://github.com/github/gollum/issues/1" class="issue-link" title="This is another issue">#1</a>!</p>')
+            expect(html).must.be('<p>Hello world <a href="https://github.com/github/linguist/issues/1" class="issue-link js-issue-link" data-url="https://github.com/github/linguist/issues/1" data-id="1012654" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">github/linguist#1</a> <strong>cool</strong>, and <a href="https://github.com/gollum/gollum/issues/1" class="issue-link js-issue-link" data-url="https://github.com/gollum/gollum/issues/1" data-id="183433" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">#1</a>!</p>');
             done();
         }));
     });
