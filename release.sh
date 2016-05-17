@@ -25,5 +25,6 @@ rm -rf docs/
 git checkout gh-pages
 mv out/* docs/
 echo $VERSION >> _data/versions.csv
-git co -am "adding docs for v$VERSION"
+git add .
+git co -m "adding docs for v$VERSION"
 git push

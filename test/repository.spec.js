@@ -140,6 +140,9 @@ describe('Repository', function() {
 
       it('should show repo contributors', function(done) {
          remoteRepo.getContributors(assertSuccessful(done, function(err, contributors) {
+            if (!(contributors instanceof Array)) {
+               console.log(contributors); // eslint-disable-line
+            }
             expect(contributors).to.be.an.array();
             expect(contributors.length).to.be.above(1);
 
