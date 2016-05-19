@@ -42,12 +42,11 @@ describe('Organization', function() {
             }).catch(done);
       });
 
-      it('should test for membership', function(done) {
-         organization.isMember(MEMBER_NAME)
+      it('should test for membership', function() {
+         return organization.isMember(MEMBER_NAME)
             .then(function(isMember) {
                expect(isMember).to.be.true();
-               done();
-            }).catch(done);
+            });
       });
    });
 
@@ -59,7 +58,7 @@ describe('Organization', function() {
          organization = github.getOrganization(testUser.ORGANIZATION);
       });
 
-      it('should create an organisation repo', function(done) {
+      it('should create an organization repo', function(done) {
          const options = {
             name: testRepoName,
             description: 'test create organization repo',
@@ -73,6 +72,32 @@ describe('Organization', function() {
          organization.createRepo(options, assertSuccessful(done, function(err, repo) {
             expect(repo.name).to.equal(testRepoName);
             expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`); // eslint-disable-line
+            done();
+         }));
+      });
+
+      // TODO: The longer this is in place the slower it will get if we don't cleanup random test teams
+      it('should list the teams in the organization', function() {
+         return organization.getTeams()
+           .then(({data}) => {
+              const hasTeam = data.reduce(
+                 (found, member) => member.slug === 'fixed-test-team-1' || found,
+                 false);
+
+              expect(hasTeam).to.be.true();
+           });
+      });
+
+      it('should create an organization team', function(done) {
+         const options = {
+            name: testRepoName,
+            description: 'Created by unit tests',
+            privacy: 'secret'
+         };
+
+         organization.createTeam(options, assertSuccessful(done, function(err, team) {
+            expect(team.name).to.equal(testRepoName);
+            expect(team.organization.login).to.equal(testUser.ORGANIZATION); // jscs:ignore
             done();
          }));
       });
