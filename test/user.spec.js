@@ -16,7 +16,7 @@ describe('User', function() {
    });
 
    it('should get user repos', function(done) {
-      user.getRepos(assertArray(done));
+      user.listRepos(assertArray(done));
    });
 
    it('should get user repos with options', function(done) {
@@ -27,19 +27,19 @@ describe('User', function() {
          page: 10
       };
 
-      user.getRepos(filterOpts, assertArray(done));
+      user.listRepos(filterOpts, assertArray(done));
    });
 
    it('should get user orgs', function(done) {
-      user.getOrgs(assertArray(done));
+      user.listOrgs(assertArray(done));
    });
 
    it('should get user gists', function(done) {
-      user.getGists(assertArray(done));
+      user.listGists(assertArray(done));
    });
 
    it('should get user notifications', function(done) {
-      user.getNotifications(assertArray(done));
+      user.listNotifications(assertArray(done));
    });
 
    it('should get user notifications with options', function(done) {
@@ -50,7 +50,7 @@ describe('User', function() {
          before: '2015-02-01T00:00:00Z'
       };
 
-      user.getNotifications(filterOpts, assertArray(done));
+      user.listNotifications(filterOpts, assertArray(done));
    });
 
    it('should get the user\'s profile', function(done) {
@@ -58,7 +58,7 @@ describe('User', function() {
    });
 
    it('should show user\'s starred repos', function(done) {
-      user.getStarredRepos(assertArray(done));
+      user.listStarredRepos(assertArray(done));
    });
 
    it('should follow user', function(done) {
