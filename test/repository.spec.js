@@ -141,7 +141,7 @@ describe('Repository', function() {
       it('should show repo contributors', function(done) {
          remoteRepo.getContributors(assertSuccessful(done, function(err, contributors) {
             if (!(contributors instanceof Array)) {
-               console.log(contributors); // eslint-disable-line
+               console.log(JSON.stringify(contributors, null, 2)); // eslint-disable-line
             }
             expect(contributors).to.be.an.array();
             expect(contributors.length).to.be.above(1);
@@ -258,7 +258,7 @@ describe('Repository', function() {
       it('should show repo collaborators', function(done) {
          remoteRepo.getCollaborators(assertSuccessful(done, function(err, collaborators) {
             if (!(collaborators instanceof Array)) {
-               console.log(collaborators); // eslint-disable-line
+               console.log(JSON.stringify(collaborators, null, 2)); // eslint-disable-line
             }
             expect(collaborators).to.be.an.array();
             expect(collaborators).to.have.length(1);
