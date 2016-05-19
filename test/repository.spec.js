@@ -287,6 +287,21 @@ describe('Repository', function() {
          }));
       });
 
+      it('should rename files', function(done) {
+         remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
+            remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
+               remoteRepo.getContents('master', fileName, 'raw', assertFailure(done, function(err) {
+                  expect(err.status).to.be(404);
+                  remoteRepo.getContents('master', 'new_name', 'raw', assertSuccessful(done, function(err, fileText) {
+                     expect(fileText).to.be(initialText);
+
+                     done();
+                  }));
+               }));
+            }));
+         }));
+      });
+
       it('should create a new branch', function(done) {
          remoteRepo.createBranch('master', 'dev', assertSuccessful(done, function(err, branch) {
             expect(branch).to.have.property('ref', 'refs/heads/dev');
