@@ -138,6 +138,23 @@ describe('Repository', function() {
          }));
       });
 
+      it('should get the latest commit from master', function(done) {
+         remoteRepo.getSingleCommit('master', assertSuccessful(done, function(err, commit) {
+            expect(commit).to.have.own('sha');
+            expect(commit).to.have.own('commit');
+            expect(commit).to.have.own('author');
+
+            done();
+         }));
+      });
+
+      it('should fail when null ref is passed', function(done) {
+         remoteRepo.getSingleCommit(null, assertFailure(done, function(err) {
+            expect(err.status).to.be(404);
+            done();
+         }));
+      });
+
       it('should show repo contributors', function(done) {
          remoteRepo.getContributors(assertSuccessful(done, function(err, contributors) {
             if (!(contributors instanceof Array)) {
