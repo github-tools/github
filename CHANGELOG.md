@@ -2,13 +2,22 @@
 
 ## master
 ### Features
-Added Milestone API
-* `Issue.listMilestones`
-* `Issue.getMilestone`
-* `Issue.editMilestone`
-* `Issue.deleteMilestone`
 
 ### Fixes
+
+## 2.0.0
+### Breaking
+* `Repository#move` has a new argument list
+User
+* `getRepos` → `listRepos`
+* `getOrgs` → `listOrgs`
+* `getGists` → `listGists`
+* `getNotifications` → `listNotifications`
+* `getStarredRepos` → `listStarredRepos`
+
+### Fixes
+* `Repository`: `move` now works
+* `User`: `listRepos`
 
 ## 1.2.1
 ### Fixes
