@@ -132,7 +132,7 @@ describe('Issue', function() {
 
       it('should delete issue comment', function(done) {
          remoteIssues.deleteIssueComment(issueCommentId, assertSuccessful(done, function(err, response) {
-            expect(response).to.be.true;
+            expect(response).to.be.true();
 
             done();
          }));

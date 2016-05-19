@@ -67,9 +67,9 @@ describe('Gist', function() {
       });
 
       it('should create a comment a gist', function(done) {
-         gist.createComment("Comment test", assertSuccessful(done, function(err, comment) {
+         gist.createComment('Comment test', assertSuccessful(done, function(err, comment) {
             expect(comment).to.have.own('body', 'Comment test');
-            commentId = comment.id
+            commentId = comment.id;
             done();
          }));
       });

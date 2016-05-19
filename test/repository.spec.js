@@ -379,7 +379,7 @@ describe('Repository', function() {
             sort: 'updated',
             direction: 'desc',
             page: 1,
-            per_page: 10 // jscs:ignore
+            per_page: 10 //eslint-disable-line
          };
 
          remoteRepo.listPullRequests(filterOpts, assertSuccessful(done, function(err, pullRequests) {
@@ -514,8 +514,8 @@ describe('Repository', function() {
       it('should create a release', function(done) {
          const releaseDef = {
             name: releaseName,
-            tag_name: releaseTag, // jscs:ignore
-            target_commitish: sha // jscs:ignore
+            tag_name: releaseTag, // eslint-disable-line
+            target_commitish: sha  // eslint-disable-line
          };
 
          remoteRepo.createRelease(releaseDef, assertSuccessful(done, function(err, res) {

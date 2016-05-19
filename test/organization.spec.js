@@ -65,14 +65,14 @@ describe('Organization', function() {
             description: 'test create organization repo',
             homepage: 'https://github.com/',
             private: false,
-            has_issues: true, // jscs:ignore
-            has_wiki: true, // jscs:ignore
-            has_downloads: true // jscs:ignore
+            has_issues: true, // eslint-disable-line
+            has_wiki: true,  // eslint-disable-line
+            has_downloads: true // eslint-disable-line
          };
 
          organization.createRepo(options, assertSuccessful(done, function(err, repo) {
             expect(repo.name).to.equal(testRepoName);
-            expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`); // jscs:ignore
+            expect(repo.full_name).to.equal(`${testUser.ORGANIZATION}/${testRepoName}`); // eslint-disable-line
             done();
          }));
       });

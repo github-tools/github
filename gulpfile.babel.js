@@ -1,35 +1,26 @@
 import gulp from 'gulp';
-import jscs from 'gulp-jscs';
 import eslint from 'gulp-eslint';
-import stylish from 'gulp-jscs-stylish';
-
 import babel from 'gulp-babel';
 import rename from 'gulp-rename';
 
 import browserify from 'browserify';
 import buffer from 'vinyl-buffer';
 import del from 'del';
-import path from 'path';
-import {Promise}  from 'es6-promise';
 import source from 'vinyl-source-stream';
 import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
 
 const ALL_SOURCES = [
-   path.join(__dirname, '/*.js'),
-   path.join(__dirname, '/src/*.js'),
-   path.join(__dirname, '/test/*.js')
+   '*.js',
+   'lib/*.js',
+   'test/*.js'
 ];
 
 gulp.task('lint', function() {
-   const opts = {
-      base: './'
-   };
-   return gulp.src(ALL_SOURCES, opts)
+   return gulp.src(ALL_SOURCES)
       .pipe(eslint())
-      .pipe(jscs())
-      .pipe(stylish.combineWithHintResults())
-      .pipe(stylish())
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError())
       ;
 });
 

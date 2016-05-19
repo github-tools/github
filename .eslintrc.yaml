@@ -1,0 +1,36 @@
+---
+   extends:
+      - eslint:recommended
+      - google
+   parserOptions:
+      ecmaVersion: 6
+      sourceType: module
+   rules:
+      arrow-parens: [error, always]
+      eqeqeq: error
+      guard-for-in: error
+      indent: [error, 3, {SwitchCase: 1}]
+      max-len: [error, {code: 120, ignoreTrailingComments: true}]
+      no-bitwise: warn
+      no-extend-native: error
+      no-useless-constructor: off
+      no-var: error
+      padded-blocks: off
+      quotes: [error, single, {avoidEscape: true}]
+      require-jsdoc:
+         - error
+         - require:
+            FunctionDeclaration: false
+            ClassDeclaration: true
+            MethodDefinition: true
+      spaced-comment: error
+      valid-jsdoc: [error, {requireParamDescription: true}]
+
+   env:
+      es6: true
+      node: true
+      browser: true
+   # globals:
+   #    require: false
+   #    define: false
+   #    escape: false

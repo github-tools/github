@@ -1,0 +1,6 @@
+---
+   extends: ../.eslintrc.yaml
+   env:
+      mocha: true
+   rules:
+      handle-callback-err: off

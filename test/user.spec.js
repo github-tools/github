@@ -23,7 +23,7 @@ describe('User', function() {
       const filterOpts = {
          type: 'owner',
          sort: 'updated',
-         per_page: 90, // jscs:ignore
+         per_page: 90, // eslint-disable-line
          page: 10
       };
 

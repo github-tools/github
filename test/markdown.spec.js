@@ -37,7 +37,7 @@ describe('Markdown', function() {
       };
       markdown.render(options)
          .then(function({data: html}) {
-            expect(html).to.be('<p>Hello world <a href="https://github.com/github/linguist/issues/1" class="issue-link js-issue-link" data-url="https://github.com/github/linguist/issues/1" data-id="1012654" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">github/linguist#1</a> <strong>cool</strong>, and <a href="https://github.com/gollum/gollum/issues/1" class="issue-link js-issue-link" data-url="https://github.com/gollum/gollum/issues/1" data-id="183433" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">#1</a>!</p>'); // jscs:ignore
+            expect(html).to.be('<p>Hello world <a href="https://github.com/github/linguist/issues/1" class="issue-link js-issue-link" data-url="https://github.com/github/linguist/issues/1" data-id="1012654" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">github/linguist#1</a> <strong>cool</strong>, and <a href="https://github.com/gollum/gollum/issues/1" class="issue-link js-issue-link" data-url="https://github.com/gollum/gollum/issues/1" data-id="183433" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">#1</a>!</p>'); // eslint-disable-line
             done();
          }).catch(done);
    });

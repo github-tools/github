@@ -14,37 +14,41 @@ describe('Search', function() {
    });
 
    it('should search repositories', function(done) {
+      let options;
       let search = github.search({
          q: 'tetris language:assembly',
          sort: 'stars',
          order: 'desc'
       });
-      let options = undefined;
 
       search.forRepositories(options, assertSuccessful(done));
    });
 
    it('should search code', function(done) {
-      let search = github.search({q: 'addClass in:file language:js repo:jquery/jquery'});
-      let options = undefined;
+      let options;
+      let search = github.search({
+         q: 'addClass in:file language:js repo:jquery/jquery'
+      });
 
       search.forCode(options, assertSuccessful(done));
    });
 
    it('should search issues', function(done) {
+      let options;
       let search = github.search({
          q: 'windows pip label:bug language:python state:open ',
          sort: 'created',
          order: 'asc'
       });
-      let options = undefined;
 
       search.forIssues(options, assertSuccessful(done));
    });
 
    it('should search users', function(done) {
-      let search = github.search({q: 'tom repos:>42 followers:>1000'});
-      let options = undefined;
+      let options;
+      let search = github.search({
+         q: 'tom repos:>42 followers:>1000'
+      });
 
       search.forUsers(options, assertSuccessful(done));
    });
