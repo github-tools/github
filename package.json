@@ -1,6 +1,6 @@
 {
   "name": "github-api",
-  "version": "1.3.1",
+  "version": "1.3.0",
   "license": "BSD-3-Clause-Clear",
   "description": "A higher-level wrapper around the Github API.",
   "main": "dist/components/GitHub.js",
