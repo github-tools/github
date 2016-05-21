@@ -61,6 +61,7 @@
     "codecov": "^1.0.1",
     "del": "^2.2.0",
     "eslint-config-google": "^0.5.0",
+    "eslint-plugin-mocha": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^2.0.0",
