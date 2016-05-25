@@ -4,6 +4,12 @@
 # make sure all our dependencies are installed so we can publish docs
 npm install
 
+# guard against stupid
+if [ -z "$1" ]; then
+   echo "You must specify a new version level: [patch, minor, major]";
+   exit 1;
+fi
+
 # bump the version
 echo "npm version $1"
 npm version $1
