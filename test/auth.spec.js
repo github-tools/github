@@ -51,7 +51,7 @@ describe('Github', function() {
                done();
             } catch (e) {
                try {
-                  if (err && err.request.headers['x-ratelimit-remaining'] === '0') {
+                  if (err && err.response.headers['x-ratelimit-remaining'] === '0') {
                      done();
                      return;
                   }
