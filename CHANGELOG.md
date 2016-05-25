@@ -1,7 +1,19 @@
 # Change Log
 
-## master
+## 2.1.0
 ### Features
+Team API
+* `Organization.getTeams`
+* `Team.getTeam`
+* `Team.listRepos`
+* `Team.editTeam`
+* `Team.listMembers`
+* `Team.getMembership`
+* `Team.addMembership`
+* `Team.isManagedRepo`
+* `Team.manageRepo`
+* `Team.unmanageRepo`
+* `Team.deleteTeam`
 
 ### Fixes
 

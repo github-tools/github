@@ -28,10 +28,10 @@ npm install github-api
 
 ## Compatibility
 Github.js is tested on Node:
+* 6.x
 * 5.x
 * 4.x
 * 0.12
-* 0.10
 
 ## GitHub Tools
 
@@ -47,11 +47,11 @@ as well. In the meantime, we recommend you to take a look at other projects of t
    or using a new promise-based API. For now the promise-based API just returns the
    raw HTTP request promise; this might change in the next version.
  */
-var GitHub = require('github-api');
+import GitHub from 'github-api';
 
 // unauthenticated client
-var gh = new GitHub();
-var gist = gh.getGist(); // not a gist yet
+const gh = new GitHub();
+let gist = gh.getGist(); // not a gist yet
 gist.create({
    public: true,
    description: 'My first gist',
@@ -60,37 +60,37 @@ gist.create({
          contents: "Aren't gists great!"
       }
    }
-}).then(function(httpResponse) {
+}).then(function({data}) {
    // Promises!
-   var gist = httpResponse.data;
+   let gistJson = data;
    gist.read(function(err, gist, xhr) {
       // if no error occurred then err == null
 
-      // gist == httpResponse.data
+      // gistJson === httpResponse.data
 
-      // xhr == httpResponse
+      // xhr === httpResponse
    });
 });
 ```
 
 ```javascript
-var GitHub = require('github-api');
+import GitHub from 'github-api';
 
 // basic auth
-var gh = new GitHub({
+const gh = new GitHub({
    username: 'FOO',
    password: 'NotFoo'
 });
 
-var me = gh.getUser();
-me.getNotification(function(err, notifcations) {
+const me = gh.getUser();
+me.listNotifications(function(err, notifcations) {
    // do some stuff
 });
 
-var clayreimann = gh.getUser('clayreimann');
+const clayreimann = gh.getUser('clayreimann');
 clayreimann.getStarredRepos()
-   .then(function(httpPromise) {
-      var repos = httpPromise.data;
+   .then(function({data: reposJson}) {
+      // do stuff with reposJson
    });
 ```
 
