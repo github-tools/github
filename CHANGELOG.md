@@ -15,8 +15,6 @@ Team API
 * `Team.unmanageRepo`
 * `Team.deleteTeam`
 
-### Fixes
-
 ## 2.0.0
 ### Breaking
 * `Repository#move` has a new argument list
