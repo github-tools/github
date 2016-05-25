@@ -58,45 +58,47 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
 
             let hasTestUser = members.reduce(
                (found, member) => member.login === testUser.USERNAME || found,
-               false);
+               false
+            );
 
             expect(hasTestUser).to.be.true();
          });
    });
 
    it('should get team repos', function() {
-      return team.getRepos()
-        .then(({data}) => {
-           const hasRepo = data.reduce(
-              (found, repo) => repo.name === 'fixed-test-repo-1' || found,
-              false);
+      return team.listRepos()
+         .then(({data}) => {
+            const hasRepo = data.reduce(
+               (found, repo) => repo.name === 'fixed-test-repo-1' || found,
+               false
+            );
 
-           expect(hasRepo).to.be.true();
-        });
+            expect(hasRepo).to.be.true();
+         });
    });
 
    it('should get team', function() {
       return team.getTeam()
-        .then(({data}) => {
-           expect(data.name).to.equal('Fixed Test Team 1');
-        });
+         .then(({data}) => {
+            expect(data.name).to.equal('Fixed Test Team 1');
+         });
    });
 
    it('should check if team manages repo', function() {
       return team.isManagedRepo(testUser.ORGANIZATION, 'fixed-test-repo-1')
-        .then((result) => {
-           expect(result).to.be.true();
-        });
+         .then((result) => {
+            expect(result).to.be.true();
+         });
    });
 });
 
 describe('Team', function() { // Isolate tests that need a new team per test
    beforeEach(function() {
       return createTestTeam()
-        .then((x) => {
-           team = x.team;
-           name = x.name;
-        });
+         .then((x) => {
+            team = x.team;
+            name = x.name;
+         });
    });
 
    // Test for Team deletion
@@ -108,9 +110,9 @@ describe('Team', function() { // Isolate tests that need a new team per test
    it('should update team', function() {
       const newName = `${name}-updated`;
       return team.editTeam({name: newName})
-        .then(function({data}) {
-           expect(data.name).to.equal(newName);
-        });
+         .then(function({data}) {
+            expect(data.name).to.equal(newName);
+         });
    });
 
    it('should add membership for a given user', function() {
