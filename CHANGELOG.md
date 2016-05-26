@@ -3,6 +3,7 @@
 ## 2.1.0
 ### Features
 Team API
+* `Organization.createTeam`
 * `Organization.getTeams`
 * `Team.getTeam`
 * `Team.listRepos`
