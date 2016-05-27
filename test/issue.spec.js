@@ -39,6 +39,13 @@ describe('Issue', function() {
          }));
       });
 
+      it('should get issue events', function() {
+         return remoteIssues.listIssueEvents(remoteIssueId)
+            .then(function({data: events}) {
+               expect(events).to.be.an.array();
+            });
+      });
+
       it('should get all milestones', function(done) {
          remoteIssues.listMilestones()
             .then(({data: milestones}) => {

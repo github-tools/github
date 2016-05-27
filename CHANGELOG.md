@@ -1,5 +1,11 @@
 # Change Log
 
+## master
+### Features
+* add `Issue.listIssueEvents`
+
+### Fixes
+
 ## 2.1.0
 ### Features
 Team API
