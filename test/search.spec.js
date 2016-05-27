@@ -1,8 +1,10 @@
+import expect from 'must';
+
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
-import {assertSuccessful} from './helpers/callbacks';
 
 describe('Search', function() {
+   this.timeout(20 * 1000);
    let github;
 
    before(function() {
@@ -13,7 +15,7 @@ describe('Search', function() {
       });
    });
 
-   it('should search repositories', function(done) {
+   it('should search repositories', function() {
       let options;
       let search = github.search({
          q: 'tetris language:assembly',
@@ -21,19 +23,27 @@ describe('Search', function() {
          order: 'desc'
       });
 
-      search.forRepositories(options, assertSuccessful(done));
+      return search.forRepositories(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.be.above(0);
+         });
    });
 
-   it('should search code', function(done) {
+   it('should search code', function() {
       let options;
       let search = github.search({
          q: 'addClass in:file language:js repo:jquery/jquery'
       });
 
-      search.forCode(options, assertSuccessful(done));
+      return search.forCode(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.be.above(0);
+         });
    });
 
-   it('should search issues', function(done) {
+   it('should search issues', function() {
       let options;
       let search = github.search({
          q: 'windows pip label:bug language:python state:open ',
@@ -41,15 +51,23 @@ describe('Search', function() {
          order: 'asc'
       });
 
-      search.forIssues(options, assertSuccessful(done));
+      return search.forIssues(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.be.above(0);
+         });
    });
 
-   it('should search users', function(done) {
+   it('should search users', function() {
       let options;
       let search = github.search({
          q: 'tom repos:>42 followers:>1000'
       });
 
-      search.forUsers(options, assertSuccessful(done));
+      return search.forUsers(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.be.above(0);
+         });
    });
 });

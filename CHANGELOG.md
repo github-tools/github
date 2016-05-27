@@ -1,12 +1,13 @@
 # Change Log
 
-## master
+## 2.2.0 - 2016/05/27
 ### Features
 * add `Issue.listIssueEvents`
 
 ### Fixes
+* Search returns results again
 
-## 2.1.0
+## 2.1.0 - 2016/05/26
 ### Features
 Team API
 * `Organization.createTeam`
@@ -40,7 +41,7 @@ User
 ### Fixes
 * `Repository`: Replace invalid references to `postTree` with `createTree`
 
-## 1.2.0 - 2015/05/11
+## 1.2.0 - 2016/05/11
 ### Features
 * Search API now returns all pages of results
 * Added `Repository.listReleases`
@@ -58,7 +59,7 @@ Added functions for issue comments
 ### Fixes
 * all functions now return a Promise
 
-## 1.1.0 - 2015/05/03
+## 1.1.0 - 2016/05/03
 ### Features
 Added methods for commenting on Gists:
 * `Gist.listComments`
@@ -70,7 +71,7 @@ Added methods for commenting on Gists:
 ### Fixes
 * `Repository.deleteFile` now correctly returns a promise.
 
-## 1.0.0 - 2015/04/27
+## 1.0.0 - 2016/04/27
 Complete rewrite in ES2015.
 
 * Promise-ified the API
