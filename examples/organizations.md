@@ -2,7 +2,7 @@
 layout: default
 ---
 
-## Organizations
+## Get an organization's repositories
 
 ```javascript
 var GitHub = require('github-api');

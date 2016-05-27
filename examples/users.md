@@ -4,23 +4,28 @@ layout: default
 
 # Users
 
+Note that when you `getUser()` you will get a user that represents the authenticated user. This will
+slightly change the calls to GitHub. In general you should have to worry about the differences between
+Listing [your repos](https://developer.github.com/v3/repos/#list-your-repositories) and listing
+[a user's repos](https://developer.github.com/v3/repos/#list-user-repositories) because things should just work.
+
 ```javascript
-var GitHub = require('github-api');
+import GitHub from 'github-api';
 
 // basic auth
-var gh = new GitHub({
+const gh = new GitHub({
    username: 'FOO',
    password: 'NotFoo'
 });
 
-var me = gh.getUser();
-me.getNotification(function(err, notifcations) {
+const me = gh.getUser();
+me.listNotification(function(err, notifcations) {
    // do some stuff
 });
 
-var clayreimann = gh.getUser('clayreimann');
-clayreimann.getStarredRepos()
-   .then(function(httpPromise) {
-      var repos = httpPromise.data;
+const clayreimann = gh.getUser('clayreimann');
+clayreimann.listStarredRepos()
+   .then(function({data: reposJson}) {
+     console.log(`clayreimann has ${reposJson.length} repos!`);
    });
 ```

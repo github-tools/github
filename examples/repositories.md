@@ -1,6 +1,0 @@
----
-layout: default
----
-
-```javascript
-```

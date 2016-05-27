@@ -13,23 +13,26 @@ Data can be retrieved from the API either using callbacks (as in versions < 1.0)
 or using a new promise-based API. For now the promise-based API just returns the
 raw HTTP request promise; this might change in the next version.
 
-{%for entry in site.data.versions %}
+{%for entry in site.data.versions reversed %}
 * [{{entry.version}}]({{site.baseurl}}/docs/{{entry.version}}/index.html)
 {%endfor%}
 
 #### Examples
 
-* [Authorization][authorization]
-* [Gists][gists]
-* [Users][users]
-* [Organizations][organizations]
-* Repositories
+* [Authorization][authorization-examples]
+* [Gists][gist-examples]
+* [Users][user-examples]
+* [Organizations][organization-examples]
+* [Webhooks][webhook-examples]
+* [Rate Limit][ratelimit-examples]
 
 #### Credits
 * Base styles: [Milligram](milligram)
 
 [milligram]: https://milligram.github.io/
-[gists]: {{site.baseurl}}/examples/gists
-[users]: {{site.baseurl}}/examples/users
-[organizations]: {{site.baseurl}}/examples/organizations
-[authorization]: {{site.baseurl}}/examples/authorization
+[gist-examples]: {{site.baseurl}}/examples/gists
+[user-examples]: {{site.baseurl}}/examples/users
+[organization-examples]: {{site.baseurl}}/examples/organizations
+[authorization-examples]: {{site.baseurl}}/examples/authorization
+[webhook-examples]: {{site.baseurl}}/examples/webhooks
+[ratelimit-examples]: {{site.baseurl}}/examples/ratelimit

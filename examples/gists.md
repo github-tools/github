@@ -2,15 +2,19 @@
 layout: default
 ---
 
-## Reading and Manipulating Gists
+## Reading and manipulating gists
 
 ```javascript
 var GitHub = require('github-api');
 
 // unauthenticated client
-var gh = new GitHub();
+var gh = new GitHub({
+  username: 'foo',
+  password: 'bar'
+});
+
 var gist = gh.getGist(); // not a gist yet
-gist.create({
+var data = {
    public: true,
    description: 'My first gist',
    files: {
@@ -18,16 +22,17 @@ gist.create({
          contents: "Aren't gists great!"
       }
    }
-})
-// Promises!
-.then(function(httpResponse) {
-   var gistJson = httpResponse.data;
+};
 
-   // Callbacks too
-   gist.read(function(err, gist, xhr) {
-      // if no error occurred then err == null
-      // gistJson == httpResponse.data
-      // xhr == httpResponse
-   });
-});
+gist.create(data)
+  .then(function(httpResponse) {
+     var gistJson = httpResponse.data;
+
+     // Callbacks too
+     gist.read(function(err, gist, xhr) {
+        // if no error occurred then err == null
+        // gistJson == httpResponse.data
+        // xhr == httpResponse
+     });
+  });
 ```

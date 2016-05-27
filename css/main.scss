@@ -73,3 +73,12 @@ a {
 a:visited {
   color: darken($salmon, 10%);
 }
+
+ul {
+  li {
+    margin-bottom: 0;
+    p {
+      margin: 0;
+    }
+  }
+}

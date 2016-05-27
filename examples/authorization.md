@@ -2,7 +2,7 @@
 layout: default
 ---
 
-## Authorization and Making Requests
+## Authorization and making requests
 
 The library currently supports most authentication schemes that GitHub
 provides.
