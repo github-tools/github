@@ -75,6 +75,14 @@ describe('Repository', function() {
          }));
       });
 
+      it('should show repo readme', function(done) {
+         remoteRepo.getReadme('master', 'raw', assertSuccessful(done, function(err, text) {
+            expect(text).to.contain('# Github.js');
+
+            done();
+         }));
+      });
+
       it('should get ref from repo', function(done) {
          remoteRepo.getRef('heads/master', assertSuccessful(done));
       });
