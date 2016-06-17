@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.3.0 - 2016/06/17
+### Features
+* add `Repository.mergePullRequest`
+* add `Repository.updatePullRequest`
+* add `Repository.listPullRequestFiles`
+* add `Repository.getReadme`
+
 ## 2.2.0 - 2016/05/27
 ### Features
 * add `Issue.listIssueEvents`
