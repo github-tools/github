@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Requestable - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Gist.html">Gist</a><ul class='methods'><li data-type='method'><a href="Gist.html#create">create</a></li><li data-type='method'><a href="Gist.html#createComment">createComment</a></li><li data-type='method'><a href="Gist.html#delete">delete</a></li><li data-type='method'><a href="Gist.html#deleteComment">deleteComment</a></li><li data-type='method'><a href="Gist.html#editComment">editComment</a></li><li data-type='method'><a href="Gist.html#fork">fork</a></li><li data-type='method'><a href="Gist.html#getComment">getComment</a></li><li data-type='method'><a href="Gist.html#isStarred">isStarred</a></li><li data-type='method'><a href="Gist.html#listComments">listComments</a></li><li data-type='method'><a href="Gist.html#read">read</a></li><li data-type='method'><a href="Gist.html#star">star</a></li><li data-type='method'><a href="Gist.html#unstar">unstar</a></li><li data-type='method'><a href="Gist.html#update">update</a></li></ul></li><li><a href="GitHub.html">GitHub</a><ul class='methods'><li data-type='method'><a href="GitHub.html#_getFullName">_getFullName</a></li><li data-type='method'><a href="GitHub.html#getGist">getGist</a></li><li data-type='method'><a href="GitHub.html#getIssues">getIssues</a></li><li data-type='method'><a href="GitHub.html#getMarkdown">getMarkdown</a></li><li data-type='method'><a href="GitHub.html#getOrganization">getOrganization</a></li><li data-type='method'><a href="GitHub.html#getRateLimit">getRateLimit</a></li><li data-type='method'><a href="GitHub.html#getRepo">getRepo</a></li><li data-type='method'><a href="GitHub.html#getTeam">getTeam</a></li><li data-type='method'><a href="GitHub.html#getUser">getUser</a></li><li data-type='method'><a href="GitHub.html#search">search</a></li></ul></li><li><a href="Issue.html">Issue</a><ul class='methods'><li data-type='method'><a href="Issue.html#createIssue">createIssue</a></li><li data-type='method'><a href="Issue.html#createIssueComment">createIssueComment</a></li><li data-type='method'><a href="Issue.html#createMilestone">createMilestone</a></li><li data-type='method'><a href="Issue.html#deleteIssueComment">deleteIssueComment</a></li><li data-type='method'><a href="Issue.html#deleteMilestone">deleteMilestone</a></li><li data-type='method'><a href="Issue.html#editIssue">editIssue</a></li><li data-type='method'><a href="Issue.html#editIssueComment">editIssueComment</a></li><li data-type='method'><a href="Issue.html#editMilestone">editMilestone</a></li><li data-type='method'><a href="Issue.html#getIssue">getIssue</a></li><li data-type='method'><a href="Issue.html#getIssueComment">getIssueComment</a></li><li data-type='method'><a href="Issue.html#getMilestone">getMilestone</a></li><li data-type='method'><a href="Issue.html#listIssueComments">listIssueComments</a></li><li data-type='method'><a href="Issue.html#listIssueEvents">listIssueEvents</a></li><li data-type='method'><a href="Issue.html#listIssues">listIssues</a></li><li data-type='method'><a href="Issue.html#listMilestones">listMilestones</a></li></ul></li><li><a href="Markdown.html">Markdown</a><ul class='methods'><li data-type='method'><a href="Markdown.html#render">render</a></li></ul></li><li><a href="Organization.html">Organization</a><ul class='methods'><li data-type='method'><a href="Organization.html#createRepo">createRepo</a></li><li data-type='method'><a href="Organization.html#createTeam">createTeam</a></li><li data-type='method'><a href="Organization.html#getRepos">getRepos</a></li><li data-type='method'><a href="Organization.html#getTeams">getTeams</a></li><li data-type='method'><a href="Organization.html#isMember">isMember</a></li><li data-type='method'><a href="Organization.html#listMembers">listMembers</a></li></ul></li><li><a href="RateLimit.html">RateLimit</a><ul class='methods'><li data-type='method'><a href="RateLimit.html#getRateLimit">getRateLimit</a></li></ul></li><li><a href="Repository.html">Repository</a><ul class='methods'><li data-type='method'><a href="Repository.html#_getContentObject">_getContentObject</a></li><li data-type='method'><a href="Repository.html#commit">commit</a></li><li data-type='method'><a href="Repository.html#compareBranches">compareBranches</a></li><li data-type='method'><a href="Repository.html#createBlob">createBlob</a></li><li data-type='method'><a href="Repository.html#createBranch">createBranch</a></li><li data-type='method'><a href="Repository.html#createHook">createHook</a></li><li data-type='method'><a href="Repository.html#createPullRequest">createPullRequest</a></li><li data-type='method'><a href="Repository.html#createRef">createRef</a></li><li data-type='method'><a href="Repository.html#createRelease">createRelease</a></li><li data-type='method'><a href="Repository.html#createTree">createTree</a></li><li data-type='method'><a href="Repository.html#deleteFile">deleteFile</a></li><li data-type='method'><a href="Repository.html#deleteHook">deleteHook</a></li><li data-type='method'><a href="Repository.html#deleteRef">deleteRef</a></li><li data-type='method'><a href="Repository.html#deleteRelease">deleteRelease</a></li><li data-type='method'><a href="Repository.html#deleteRepo">deleteRepo</a></li><li data-type='method'><a href="Repository.html#fork">fork</a></li><li data-type='method'><a href="Repository.html#getBlob">getBlob</a></li><li data-type='method'><a href="Repository.html#getCollaborators">getCollaborators</a></li><li data-type='method'><a href="Repository.html#getCommit">getCommit</a></li><li data-type='method'><a href="Repository.html#getContents">getContents</a></li><li data-type='method'><a href="Repository.html#getContributors">getContributors</a></li><li data-type='method'><a href="Repository.html#getDetails">getDetails</a></li><li data-type='method'><a href="Repository.html#getHook">getHook</a></li><li data-type='method'><a href="Repository.html#getPullRequest">getPullRequest</a></li><li data-type='method'><a href="Repository.html#getReadme">getReadme</a></li><li data-type='method'><a href="Repository.html#getRef">getRef</a></li><li data-type='method'><a href="Repository.html#getRelease">getRelease</a></li><li data-type='method'><a href="Repository.html#getSha">getSha</a></li><li data-type='method'><a href="Repository.html#getSingleCommit">getSingleCommit</a></li><li data-type='method'><a href="Repository.html#getTree">getTree</a></li><li data-type='method'><a href="Repository.html#isCollaborator">isCollaborator</a></li><li data-type='method'><a href="Repository.html#isStarred">isStarred</a></li><li data-type='method'><a href="Repository.html#listBranches">listBranches</a></li><li data-type='method'><a href="Repository.html#listCommits">listCommits</a></li><li data-type='method'><a href="Repository.html#listForks">listForks</a></li><li data-type='method'><a href="Repository.html#listHooks">listHooks</a></li><li data-type='method'><a href="Repository.html#listPullRequestFiles">listPullRequestFiles</a></li><li data-type='method'><a href="Repository.html#listPullRequests">listPullRequests</a></li><li data-type='method'><a href="Repository.html#listReleases">listReleases</a></li><li data-type='method'><a href="Repository.html#listStatuses">listStatuses</a></li><li data-type='method'><a href="Repository.html#listTags">listTags</a></li><li data-type='method'><a href="Repository.html#mergePullRequest">mergePullRequest</a></li><li data-type='method'><a href="Repository.html#move">move</a></li><li data-type='method'><a href="Repository.html#star">star</a></li><li data-type='method'><a href="Repository.html#unstar">unstar</a></li><li data-type='method'><a href="Repository.html#updateHead">updateHead</a></li><li data-type='method'><a href="Repository.html#updateHook">updateHook</a></li><li data-type='method'><a href="Repository.html#updatePullRequst">updatePullRequst</a></li><li data-type='method'><a href="Repository.html#updateRelease">updateRelease</a></li><li data-type='method'><a href="Repository.html#updateTree">updateTree</a></li><li data-type='method'><a href="Repository.html#writeFile">writeFile</a></li></ul></li><li><a href="Requestable.html">Requestable</a><ul class='methods'><li data-type='method'><a href="Requestable.html#_dateToISO">_dateToISO</a></li><li data-type='method'><a href="Requestable.html#_getOptionsWithDefaults">_getOptionsWithDefaults</a></li><li data-type='method'><a href="Requestable.html#_request">_request</a></li><li data-type='method'><a href="Requestable.html#_request204or404">_request204or404</a></li><li data-type='method'><a href="Requestable.html#_requestAllPages">_requestAllPages</a></li></ul></li><li><a href="ResponseError.html">ResponseError</a></li><li><a href="Search.html">Search</a><ul class='methods'><li data-type='method'><a href="Search.html#forCode">forCode</a></li><li data-type='method'><a href="Search.html#forIssues">forIssues</a></li><li data-type='method'><a href="Search.html#forRepositories">forRepositories</a></li><li data-type='method'><a href="Search.html#forUsers">forUsers</a></li></ul></li><li><a href="Team.html">Team</a><ul class='methods'><li data-type='method'><a href="Team.html#addMembership">addMembership</a></li><li data-type='method'><a href="Team.html#deleteTeam">deleteTeam</a></li><li data-type='method'><a href="Team.html#editTeam">editTeam</a></li><li data-type='method'><a href="Team.html#getMembership">getMembership</a></li><li data-type='method'><a href="Team.html#getTeam">getTeam</a></li><li data-type='method'><a href="Team.html#isManagedRepo">isManagedRepo</a></li><li data-type='method'><a href="Team.html#listMembers">listMembers</a></li><li data-type='method'><a href="Team.html#listRepos">listRepos</a></li><li data-type='method'><a href="Team.html#manageRepo">manageRepo</a></li><li data-type='method'><a href="Team.html#unmanageRepo">unmanageRepo</a></li></ul></li><li><a href="User.html">User</a><ul class='methods'><li data-type='method'><a href="User.html#createRepo">createRepo</a></li><li data-type='method'><a href="User.html#follow">follow</a></li><li data-type='method'><a href="User.html#getProfile">getProfile</a></li><li data-type='method'><a href="User.html#listGists">listGists</a></li><li data-type='method'><a href="User.html#listNotifications">listNotifications</a></li><li data-type='method'><a href="User.html#listOrgs">listOrgs</a></li><li data-type='method'><a href="User.html#listRepos">listRepos</a></li><li data-type='method'><a href="User.html#listStarredRepos">listStarredRepos</a></li><li data-type='method'><a href="User.html#unfollow">unfollow</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Requestable</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Requestable
+        </h2>
+        
+            <div class="class-description"><p>Requestable wraps the logic for making http requests to the API</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="Requestable"><span class="type-signature"></span>new Requestable<span class="signature">(auth<span class="signature-attributes">opt</span>, apiBase<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Initialize the http internals.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>auth</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Requestable.html#.auth">Requestable.auth</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the credentials to authenticate to Github. If auth is
+                                 not provided request will be made unauthenticated</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>apiBase</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    https://api.github.com
+                
+                </td>
+            
+
+            <td class="description last"><p>the base Github API URL</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="_dateToISO"><span class="type-signature"></span>_dateToISO<span class="signature">(date)</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>if a <code>Date</code> is passed to this function it will be converted to an ISO string</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the object to attempt to cooerce into an ISO date string</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line127">line 127</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the ISO representation of <code>date</code> or whatever was passed in if it was not a date</li>
+</ul>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_getOptionsWithDefaults"><span class="type-signature">(protected) </span>_getOptionsWithDefaults<span class="signature">(requestOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sets the default options for API requests</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>requestOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last"><p>the current options for the request</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line112">line 112</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the options to pass to the request</li>
+</ul>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_request"><span class="type-signature"></span>_request<span class="signature">(method, path, data<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>, raw<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Make a request.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the method for the request (GET, PUT, POST, DELETE)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the path for the request</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the data to send to the server. For HTTP methods that don't have a body the data
+                  will be sent as query parameters</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Requestable.html#.callback">Requestable.callback</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the callback for the request</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>raw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>if the request should be sent as raw. If this is a falsy value then the
+                             request will be made as JSON</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the Promise for the http request</li>
+</ul>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_request204or404"><span class="type-signature"></span>_request204or404<span class="signature">(path, data, cb, method<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Make a request to an endpoint the returns 204 when true and 404 when false</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the path to request</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>any query parameters for the request</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Requestable.html#.callback">Requestable.callback</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>the callback that will receive <code>true</code> or <code>false</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">method</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    GET
+                
+                </td>
+            
+
+            <td class="description last"><p>HTTP Method to use</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line193">line 193</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>the promise for the http request</li>
+</ul>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="_requestAllPages"><span class="type-signature"></span>_requestAllPages<span class="signature">(path, options, cb<span class="signature-attributes">opt</span>, results)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Make a request and fetch all the available data. Github will paginate responses so for queries
+that might span multiple pages this method is preferred to <code>Requestable#request</code></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the path to request</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the query parameters to include</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Requestable.html#.callback">Requestable.callback</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the function to receive the data. The returned data will always be an array.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the partial results. This argument is intended for interal use only.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>This will be folded into <a href="Requestable.html#_request"><code>Requestable#_request</code></a> in the 2.0 release.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line225">line 225</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>a promise which will resolve when all pages have been fetched</li>
+</ul>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id=".auth">auth</h4>
+
+
+
+
+<div class="description">
+    <p>Either a username and password or an oauth token for Github</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the Github username</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>the user's password</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">token</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>an OAuth token</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id=".callback"><span class="type-signature"></span>callback<span class="signature">(error, result, request)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>A function that receives the result of the API request.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Requestable.Error</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the error returned by the API or <code>null</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">true</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the data returned by the API or <code>true</code> if the API returns <code>204 No Content</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>request</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the raw <a href="https://github.com/mzabriskie/axios#response-schema">Response</a></p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Requestable.js.html">Requestable.js</a>, <a href="Requestable.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Jun 17 2016 09:42:34 GMT-0500 (CDT) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
