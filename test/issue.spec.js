@@ -165,6 +165,7 @@ describe('Issue', function() {
             description: 'Version 6 * 7'
          };
 
+         expect(createdMilestoneId).to.be.a.number();
          remoteIssues.editMilestone(createdMilestoneId, milestone)
             .then(({data: createdMilestone}) => {
                expect(createdMilestone).to.have.own('number', createdMilestoneId);
@@ -174,6 +175,7 @@ describe('Issue', function() {
             }).catch(done);
       });
       it('should delete a milestone', function(done) {
+         expect(createdMilestoneId).to.be.a.number();
          remoteIssues.deleteMilestone(createdMilestoneId)
             .then(({status}) => {
                expect(status).to.equal(204);
