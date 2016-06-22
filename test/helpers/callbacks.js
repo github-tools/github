@@ -5,7 +5,7 @@ const STANDARD_DELAY = 200; // 200ms between nested calls to the API so things s
 export function assertSuccessful(done, cb) {
    return function successCallback(err, res, xhr) {
       try {
-         expect(err).not.to.exist(err ? err.response.data : 'No error');
+         expect(err).not.to.exist(err ? (err.response ? err.response.data : err) : 'No error');
          expect(res).to.exist();
          expect(xhr).to.be.an.object();
 

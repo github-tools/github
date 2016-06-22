@@ -74,6 +74,7 @@
     "minami": "^1.1.1",
     "mocha": "^2.3.4",
     "must": "^0.13.1",
+    "nock": "^8.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
