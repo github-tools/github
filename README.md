@@ -20,10 +20,10 @@ npm install github-api
 
 ```html
 <!-- just github-api source (5.3kb) -->
-<script src="//npmcdn.com/github-api/dist/GitHub.min.js"></script>
+<script src="https://npmcdn.com/github-api/dist/GitHub.min.js"></script>
 
 <!-- standalone (20.3kb) -->
-<script src="//npmcdn.com/github-api/dist/GitHub.bundle.min.js"></script>
+<script src="https://npmcdn.com/github-api/dist/GitHub.bundle.min.js"></script>
 ```
 
 ## Compatibility
