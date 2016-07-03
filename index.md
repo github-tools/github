@@ -13,6 +13,9 @@ Data can be retrieved from the API either using callbacks (as in versions < 1.0)
 or using a new promise-based API. For now the promise-based API just returns the
 raw HTTP request promise; this might change in the next version.
 
+Below you can find the link to read the documentation for each of the versions
+released so far, starting from version 1.0.0.
+
 {%for entry in site.data.versions reversed %}
 * [{{entry.version}}]({{site.baseurl}}/docs/{{entry.version}}/index.html)
 {%endfor%}
