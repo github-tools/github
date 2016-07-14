@@ -48,7 +48,7 @@ const externalConfig = {
    external: [
       'axios',
       'js-base64',
-      'es6-promise',
+      'babel-runtime',
       'debug',
       'utf8'
    ],
