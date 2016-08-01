@@ -45,6 +45,12 @@ $icon-width: 10rem;
 .container {
   padding-top: 2rem;
   max-width: 70rem;
+
+  &.landing {
+    ul > li > p {
+      display: inline;
+    }
+  }
 }
 
 .centered {
