@@ -45,10 +45,11 @@
     "lib/*"
   ],
   "dependencies": {
-    "axios": "^0.10.0",
     "debug": "^2.2.0",
     "es6-promise": "^3.0.2",
     "js-base64": "^2.1.9",
+    "request-extensible": "^0.1.1",
+    "request-http-cache": "^1.0.1",
     "utf8": "^2.1.1"
   },
   "devDependencies": {

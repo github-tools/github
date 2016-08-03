@@ -29,10 +29,10 @@ gulp.task('clean', function() {
 });
 
 gulp.task('build', [
-   'build:bundled:min',
-   'build:external:min',
-   'build:bundled:debug',
-   'build:external:debug',
+//   'build:bundled:min',
+//   'build:external:min',
+//   'build:bundled:debug',
+//   'build:external:debug',
    'build:components'
 ]);
 
@@ -46,7 +46,8 @@ const externalConfig = {
    entries: 'lib/GitHub.js',
    standalone: 'GitHub',
    external: [
-      'axios',
+      'request-extensible',
+      'request-http-cache',
       'js-base64',
       'es6-promise',
       'debug',
