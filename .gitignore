@@ -1,7 +1,6 @@
 .sass-cache/
 _site/
 docs/
-dist/
 coverage/
 node_modules/
 
