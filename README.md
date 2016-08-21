@@ -88,7 +88,7 @@ me.listNotifications(function(err, notifcations) {
 });
 
 const clayreimann = gh.getUser('clayreimann');
-clayreimann.getStarredRepos()
+clayreimann.listStarredRepos()
    .then(function({data: reposJson}) {
       // do stuff with reposJson
    });
