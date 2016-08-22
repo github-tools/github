@@ -88,7 +88,7 @@ me.listNotifications(function(err, notifcations) {
 });
 
 const clayreimann = gh.getUser('clayreimann');
-clayreimann.getStarredRepos()
+clayreimann.listStarredRepos()
    .then(function({data: reposJson}) {
       // do stuff with reposJson
    });
@@ -103,7 +103,7 @@ var gh = new GitHub({
 });
 
 var yahoo = gh.getOrganization('yahoo');
-yahoo.getRepos(function(err, repos) {
+yahoo.listRepos(function(err, repos) {
    // look at all the repos!
 })
 ```
