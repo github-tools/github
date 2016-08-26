@@ -18,8 +18,7 @@
     "test-verbose": "DEBUG=github* npm test",
     "lint": "gulp lint",
     "make-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
-    "release": "./release.sh",
-    "install": "npm i && npm run build"
+    "release": "./release.sh"
   },
   "babel": {
     "presets": [
