@@ -52,6 +52,14 @@ describe('Repository', function() {
          }));
       });
 
+      it('should get a branch', function(done) {
+         remoteRepo.getBranch('master', assertSuccessful(done, function(err, content) {
+            expect(content.name).to.be('master');
+
+            done();
+         }));
+      });
+
       it('should show repo contents', function(done) {
          remoteRepo.getContents('master', '', false, assertSuccessful(done, function(err, contents) {
             expect(contents).to.be.an.array();
