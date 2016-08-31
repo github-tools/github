@@ -12,7 +12,7 @@ Github.js provides a minimal higher-level wrapper around Github's API. It was co
 ## [Read the docs][docs]
 
 ## Installation
-Github.js is available from `npm` or [npmcdn][npmcdn].
+Github.js is available from `npm` or [unpkg][unpkg].
 
 ```shell
 npm install github-api
@@ -20,10 +20,10 @@ npm install github-api
 
 ```html
 <!-- just github-api source (5.3kb) -->
-<script src="https://npmcdn.com/github-api/dist/GitHub.min.js"></script>
+<script src="https://unpkg.com/github-api/dist/GitHub.min.js"></script>
 
 <!-- standalone (20.3kb) -->
-<script src="https://npmcdn.com/github-api/dist/GitHub.bundle.min.js"></script>
+<script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script>
 ```
 
 ## Compatibility
@@ -112,7 +112,7 @@ yahoo.listRepos(function(err, repos) {
 [docs]: http://michael.github.io/github/
 [gitter]: https://gitter.im/michael/github
 [npm-package]: https://www.npmjs.com/package/github-api/
-[npmcdn]: https://npmcdn.com/github-api/
+[unpkg]: https://unpkg.com/github-api/
 [prose]: http://prose.io
 [travis-ci]: https://travis-ci.org/michael/github
 [xhr-link]: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
