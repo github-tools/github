@@ -57,7 +57,7 @@ gist.create({
    description: 'My first gist',
    files: {
       "file1.txt": {
-         contents: "Aren't gists great!"
+         content: "Aren't gists great!"
       }
    }
 }).then(function({data}) {
