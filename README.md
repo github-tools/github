@@ -83,7 +83,7 @@ const gh = new GitHub({
 });
 
 const me = gh.getUser();
-me.listNotifications(function(err, notifcations) {
+me.listNotifications(function(err, notifications) {
    // do some stuff
 });
 
