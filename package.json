@@ -3,7 +3,7 @@
   "version": "2.4.0",
   "license": "BSD-3-Clause-Clear",
   "description": "A higher-level wrapper around the Github API.",
-  "main": "dist/components/GitHub.js",
+  "main": "lib/GitHub.js",
   "contributors": [
     "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
     "Aurelio De Rosa <a.derosa@audero.it> (http://www.audero.it/)",
