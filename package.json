@@ -19,6 +19,7 @@
     "lint": "gulp lint",
     "make-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
     "release": "./release.sh"
+    "prepublish": "npm run build"
   },
   "babel": {
     "presets": [
