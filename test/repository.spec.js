@@ -240,6 +240,45 @@ describe('Repository', function() {
             done();
          }));
       });
+
+      it('should list repo projects', function(done) {
+         remoteRepo.listProjects(assertSuccessful(done, function(err, projects) {
+            expect(projects).to.be.an.array();
+            expect(projects.length).to.equal(1);
+         }));
+      });
+
+      it('should get repo project', function(done) {
+         remoteRepo.getProject(1, assertSuccessful(done, function(err, project) {
+            expect(project).to.own('name', 'test-project');
+         }));
+      });
+
+      it('should list repo project columns', function(done) {
+         remoteRepo.listProjectColumns(1, assertSuccessful(done, function(err, columns) {
+            expect(columns).to.be.an.array();
+            expect(columns.length).to.equal(1);
+         }));
+      });
+
+      it('should get repo project column', function(done) {
+         remoteRepo.getProjectColumn(1, assertSuccessful(done, function(err, project) {
+            expect(project).to.own('name', 'test-column');
+         }));
+      });
+
+      it('should list repo project cards', function(done) {
+         remoteRepo.listProjectCards(1, assertSuccessful(done, function(err, cards) {
+            expect(cards).to.be.an.array();
+            expect(cards.length).to.equal(1);
+         }));
+      });
+
+      it('should get repo project card', function(done) {
+         remoteRepo.getProjectColumn(1, assertSuccessful(done, function(err, card) {
+            expect(card).to.own('note', 'test-card');
+         }));
+      });
    });
 
    describe('creating/modifiying', function() {
