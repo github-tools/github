@@ -699,6 +699,20 @@ describe('Repository', function() {
          }));
       });
 
+      it('should move repo project card', function(done) {
+         remoteRepo.moveProjectCard(cardId, 'top', columnId, assertSuccessful(done, function(err, result) {
+            expect(result).to.be(true);
+            done();
+         }));
+      });
+
+      it('should move repo project column', function(done) {
+         remoteRepo.moveProjectColumn(columnId, 'first', assertSuccessful(done, function(err, result) {
+            expect(result).to.be(true);
+            done();
+         }));
+      });
+
       it('should delete repo project card', function(done) {
          remoteRepo.deleteProjectCard(cardId, assertSuccessful(done, function(err, result) {
             expect(result).to.be(true);
