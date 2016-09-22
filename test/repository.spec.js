@@ -597,7 +597,7 @@ describe('Repository', function() {
          remoteRepo.createProject({
             name: 'test-project',
             body: 'body'
-         }, assertSuccessful(done, function(err, project){
+         }, assertSuccessful(done, function(err, project) {
             expect(project).to.own('name', 'test-project');
             expect(project).to.own('body', 'body');
             projectNumber = project.number;
@@ -624,7 +624,7 @@ describe('Repository', function() {
          remoteRepo.updateProject(projectNumber, {
             name: 'another-test-project',
             body: 'another-body'
-         }, assertSuccessful(done, function(err, project){
+         }, assertSuccessful(done, function(err, project) {
             expect(project).to.own('name', 'another-test-project');
             expect(project).to.own('body', 'another-body');
             done();
@@ -665,9 +665,9 @@ describe('Repository', function() {
          }));
       });
 
-      it('should create repo project card', function(done){
+      it('should create repo project card', function(done) {
          remoteRepo.createProjectCard(columnId, {
-            note: "test-card"
+            note: 'test-card'
          }, assertSuccessful(done, function(err, card) {
             expect(card).to.own('note', 'test-card');
             cardId = card.id;
@@ -693,28 +693,28 @@ describe('Repository', function() {
       it('should update repo project card', function(done) {
          remoteRepo.updateProjectCard(cardId, {
             note: 'another-test-card'
-         }, assertSuccessful(done, function(err, card){
+         }, assertSuccessful(done, function(err, card) {
             expect(card).to.own('note', 'another-test-card');
             done();
          }));
       });
 
       it('should delete repo project card', function(done) {
-         remoteRepo.deleteProjectCard(cardId, assertSuccessful(done, function(err, result){
+         remoteRepo.deleteProjectCard(cardId, assertSuccessful(done, function(err, result) {
             expect(result).to.be(true);
             done();
          }));
       });
 
       it('should delete repo project column', function(done) {
-         remoteRepo.deleteProjectColumn(columnId, assertSuccessful(done, function(err, result){
+         remoteRepo.deleteProjectColumn(columnId, assertSuccessful(done, function(err, result) {
             expect(result).to.be(true);
             done();
          }));
       });
 
       it('should delete repo project', function(done) {
-         remoteRepo.deleteProject(projectNumber, assertSuccessful(done, function(err, result){
+         remoteRepo.deleteProject(projectNumber, assertSuccessful(done, function(err, result) {
             expect(result).to.be(true);
             done();
          }));
