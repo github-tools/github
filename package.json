@@ -42,8 +42,7 @@
     }
   },
   "files": [
-    "dist/*",
-    "lib/*"
+    "dist/*"
   ],
   "dependencies": {
     "axios": "^0.10.0",
