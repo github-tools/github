@@ -20,7 +20,8 @@ function createTestTeam() {
 
    const org = github.getOrganization(testUser.ORGANIZATION);
 
-   return org.createTeam({
+   return org
+   .createTeam({
       name,
       privacy: 'closed'
    }).then(({data: result}) => {
@@ -33,14 +34,24 @@ let team;
 let name;
 
 describe('Team', function() { // Isolate tests that are based on a fixed team
-   before(function() {
+   before(function(done) {
       const github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
+      const org = github.getOrganization(testUser.ORGANIZATION);
 
       team = github.getTeam(2027812); // github-api-tests/fixed-test-team-1
+      org
+         .createRepo({name: 'fixed-test-repo-1'})
+         .then(() => {
+            return team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1');
+         })
+         .catch(() => {
+            console.log('skipping fixed-test-repo-1 creation');
+            done();
+         });
    });
 
    it('should get membership for a given user', function() {
