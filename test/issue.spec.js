@@ -33,7 +33,7 @@ describe('Issue', function() {
                title: 'Default Milestone',
                description: 'Test'
             }, done);
-         });
+         }).catch(done);
    });
 
    describe('reading', function() {
