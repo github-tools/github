@@ -53,26 +53,26 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
             });
       });
 
-      // The code below add a Fixed Test Team 1
+      // The code below add a fixed-test-repo-1
       let promiseTeam = new Promise((resolve, reject) => {
          org
             .createTeam({
-               name: 'Fixed Test Team 1',
+               name: 'fixed-test-repo-1',
                repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'] // eslint-disable-line camelcase
             })
             .then(({data: team}) => resolve(team), () => {
-               console.log('skiped Fixed Test Team 1 creation');
+               console.log('skiped fixed-test-repo-1 creation');
                // Team already exists, fetch the team
                return org.getTeams();
             })
             .then(({data: teams}) => {
                let team = teams
-                  .filter((team) => team.name === 'Fixed Test Team 1')
+                  .filter((team) => team.name === 'fixed-test-repo-1')
                   .pop();
                if (team) {
                   resolve(team);
                } else {
-                  reject(new Error('missing Fixed Test Team 1'));
+                  reject(new Error('missing fixed-test-repo-1'));
                }
             });
       });
@@ -85,11 +85,12 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
             return team;
          })
          .then((team) => {
-            let addUsers = [
+            let setupTeam = [
                team.addMembership(altUser.USERNAME),
-               team.addMembership(testUser.USERNAME)
+               team.addMembership(testUser.USERNAME),
+               team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1')
             ];
-            return Promise.all(addUsers);
+            return Promise.all(setupTeam);
          });
       });
    });
@@ -131,7 +132,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
    it('should get team', function() {
       return team.getTeam()
          .then(({data}) => {
-            expect(data.name).to.equal('Fixed Test Team 1');
+            expect(data.name).to.equal('fixed-test-repo-1');
          });
    });
 
