@@ -4,19 +4,21 @@ import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
+import clearTeams from './helpers/clearTeams';
 
 describe('Organization', function() {
    let github;
    const ORG_NAME = 'github-tools';
    const MEMBER_NAME = 'clayreimann';
 
-   before(function() {
+   before(function(done) {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
 
+      clearTeams(github, testUser.ORGANIZATION, done);
    });
 
    describe('reading', function() {

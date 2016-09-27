@@ -20,3 +20,15 @@ export function deleteRepo(repo, github) {
          });
    });
 }
+
+export function deleteTeam(team, github) {
+   return new Promise((resolve, reject) => {
+      github
+         .getTeam(team.id)
+         .deleteTeam()
+         .then((removed) => {
+            if(removed) console.log('team', team.name, 'deleted');
+            resolve();
+         });
+   });
+}
