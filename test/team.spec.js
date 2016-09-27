@@ -42,12 +42,13 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
       });
       const org = github.getOrganization(testUser.ORGANIZATION);
 
+      /* eslint-disable no-console */
       // The code below add a fixed-test-repo-1
-      let promiseRepo = new Promise((resolve, reject) => {
+      let promiseRepo = new Promise((resolve) => {
          org
             .createRepo({name: 'fixed-test-repo-1'})
             .then(resolve, () => {
-               console.log('skiped fixed-test-repo-1 creation')
+               console.log('skiped fixed-test-repo-1 creation');
                resolve();
             });
       });
@@ -57,10 +58,10 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
          org
             .createTeam({
                name: 'Fixed Test Team 1',
-               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1']
+               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'] // eslint-disable-line camelcase
             })
-            .then(({data: team}) => resolve(team), (err) => {
-               console.log('skiped Fixed Test Team 1 creation')
+            .then(({data: team}) => resolve(team), () => {
+               console.log('skiped Fixed Test Team 1 creation');
                // Team already exists, fetch the team
                return org.getTeams();
             })
@@ -68,18 +69,20 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
                let team = teams
                   .filter((team) => team.name === 'Fixed Test Team 1')
                   .pop();
-               if(team) {
-                  resolve(team)
+               if (team) {
+                  resolve(team);
                } else {
                   reject(new Error('missing Fixed Test Team 1'));
                }
             });
       });
+      /* eslint-enable no-console */
 
       return promiseRepo.then(() => {
          return promiseTeam
          .then((t) => {
-            return team = github.getTeam(t.id);
+            team = github.getTeam(t.id);
+            return team;
          })
          .then((team) => {
             let addUsers = [

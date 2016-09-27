@@ -17,18 +17,17 @@ describe('Issue', function() {
          auth: 'basic'
       });
 
-
       github
          .getUser()
          .createRepo({name: testRepoName})
-         .then(function(){
+         .then(function() {
             remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
             return remoteIssues.createIssue({
                title: 'Test issue',
                body: 'Test issue body'
             });
          })
-         .then(function(){
+         .then(function() {
             remoteIssues.createMilestone({
                title: 'Default Milestone',
                description: 'Test'
