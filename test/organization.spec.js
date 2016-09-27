@@ -78,18 +78,6 @@ describe('Organization', function() {
          }));
       });
 
-      // TODO: The longer this is in place the slower it will get if we don't cleanup random test teams
-      it('should list the teams in the organization', function() {
-         return organization.getTeams()
-           .then(({data}) => {
-              const hasTeam = data.reduce(
-                 (found, member) => member.slug === 'fixed-test-team-1' || found,
-                 false);
-
-              expect(hasTeam).to.be.true();
-           });
-      });
-
       it('should create an organization team', function(done) {
          const options = {
             name: testRepoName,
@@ -102,6 +90,17 @@ describe('Organization', function() {
             expect(team.organization.login).to.equal(testUser.ORGANIZATION); // jscs:ignore
             done();
          }));
+      });
+
+      it('should list the teams in the organization', function() {
+         return organization.getTeams()
+           .then(({data}) => {
+              const hasTeam = data.reduce(
+                 (found, member) => member.slug === testRepoName || found,
+                 false);
+
+              expect(hasTeam).to.be.true();
+           });
       });
    });
 });
