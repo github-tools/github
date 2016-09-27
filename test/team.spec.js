@@ -34,7 +34,7 @@ let team;
 let name;
 
 describe('Team', function() { // Isolate tests that are based on a fixed team
-   before(function(done) {
+   before(function() {
       const github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
@@ -42,16 +42,53 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
       });
       const org = github.getOrganization(testUser.ORGANIZATION);
 
-      team = github.getTeam(2027812); // github-api-tests/fixed-test-team-1
-      org
-         .createRepo({name: 'fixed-test-repo-1'})
-         .then(() => {
-            return team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1');
+      // The code below add a fixed-test-repo-1
+      let promiseRepo = new Promise((resolve, reject) => {
+         org
+            .createRepo({name: 'fixed-test-repo-1'})
+            .then(resolve, () => {
+               console.log('skiped fixed-test-repo-1 creation')
+               resolve();
+            });
+      });
+
+      // The code below add a Fixed Test Team 1
+      let promiseTeam = new Promise((resolve, reject) => {
+         org
+            .createTeam({
+               name: 'Fixed Test Team 1',
+               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1']
+            })
+            .then(({data: team}) => resolve(team), (err) => {
+               console.log('skiped Fixed Test Team 1 creation')
+               // Team already exists, fetch the team
+               return org.getTeams();
+            })
+            .then(({data: teams}) => {
+               let team = teams
+                  .filter((team) => team.name === 'Fixed Test Team 1')
+                  .pop();
+               if(team) {
+                  resolve(team)
+               } else {
+                  reject(new Error('missing Fixed Test Team 1'));
+               }
+            });
+      });
+
+      return promiseRepo.then(() => {
+         return promiseTeam
+         .then((t) => {
+            return team = github.getTeam(t.id);
          })
-         .catch(() => {
-            console.log('skipping fixed-test-repo-1 creation');
-            done();
+         .then((team) => {
+            let addUsers = [
+               team.addMembership(altUser.USERNAME),
+               team.addMembership(testUser.USERNAME)
+            ];
+            return Promise.all(addUsers);
          });
+      });
    });
 
    it('should get membership for a given user', function() {
