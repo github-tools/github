@@ -398,6 +398,24 @@ describe('Repository', function() {
          }));
       });
 
+      it('should update commit status', function(done) {
+         const status = {
+            state: 'success',
+            target_url: 'http://example.com', // eslint-disable-line camelcase
+            description: 'Build was successful!'
+         };
+         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
+            remoteRepo.updateStatus(refSpec.object.sha, status, assertSuccessful(done,
+            function(err, updated) {
+               expect(updated).to.have.own('state', status.state);
+               expect(updated).to.have.own('target_url', status.target_url);
+               expect(updated).to.have.own('description', status.description);
+               expect(updated).to.have.own('context', 'default');
+               done();
+            }));
+         }));
+      });
+
       it('should delete ref on repo', function(done) {
          remoteRepo.deleteRef('heads/new-test-branch', assertSuccessful(done));
       });
