@@ -288,6 +288,22 @@ describe('Repository', function() {
          }));
       });
 
+      it('should be able to edit repository information', function(done) {
+         const options = {
+            name: testRepoName,
+            description: 'New short description',
+            homepage: 'http://example.com'
+         };
+
+         remoteRepo.updateRepository(options, assertSuccessful(done,
+            function(err, repository) {
+               expect(repository).to.have.own('homepage', options.homepage);
+               expect(repository).to.have.own('description', options.description);
+               expect(repository).to.have.own('name', testRepoName);
+               done();
+            }));
+      });
+
       it('should show repo collaborators', function(done) {
          remoteRepo.getCollaborators(assertSuccessful(done, function(err, collaborators) {
             if (!(collaborators instanceof Array)) {
