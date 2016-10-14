@@ -1,5 +1,13 @@
 # Change Log
 
+## next - ???
+
+### Features
+* add `Issue.editLabel`
+* add `Issue.deleteLabel`
+* add `Issue.getLabel`
+* add `Issue.listLabels`
+
 ## 2.4.0 - 2016/09/16
 ### Features
 * add `Issue.createLabel`
