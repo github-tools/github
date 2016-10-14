@@ -35,7 +35,7 @@ describe('Organization', function() {
             .then(function({data: members}) {
                expect(members).to.be.an.array();
 
-               let hasClayReimann = members.reduce((found, member) => member.login === MEMBER_NAME || found, false);
+               const hasClayReimann = members.some((member) => member.login === MEMBER_NAME);
                expect(hasClayReimann).to.be.true();
 
                done();
@@ -80,9 +80,7 @@ describe('Organization', function() {
       it('should list the teams in the organization', function() {
          return organization.getTeams()
            .then(({data}) => {
-              const hasTeam = data.reduce(
-                 (found, member) => member.slug === 'fixed-test-team-1' || found,
-                 false);
+              const hasTeam = data.some((member) => member.slug === 'fixed-test-team-1');
 
               expect(hasTeam).to.be.true();
            });
