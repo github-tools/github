@@ -239,6 +239,21 @@ describe('Repository', function() {
          }));
       });
 
+      it('should get the combined status for a SHA from a repo', function(done) {
+         remoteRepo.getCombinedStatus(v10SHA, assertSuccessful(done, function(err, combinedStatus) {
+            expect(combinedStatus).to.be.an.object();
+            expect(combinedStatus).to.have.property('state');
+            expect(combinedStatus.state).to.equal('success');
+
+            expect(combinedStatus).to.have.property('statuses');
+            expect(combinedStatus.statuses).to.be.an.array();
+            expect(combinedStatus.statuses.length).to.equal(1);
+            expect(combinedStatus.statuses[0].url).to.equal(statusUrl);
+
+            done();
+         }));
+      });
+
       it('should get a SHA from a repo', function(done) {
          remoteRepo.getSha('master', '.gitignore', assertSuccessful(done));
       });
