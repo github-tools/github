@@ -83,11 +83,10 @@ npm install github-api
 ```
 
 ## Compatibility
-Github.js is tested on Node:
+`Github.js` is tested on Node.js:
 * 6.x
-* 5.x
-* 4.x
-* 0.12
+
+Note: `Github.js` uses Promise, hence it will not work in Node.js < 4 without polyfill.
 
 ## GitHub Tools
 
@@ -100,6 +99,4 @@ as well. In the meantime, we recommend you to take a look at other projects of t
 [gitter]: https://gitter.im/michael/github
 [npm-package]: https://www.npmjs.com/package/github-api/
 [unpkg]: https://unpkg.com/github-api/
-[prose]: http://prose.io
 [travis-ci]: https://travis-ci.org/michael/github
-[xhr-link]: http://blogs.msdn.com/b/ieinternals/archive/2010/05/13/xdomainrequest-restrictions-limitations-and-workarounds.aspx
