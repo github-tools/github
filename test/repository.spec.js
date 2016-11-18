@@ -8,7 +8,6 @@ import getTestRepoName from './helpers/getTestRepoName';
 
 describe('Repository', function() {
    let github;
-   let remoteRepo;
    let user;
    let imageB64;
    let imageBlob;
@@ -30,6 +29,8 @@ describe('Repository', function() {
    });
 
    describe('reading', function() {
+      let remoteRepo;
+
       before(function() {
          remoteRepo = github.getRepo('michael', 'github');
       });
@@ -265,6 +266,7 @@ describe('Repository', function() {
       const releaseBody = 'This is my 49 character long release description.';
       let sha;
       let releaseId;
+      let remoteRepo;
 
       before(function() {
          user = github.getUser();
@@ -592,6 +594,8 @@ describe('Repository', function() {
    });
 
    describe('deleting', function() {
+      let remoteRepo;
+
       before(function() {
          remoteRepo = github.getRepo(testUser.USERNAME, testRepoName);
       });
