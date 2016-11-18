@@ -13,7 +13,7 @@ import uglify from 'gulp-uglify';
 const ALL_SOURCES = [
    '*.js',
    'lib/*.js',
-   'test/*.js'
+   'test/*.js',
 ];
 
 gulp.task('lint', function() {
@@ -33,13 +33,13 @@ gulp.task('build', [
    'build:external:min',
    'build:bundled:debug',
    'build:external:debug',
-   'build:components'
+   'build:components',
 ]);
 
 const bundledConfig = {
    debug: true,
    entries: 'lib/GitHub.js',
-   standalone: 'GitHub'
+   standalone: 'GitHub',
 };
 const externalConfig = {
    debug: true,
@@ -50,9 +50,9 @@ const externalConfig = {
       'js-base64',
       'es6-promise',
       'debug',
-      'utf8'
+      'utf8',
    ],
-   bundleExternal: false
+   bundleExternal: false,
 };
 gulp.task('build:bundled:min', function() {
    return buildBundle(bundledConfig, '.bundle.min.js', true);
@@ -82,7 +82,7 @@ function buildBundle(options, extname, minify) {
       .pipe(source('GitHub.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({
-         loadMaps: true
+         loadMaps: true,
       }));
 
    if (minify) {

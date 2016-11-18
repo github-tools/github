@@ -6,7 +6,7 @@ import {assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
 const altUser = {
-   USERNAME: 'mtscout6-test'
+   USERNAME: 'mtscout6-test',
 };
 
 function createTestTeam() {
@@ -15,14 +15,14 @@ function createTestTeam() {
    const github = new Github({
       username: testUser.USERNAME,
       password: testUser.PASSWORD,
-      auth: 'basic'
+      auth: 'basic',
    });
 
    const org = github.getOrganization(testUser.ORGANIZATION);
 
    return org.createTeam({
       name,
-      privacy: 'closed'
+      privacy: 'closed',
    }).then(({data: result}) => {
       const team = github.getTeam(result.id);
       return {team, name};
@@ -37,7 +37,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
       const github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       const org = github.getOrganization(testUser.ORGANIZATION);
@@ -58,7 +58,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
          org
             .createTeam({
                name: 'fixed-test-repo-1',
-               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'] // eslint-disable-line camelcase
+               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'], // eslint-disable-line camelcase
             })
             .then(({data: team}) => resolve(team), () => {
                console.log('skiped fixed-test-repo-1 creation');
@@ -88,7 +88,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
             let setupTeam = [
                team.addMembership(altUser.USERNAME),
                team.addMembership(testUser.USERNAME),
-               team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1')
+               team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1'),
             ];
             return Promise.all(setupTeam);
          });

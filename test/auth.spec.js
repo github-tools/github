@@ -13,7 +13,7 @@ describe('Github', function() {
          github = new Github({
             username: testUser.USERNAME,
             password: testUser.PASSWORD,
-            auth: 'basic'
+            auth: 'basic',
          });
 
          user = github.getUser();
@@ -70,7 +70,7 @@ describe('Github', function() {
          github = new Github({
             username: testUser.USERNAME,
             password: 'fake124',
-            auth: 'basic'
+            auth: 'basic',
          });
 
          user = github.getUser();

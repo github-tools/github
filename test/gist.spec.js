@@ -15,7 +15,7 @@ describe('Gist', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
    });
 

@@ -16,7 +16,7 @@ describe('Organization', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       clearTeams(github, testUser.ORGANIZATION, () => {
@@ -85,7 +85,7 @@ describe('Organization', function() {
          const options = {
             name: testRepoName,
             description: 'Created by unit tests',
-            privacy: 'secret'
+            privacy: 'secret',
          };
 
          organization.createTeam(options, assertSuccessful(done, function(err, team) {
@@ -107,7 +107,7 @@ describe('Organization', function() {
       it('should create a project', function(done) {
          organization.createProject({
             name: 'test-project',
-            body: 'body'
+            body: 'body',
          }, assertSuccessful(done, function(err, project) {
             expect(project).to.own('name', 'test-project');
             expect(project).to.own('body', 'body');

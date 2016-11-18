@@ -14,7 +14,7 @@ describe('Issue', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       github
@@ -24,13 +24,13 @@ describe('Issue', function() {
             remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
             return remoteIssues.createIssue({
                title: 'Test issue',
-               body: 'Test issue body'
+               body: 'Test issue body',
             });
          })
          .then(function() {
             remoteIssues.createMilestone({
                title: 'Default Milestone',
-               description: 'Test'
+               description: 'Test',
             }, done);
          }).catch(done);
    });
@@ -96,7 +96,7 @@ describe('Issue', function() {
       it('should create issue', function(done) {
          const newIssue = {
             title: 'New issue',
-            body: 'New issue body'
+            body: 'New issue body',
          };
 
          remoteIssues.createIssue(newIssue, assertSuccessful(done, function(err, issue) {
@@ -112,7 +112,7 @@ describe('Issue', function() {
       it('should edit issue', function(done) {
          const newProps = {
             title: 'Edited title',
-            state: 'closed'
+            state: 'closed',
          };
 
          remoteIssues.editIssue(createdIssueId, newProps, assertSuccessful(done, function(err, issue) {
@@ -166,7 +166,7 @@ describe('Issue', function() {
       it('should create a milestone', function(done) {
          let milestone = {
             title: 'v42',
-            description: 'The ultimate version'
+            description: 'The ultimate version',
          };
 
          remoteIssues.createMilestone(milestone)
@@ -180,7 +180,7 @@ describe('Issue', function() {
       });
       it('should update a milestone', function(done) {
          let milestone = {
-            description: 'Version 6 * 7'
+            description: 'Version 6 * 7',
          };
 
          expect(createdMilestoneId).to.be.a.number();
@@ -204,7 +204,7 @@ describe('Issue', function() {
       it('should create a label', (done) => {
          let label = {
             name: 'test',
-            color: '123456'
+            color: '123456',
          };
 
          remoteIssues.createLabel(label)
@@ -220,7 +220,7 @@ describe('Issue', function() {
       it('should retrieve a single label', (done) => {
          let label = {
             name: 'test',
-            color: '123456'
+            color: '123456',
          };
 
          remoteIssues.getLabel(label.name)
@@ -234,7 +234,7 @@ describe('Issue', function() {
 
       it('should update a label', (done) => {
          let label = {
-            color: '789abc'
+            color: '789abc',
          };
 
          expect(createdLabel).to.be.a.string();

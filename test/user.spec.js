@@ -11,7 +11,7 @@ describe('User', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
       user = github.getUser();
 
@@ -27,7 +27,7 @@ describe('User', function() {
          type: 'owner',
          sort: 'updated',
          per_page: 90, // eslint-disable-line
-         page: 10
+         page: 10,
       };
 
       user.listRepos(filterOpts, assertArray(done));
@@ -50,7 +50,7 @@ describe('User', function() {
          all: true,
          participating: true,
          since: '2015-01-01T00:00:00Z',
-         before: '2015-02-01T00:00:00Z'
+         before: '2015-02-01T00:00:00Z',
       };
 
       user.listNotifications(filterOpts, assertArray(done));

@@ -19,7 +19,7 @@ describe('Repository', function() {
    before(function(done) {
       github = new Github({
          username: testUser.USERNAME,
-         password: testUser.PASSWORD
+         password: testUser.PASSWORD,
       });
 
       loadImage(function(b64, blob) {
@@ -137,7 +137,7 @@ describe('Repository', function() {
             path: 'test',
             author: 'AurelioDeRosa',
             since,
-            until
+            until,
          };
 
          remoteRepo.listCommits(options, assertSuccessful(done, function(err, commits) {
@@ -295,7 +295,7 @@ describe('Repository', function() {
 
       it('should create repo', function(done) {
          const repoDef = {
-            name: testRepoName
+            name: testRepoName,
          };
 
          user.createRepo(repoDef, assertSuccessful(done, function(err, repo) {
@@ -309,7 +309,7 @@ describe('Repository', function() {
          const options = {
             name: testRepoName,
             description: 'New short description',
-            homepage: 'http://example.com'
+            homepage: 'http://example.com',
          };
 
          remoteRepo.updateRepository(options, assertSuccessful(done,
@@ -425,7 +425,7 @@ describe('Repository', function() {
          remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
             let newRef = {
                ref: 'refs/heads/new-test-branch',
-               sha: refSpec.object.sha
+               sha: refSpec.object.sha,
             };
             remoteRepo.createRef(newRef, assertSuccessful(done));
          }));
@@ -435,7 +435,7 @@ describe('Repository', function() {
          const status = {
             state: 'success',
             target_url: 'http://example.com', // eslint-disable-line camelcase
-            description: 'Build was successful!'
+            description: 'Build was successful!',
          };
          remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
             remoteRepo.updateStatus(refSpec.object.sha, status, assertSuccessful(done,
@@ -495,7 +495,7 @@ describe('Repository', function() {
       it('should write author and committer to repo', function(done) {
          const options = {
             author: {name: 'Author Name', email: 'author@example.com'},
-            committer: {name: 'Committer Name', email: 'committer@example.com'}
+            committer: {name: 'Committer Name', email: 'committer@example.com'},
          };
 
          remoteRepo.writeFile('dev',
@@ -533,7 +533,7 @@ describe('Repository', function() {
          remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
             let newRef = {
                ref: 'refs/heads/testing-14',
-               sha: refSpec.object.sha
+               sha: refSpec.object.sha,
             };
 
             remoteRepo.createRef(newRef, assertSuccessful(done, function() {
@@ -554,7 +554,7 @@ describe('Repository', function() {
 
       it('should be able to write an image to the repo', function(done) {
          const opts = {
-            encode: false
+            encode: false,
          };
 
          remoteRepo.writeFile('master', imageFileName, imageB64, initialMessage, opts, assertSuccessful(done,
@@ -611,7 +611,7 @@ describe('Repository', function() {
       it('should edit a release', function(done) {
          const releaseDef = {
             name: releaseName,
-            body: releaseBody
+            body: releaseBody,
          };
 
          remoteRepo.updateRelease(releaseId, releaseDef, assertSuccessful(done, function(err, release) {
@@ -644,7 +644,7 @@ describe('Repository', function() {
       it('should create a project', function(done) {
          remoteRepo.createProject({
             name: 'test-project',
-            body: 'body'
+            body: 'body',
          }, assertSuccessful(done, function(err, project) {
             expect(project).to.own('name', 'test-project');
             expect(project).to.own('body', 'body');
