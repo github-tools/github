@@ -69,6 +69,7 @@ describe('Issue', function() {
       let createdIssueId;
       let issueCommentId;
       let createdMilestoneId;
+      let createdLabel;
 
       // 200ms between tests so that Github has a chance to settle
       beforeEach(function(done) {
@@ -177,6 +178,72 @@ describe('Issue', function() {
       it('should delete a milestone', function(done) {
          expect(createdMilestoneId).to.be.a.number();
          remoteIssues.deleteMilestone(createdMilestoneId)
+            .then(({status}) => {
+               expect(status).to.equal(204);
+               done();
+            }).catch(done);
+      });
+
+      it('should create a label', (done) => {
+         let label = {
+            name: 'test',
+            color: '123456'
+         };
+
+         remoteIssues.createLabel(label)
+            .then(({data: createdLabel}) => {
+               expect(createdLabel).to.have.own('name', label.name);
+               expect(createdLabel).to.have.own('color', label.color);
+
+               createdLabel = label.name;
+               done();
+            }).catch(done);
+      });
+
+      it('should retrieve a single label', (done) => {
+         let label = {
+            name: 'test',
+            color: '123456'
+         };
+
+         remoteIssues.getLabel(label.name)
+            .then(({data: retrievedLabel}) => {
+               expect(retrievedLabel).to.have.own('name', label.name);
+               expect(retrievedLabel).to.have.own('color', label.color);
+
+               done();
+            }).catch(done);
+      });
+
+      it('should update a label', (done) => {
+         let label = {
+            color: '789abc'
+         };
+
+         expect(createdLabel).to.be.a.string();
+         remoteIssues.editLabel(createdLabel, label)
+            .then(({data: updatedLabel}) => {
+               expect(updatedLabel).to.have.own('name', createdLabel);
+               expect(updatedLabel).to.have.own('color', label.color);
+
+               done();
+            }).catch(done);
+      });
+
+      it('should list labels', (done) => {
+         expect(createdLabel).to.be.a.string();
+
+         remoteIssues.listLabels({}, assertSuccessful(done, function(err, labels) {
+            expect(labels).to.be.an.array();
+            const hasLabel = labels.some((label) => label.name === createdLabel);
+            expect(hasLabel).to.be.true();
+            done();
+         }));
+      });
+
+      it('should delete a label', (done) => {
+         expect(createdLabel).to.be.a.string();
+         remoteIssues.deleteLabel(createdLabel)
             .then(({status}) => {
                expect(status).to.equal(204);
                done();
