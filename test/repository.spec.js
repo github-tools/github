@@ -166,7 +166,7 @@ describe('Repository', function() {
 
       it('should fail when null ref is passed', function(done) {
          remoteRepo.getSingleCommit(null, assertFailure(done, function(err) {
-            expect(err.status).to.be(404);
+            expect(err.response.status).to.be(404);
             done();
          }));
       });
@@ -357,7 +357,7 @@ describe('Repository', function() {
          remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
             remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
                remoteRepo.getContents('master', fileName, 'raw', assertFailure(done, function(err) {
-                  expect(err.status).to.be(404);
+                  expect(err.response.status).to.be(404);
                   remoteRepo.getContents('master', 'new_name', 'raw', assertSuccessful(done, function(err, fileText) {
                      expect(fileText).to.be(initialText);
 
@@ -590,7 +590,7 @@ describe('Repository', function() {
 
       it('should fail on broken commit', function(done) {
          remoteRepo.commit('broken-parent-hash', 'broken-tree-hash', initialMessage, assertFailure(done, function(err) {
-            expect(err.status).to.be(422);
+            expect(err.response.status).to.be(422);
             done();
          }));
       });
