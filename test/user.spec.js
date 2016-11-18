@@ -1,7 +1,6 @@
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
-import clearRepo from './helpers/clearRepo';
 
 describe('User', function() {
    let github;
@@ -14,8 +13,6 @@ describe('User', function() {
          auth: 'basic',
       });
       user = github.getUser();
-
-      clearRepo(github, done);
    });
 
    it('should get user repos', function(done) {
