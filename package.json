@@ -1,5 +1,5 @@
 {
-  "name": "github-api",
+  "name": "@mathieudutour/github-api",
   "version": "2.4.0",
   "license": "BSD-3-Clause-Clear",
   "description": "A higher-level wrapper around the Github API.",
@@ -26,12 +26,7 @@
     ],
     "plugins": [
       [
-        "transform-es2015-modules-umd",
-        {
-          "globals": {
-            "es6-promise": "Promise"
-          }
-        }
+        "transform-es2015-modules-umd"
       ]
     ],
     "env": {
@@ -47,7 +42,6 @@
   "dependencies": {
     "axios": "^0.10.0",
     "debug": "^2.2.0",
-    "es6-promise": "^3.0.2",
     "js-base64": "^2.1.9",
     "utf8": "^2.1.1"
   },

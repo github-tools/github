@@ -103,7 +103,7 @@ var gh = new GitHub({
 });
 
 var yahoo = gh.getOrganization('yahoo');
-yahoo.listRepos(function(err, repos) {
+yahoo.getRepos(function(err, repos) {
    // look at all the repos!
 })
 ```

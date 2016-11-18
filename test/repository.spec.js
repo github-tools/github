@@ -181,6 +181,23 @@ describe('Repository', function() {
 
             const contributor = contributors[0];
 
+            expect(contributor).to.have.own('login');
+            expect(contributor).to.have.own('contributions');
+
+            done();
+         }));
+      });
+
+      it('should show repo contributor stats', function(done) {
+         remoteRepo.getContributorStats(assertSuccessful(done, function(err, contributors) {
+            if (!(contributors instanceof Array)) {
+               console.log(JSON.stringify(contributors, null, 2)); // eslint-disable-line
+            }
+            expect(contributors).to.be.an.array();
+            expect(contributors.length).to.be.above(1);
+
+            const contributor = contributors[0];
+
             expect(contributor).to.have.own('author');
             expect(contributor).to.have.own('total');
             expect(contributor).to.have.own('weeks');
