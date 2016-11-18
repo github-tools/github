@@ -8,7 +8,8 @@
     "Ændrew Rininsland <aendrew.rininsland@thetimes.co.uk> (http://www.aendrew.com)",
     "Aurelio De Rosa <a.derosa@audero.it> (http://www.audero.it/)",
     "Clay Reimann <clayreimann@gmail.com> (http://clayreimann.me)",
-    "Michael Aufreiter (http://substance.io)"
+    "Michael Aufreiter (http://substance.io)",
+    "Mathieu Dutour <mathieu@dutour.me> (https://github.com/mathieudutour)"
   ],
   "readmeFilename": "README.md",
   "scripts": {
@@ -88,13 +89,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/michael/github.git"
+    "url": "git://github.com/github-tools/github.git"
   },
   "keywords": [
     "github",
     "api"
   ],
   "bugs": {
-    "url": "https://github.com/michael/github/issues"
+    "url": "https://github.com/github-tools/github/issues"
   }
 }

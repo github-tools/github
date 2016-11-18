@@ -7,7 +7,6 @@ export function assertSuccessful(done, cb) {
       try {
          expect(err).not.to.exist(err ? (err.response ? err.response.data : err) : 'No error');
          expect(res).to.exist();
-         expect(xhr).to.be.an.object();
 
          if (cb) {
             setTimeout(function delay() {

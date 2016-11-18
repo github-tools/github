@@ -2,9 +2,9 @@
 
 [![Downloads per month](https://img.shields.io/npm/dm/github-api.svg?maxAge=2592000)][npm-package]
 [![Latest version](https://img.shields.io/npm/v/github-api.svg?maxAge=3600)][npm-package]
-[![Gitter](https://img.shields.io/gitter/room/michael/github.js.svg?maxAge=2592000)][gitter]
-[![Travis](https://img.shields.io/travis/michael/github.svg?maxAge=60)][travis-ci]
-<!-- [![Codecov](https://img.shields.io/codecov/c/github/michael/github.svg?maxAge=2592000)][codecov] -->
+[![Gitter](https://img.shields.io/gitter/room/github-tools/github.js.svg?maxAge=2592000)][gitter]
+[![Travis](https://img.shields.io/travis/github-tools/github.svg?maxAge=60)][travis-ci]
+[![Codecov](https://img.shields.io/codecov/c/github/github-tools/github.svg?maxAge=2592000)][codecov]
 
 Github.js provides a minimal higher-level wrapper around Github's API.
 
@@ -94,9 +94,9 @@ The team behind Github.js has created a whole organization, called [GitHub Tools
 dedicated to GitHub and its API. In the near future this repository could be moved under the GitHub Tools organization
 as well. In the meantime, we recommend you to take a look at other projects of the organization.
 
-[codecov]: https://codecov.io/github/michael/github?branch=master
-[docs]: http://michael.github.io/github/
-[gitter]: https://gitter.im/michael/github
+[codecov]: https://codecov.io/github/github-tools/github?branch=master
+[docs]: http://github-tools.github.io/github/
+[gitter]: https://gitter.im/github-tools/github
 [npm-package]: https://www.npmjs.com/package/github-api/
 [unpkg]: https://unpkg.com/github-api/
-[travis-ci]: https://travis-ci.org/michael/github
+[travis-ci]: https://travis-ci.org/github-tools/github

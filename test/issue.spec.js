@@ -35,6 +35,10 @@ describe('Issue', function() {
          }).catch(done);
    });
 
+   after(function(done) {
+      github.getRepo(testUser.USERNAME, testRepoName).deleteRepo(done);
+   });
+
    describe('reading', function() {
       let remoteIssueId;
       let milestoneId;
