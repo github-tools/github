@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "gulp clean",
     "build": "gulp build",
-    "test": "mocha --opts ./mocha.opts test/*.spec.js",
+    "test": "mocha",
     "test-verbose": "DEBUG=github* npm test",
     "lint": "gulp lint",
     "make-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
