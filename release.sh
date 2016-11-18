@@ -1,14 +1,14 @@
 #!/bin/bash
 # This is the automated release script
 
-# make sure all our dependencies are installed so we can publish docs
-npm install
-
 # guard against stupid
 if [ -z "$1" ]; then
    echo "You must specify a new version level: [patch, minor, major]";
    exit 1;
 fi
+
+# make sure all our dependencies are installed so we can publish docs
+npm install
 
 # bump the version
 echo "npm version $1"
@@ -32,5 +32,10 @@ git checkout gh-pages
 mv out/* docs/
 echo $VERSION >> _data/versions.csv
 git add .
-git co -m "adding docs for v$VERSION"
+git commit -m "adding docs for v$VERSION"
 git push
+
+# switch back to master, build and publish
+git checkout master
+npm run build
+npm publish
