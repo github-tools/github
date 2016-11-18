@@ -253,13 +253,11 @@ describe('Repository', function() {
       });
 
       it('should check if the repo is starred', function(done) {
-         setTimeout(() => {
-            remoteRepo.isStarred(assertSuccessful(done, function(err, result) {
-               expect(result).to.equal(false);
+         remoteRepo.isStarred(assertSuccessful(done, function(err, result) {
+            expect(result).to.equal(false);
 
-               done();
-            }));
-         }, 200);
+            done();
+         }));
       });
    });
 
@@ -579,22 +577,18 @@ describe('Repository', function() {
       });
 
       it('should star the repo', function(done) {
-         setTimeout(() => {
-            remoteRepo.star(assertSuccessful(done, function() {
-               remoteRepo.isStarred(assertSuccessful(done));
-            }));
-         }, 200);
+         remoteRepo.star(assertSuccessful(done, function() {
+            remoteRepo.isStarred(assertSuccessful(done));
+         }));
       });
 
       it('should unstar the repo', function(done) {
-         setTimeout(() => {
-            remoteRepo.unstar(assertSuccessful(done, function() {
-               remoteRepo.isStarred(assertSuccessful(done, function(_, isStarred) {
-                  expect(isStarred).to.be(false);
-                  done();
-               }));
+         remoteRepo.unstar(assertSuccessful(done, function() {
+            remoteRepo.isStarred(assertSuccessful(done, function(_, isStarred) {
+               expect(isStarred).to.be(false);
+               done();
             }));
-         }, 200);
+         }));
       });
 
       it('should fail on broken commit', function(done) {
