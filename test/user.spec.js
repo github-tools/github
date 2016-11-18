@@ -6,7 +6,7 @@ describe('User', function() {
    let github;
    let user;
 
-   before(function(done) {
+   before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
