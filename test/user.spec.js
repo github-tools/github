@@ -71,4 +71,8 @@ describe('User', function() {
    it('should unfollow user', function(done) {
       user.unfollow('ingalls', assertSuccessful(done));
    });
+
+   it('should list the email addresses of the user', function(done) {
+      user.getEmails(assertSuccessful(done));
+   });
 });
