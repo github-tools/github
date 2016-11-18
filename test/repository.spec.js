@@ -305,6 +305,22 @@ describe('Repository', function() {
          }));
       });
 
+      it('should be able to edit repository information', function(done) {
+         const options = {
+            name: testRepoName,
+            description: 'New short description',
+            homepage: 'http://example.com'
+         };
+
+         remoteRepo.updateRepository(options, assertSuccessful(done,
+            function(err, repository) {
+               expect(repository).to.have.own('homepage', options.homepage);
+               expect(repository).to.have.own('description', options.description);
+               expect(repository).to.have.own('name', testRepoName);
+               done();
+            }));
+      });
+
       it('should show repo collaborators', function(done) {
          remoteRepo.getCollaborators(assertSuccessful(done, function(err, collaborators) {
             if (!(collaborators instanceof Array)) {
@@ -412,6 +428,24 @@ describe('Repository', function() {
                sha: refSpec.object.sha
             };
             remoteRepo.createRef(newRef, assertSuccessful(done));
+         }));
+      });
+
+      it('should update commit status', function(done) {
+         const status = {
+            state: 'success',
+            target_url: 'http://example.com', // eslint-disable-line camelcase
+            description: 'Build was successful!'
+         };
+         remoteRepo.getRef('heads/master', assertSuccessful(done, function(err, refSpec) {
+            remoteRepo.updateStatus(refSpec.object.sha, status, assertSuccessful(done,
+            function(err, updated) {
+               expect(updated).to.have.own('state', status.state);
+               expect(updated).to.have.own('target_url', status.target_url);
+               expect(updated).to.have.own('description', status.description);
+               expect(updated).to.have.own('context', 'default');
+               done();
+            }));
          }));
       });
 
