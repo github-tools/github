@@ -40,7 +40,59 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
          auth: 'basic'
       });
 
-      team = github.getTeam(2027812); // github-api-tests/fixed-test-team-1
+      const org = github.getOrganization(testUser.ORGANIZATION);
+
+      /* eslint-disable no-console */
+      // The code below add a fixed-test-repo-1
+      let promiseRepo = new Promise((resolve) => {
+         org
+            .createRepo({name: 'fixed-test-repo-1'})
+            .then(resolve, () => {
+               console.log('skiped fixed-test-repo-1 creation');
+               resolve();
+            });
+      });
+
+      // The code below add a fixed-test-repo-1
+      let promiseTeam = new Promise((resolve, reject) => {
+         org
+            .createTeam({
+               name: 'fixed-test-repo-1',
+               repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'] // eslint-disable-line camelcase
+            })
+            .then(({data: team}) => resolve(team), () => {
+               console.log('skiped fixed-test-repo-1 creation');
+               // Team already exists, fetch the team
+               return org.getTeams();
+            })
+            .then(({data: teams}) => {
+               let team = teams
+                  .filter((team) => team.name === 'fixed-test-repo-1')
+                  .pop();
+               if (team) {
+                  resolve(team);
+               } else {
+                  reject(new Error('missing fixed-test-repo-1'));
+               }
+            });
+      });
+      /* eslint-enable no-console */
+
+      return promiseRepo.then(() => {
+         return promiseTeam
+         .then((t) => {
+            team = github.getTeam(t.id);
+            return team;
+         })
+         .then((team) => {
+            let setupTeam = [
+               team.addMembership(altUser.USERNAME),
+               team.addMembership(testUser.USERNAME),
+               team.manageRepo(testUser.ORGANIZATION, 'fixed-test-repo-1')
+            ];
+            return Promise.all(setupTeam);
+         });
+      });
    });
 
    it('should get membership for a given user', function() {
@@ -74,7 +126,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
    it('should get team', function() {
       return team.getTeam()
          .then(({data}) => {
-            expect(data.name).to.equal('Fixed Test Team 1');
+            expect(data.name).to.equal('fixed-test-repo-1');
          });
    });
 

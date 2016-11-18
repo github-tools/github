@@ -3,19 +3,36 @@ import expect from 'must';
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful} from './helpers/callbacks';
+import getTestRepoName from './helpers/getTestRepoName';
 
 describe('Issue', function() {
    let github;
+   const testRepoName = getTestRepoName();
    let remoteIssues;
 
-   before(function() {
+   before(function(done) {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic'
       });
 
-      remoteIssues = github.getIssues(testUser.USERNAME, 'TestRepo');
+      github
+         .getUser()
+         .createRepo({name: testRepoName})
+         .then(function() {
+            remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
+            return remoteIssues.createIssue({
+               title: 'Test issue',
+               body: 'Test issue body'
+            });
+         })
+         .then(function() {
+            remoteIssues.createMilestone({
+               title: 'Default Milestone',
+               description: 'Test'
+            }, done);
+         }).catch(done);
    });
 
    describe('reading', function() {
@@ -191,9 +208,9 @@ describe('Issue', function() {
          };
 
          remoteIssues.createLabel(label)
-            .then(({data: createdLabel}) => {
-               expect(createdLabel).to.have.own('name', label.name);
-               expect(createdLabel).to.have.own('color', label.color);
+            .then(({data: _createdLabel}) => {
+               expect(_createdLabel).to.have.own('name', label.name);
+               expect(_createdLabel).to.have.own('color', label.color);
 
                createdLabel = label.name;
                done();
