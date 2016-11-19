@@ -109,7 +109,7 @@ yahoo.listRepos(function(err, repos) {
 ```
 
 [codecov]: https://codecov.io/github/michael/github?branch=master
-[docs]: http://michael.github.io/github/
+[docs]: http://github-tools.github.io/github/
 [gitter]: https://gitter.im/michael/github
 [npm-package]: https://www.npmjs.com/package/github-api/
 [unpkg]: https://unpkg.com/github-api/
