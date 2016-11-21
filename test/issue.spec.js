@@ -11,17 +11,17 @@ describe('Issue', function() {
    const testRepoName = getTestRepoName();
    let remoteIssues;
 
-   before(function(done) {
+   before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic',
       });
 
-      github
+      return github
          .getUser()
          .createRepo({name: testRepoName})
-         .then(wait())
+         .then(wait(5000))
          .then(function() {
             remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
             return remoteIssues.createIssue({
@@ -30,15 +30,15 @@ describe('Issue', function() {
             });
          })
          .then(function() {
-            remoteIssues.createMilestone({
+            return remoteIssues.createMilestone({
                title: 'Default Milestone',
                description: 'Test',
-            }, done);
-         }).catch(done);
+            });
+         });
    });
 
-   after(function(done) {
-      github.getRepo(testUser.USERNAME, testRepoName).deleteRepo(done);
+   after(function() {
+      return github.getRepo(testUser.USERNAME, testRepoName).deleteRepo();
    });
 
    describe('reading', function() {
