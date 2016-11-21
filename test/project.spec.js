@@ -13,14 +13,14 @@ describe('Project', function() {
    let columnId;
    let cardId;
 
-   before(function(done) {
+   before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic',
       });
 
-      github
+      return github
         .getUser()
         .createRepo({name: testRepoName})
         .then(wait(5000))
@@ -33,12 +33,11 @@ describe('Project', function() {
         })
         .then(function(_project) {
            project = github.getProject(_project.data.id);
-           done();
-        }).catch(done);
+        });
    });
 
-   after(function(done) {
-      github.getRepo(testUser.USERNAME, testRepoName).deleteRepo(done);
+   after(function() {
+      return github.getRepo(testUser.USERNAME, testRepoName).deleteRepo();
    });
 
    it('should get repo project', function(done) {

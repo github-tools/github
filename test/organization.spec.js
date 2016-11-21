@@ -11,12 +11,13 @@ describe('Organization', function() {
    const MEMBER_NAME = 'clayreimann';
    let createdProject;
 
-   before(function(done) {
+   before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic',
       });
+      return;
    });
 
    after(function() {
