@@ -4,8 +4,6 @@ import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
-import clearTeams from './helpers/clearTeams';
-import clearOrgProjects from './helpers/clearOrgProjects';
 
 describe('Organization', function() {
    let github;
@@ -17,10 +15,6 @@ describe('Organization', function() {
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
          auth: 'basic',
-      });
-
-      clearTeams(github, testUser.ORGANIZATION, () => {
-         clearOrgProjects(github, testUser.ORGANIZATION, done);
       });
    });
 
@@ -106,10 +100,10 @@ describe('Organization', function() {
 
       it('should create a project', function(done) {
          organization.createProject({
-            name: 'test-project',
+            name: testRepoName,
             body: 'body',
          }, assertSuccessful(done, function(err, project) {
-            expect(project).to.own('name', 'test-project');
+            expect(project).to.own('name', testRepoName);
             expect(project).to.own('body', 'body');
             done();
          }));
@@ -118,7 +112,10 @@ describe('Organization', function() {
       it('should list repo projects', function(done) {
          organization.listProjects(assertSuccessful(done, function(err, projects) {
             expect(projects).to.be.an.array();
-            expect(projects.length).to.equal(1);
+
+            const hasProject = projects.some((project) => project.name === testRepoName);
+
+            expect(hasProject).to.be.true();
             done();
          }));
       });

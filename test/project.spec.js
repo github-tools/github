@@ -23,7 +23,7 @@ describe('Project', function() {
       github
         .getUser()
         .createRepo({name: testRepoName})
-        .then(wait())
+        .then(wait(5000))
         .then(function() {
            const remoteRepo = github.getRepo(testUser.USERNAME, testRepoName);
            return remoteRepo.createProject({
