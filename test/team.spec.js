@@ -2,12 +2,9 @@ import expect from 'must';
 
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
+import altUser from './fixtures/alt-user.json';
 import {assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
-
-const altUser = {
-   USERNAME: 'mtscout6-test'
-};
 
 function createTestTeam() {
    const name = getTestRepoName();
