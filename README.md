@@ -88,12 +88,6 @@ npm install github-api
 
 Note: `Github.js` uses Promise, hence it will not work in Node.js < 4 without polyfill.
 
-## GitHub Tools
-
-The team behind Github.js has created a whole organization, called [GitHub Tools](https://github.com/github-tools),
-dedicated to GitHub and its API. In the near future this repository could be moved under the GitHub Tools organization
-as well. In the meantime, we recommend you to take a look at other projects of the organization.
-
 [codecov]: https://codecov.io/github/github-tools/github?branch=master
 [docs]: http://github-tools.github.io/github/
 [gitter]: https://gitter.im/github-tools/github

@@ -1,6 +1,6 @@
 {
-  "name": "@mathieudutour/github-api",
-  "version": "3.2.0",
+  "name": "github-api",
+  "version": "2.4.0",
   "license": "BSD-3-Clause-Clear",
   "description": "A higher-level wrapper around the Github API.",
   "main": "dist/components/GitHub.js",

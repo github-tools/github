@@ -10,6 +10,9 @@ fi
 # make sure all our dependencies are installed so we can publish docs
 npm install
 
+# try to build to make sure we don't publish something really broken
+npm run build
+
 # bump the version
 echo "npm version $1"
 npm version $1
@@ -34,8 +37,3 @@ echo $VERSION >> _data/versions.csv
 git add .
 git commit -m "adding docs for v$VERSION"
 git push
-
-# switch back to master, build and publish
-git checkout master
-npm run build
-npm publish
