@@ -56,10 +56,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
          .then(function({data: members}) {
             expect(members).to.be.an.array();
 
-            let hasTestUser = members.reduce(
-               (found, member) => member.login === testUser.USERNAME || found,
-               false
-            );
+            let hasTestUser = members.some((member) => member.login === testUser.USERNAME);
 
             expect(hasTestUser).to.be.true();
          });
@@ -68,10 +65,7 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
    it('should get team repos', function() {
       return team.listRepos()
          .then(({data}) => {
-            const hasRepo = data.reduce(
-               (found, repo) => repo.name === 'fixed-test-repo-1' || found,
-               false
-            );
+            const hasRepo = data.some((repo) => repo.name === 'fixed-test-repo-1');
 
             expect(hasRepo).to.be.true();
          });
