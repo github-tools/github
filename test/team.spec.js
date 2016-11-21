@@ -54,28 +54,25 @@ describe('Team', function() { // Isolate tests that are based on a fixed team
       });
 
       // The code below add a fixed-test-repo-1
-      let promiseTeam = new Promise((resolve, reject) => {
-         org
+      let promiseTeam = org
             .createTeam({
                name: 'fixed-test-repo-1',
                repo_names: [testUser.ORGANIZATION + '/fixed-test-repo-1'], // eslint-disable-line camelcase
             })
-            .then(({data: team}) => resolve(team), () => {
+            .then(({data: team}) => team)
+            .catch(() => {
                console.log('skiped fixed-test-repo-1 creation');
                // Team already exists, fetch the team
-               return org.getTeams();
-            })
-            .then(({data: teams}) => {
-               let team = teams
-                  .filter((team) => team.name === 'fixed-test-repo-1')
-                  .pop();
-               if (team) {
-                  resolve(team);
-               } else {
-                  reject(new Error('missing fixed-test-repo-1'));
-               }
+               return org.getTeams().then(({data: teams}) => {
+                  let team = teams
+                     .filter((team) => team.name === 'fixed-test-repo-1')
+                     .pop();
+                  if (!team) {
+                     throw new Error('missing fixed-test-repo-1');
+                  }
+                  return team;
+               });
             });
-      });
       /* eslint-enable no-console */
 
       return promiseRepo.then(() => {

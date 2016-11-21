@@ -2,6 +2,7 @@ import expect from 'must';
 
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
+import wait from './helpers/wait';
 import {assertSuccessful} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
@@ -20,6 +21,7 @@ describe('Issue', function() {
       github
          .getUser()
          .createRepo({name: testRepoName})
+         .then(wait())
          .then(function() {
             remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
             return remoteIssues.createIssue({
