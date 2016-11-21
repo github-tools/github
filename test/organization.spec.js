@@ -9,6 +9,7 @@ describe('Organization', function() {
    let github;
    const ORG_NAME = 'github-tools';
    const MEMBER_NAME = 'clayreimann';
+   let createdProject;
 
    before(function(done) {
       github = new Github({
@@ -16,6 +17,10 @@ describe('Organization', function() {
          password: testUser.PASSWORD,
          auth: 'basic',
       });
+   });
+
+   after(function() {
+      return github.getProject(createdProject.id).deleteProject();
    });
 
    describe('reading', function() {
@@ -103,6 +108,7 @@ describe('Organization', function() {
             name: testRepoName,
             body: 'body',
          }, assertSuccessful(done, function(err, project) {
+            createdProject = project;
             expect(project).to.own('name', testRepoName);
             expect(project).to.own('body', 'body');
             done();
