@@ -349,11 +349,12 @@ describe('Repository', function() {
 
       it('should write to repo', function(done) {
          remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
-            remoteRepo.getContents('master', fileName, 'raw', assertSuccessful(done, function(err, fileText) {
+            wait().then(() => remoteRepo.getContents('master', fileName, 'raw',
+            assertSuccessful(done, function(err, fileText) {
                expect(fileText).to.be(initialText);
 
                done();
-            }));
+            })));
          }));
       });
 
