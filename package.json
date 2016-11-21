@@ -18,7 +18,8 @@
     "test-verbose": "DEBUG=github* npm test",
     "lint": "gulp lint",
     "make-docs": "node_modules/.bin/jsdoc -c .jsdoc.json --verbose",
-    "release": "./release.sh"
+    "release": "./release.sh",
+    "prepublish": "npm run build"
   },
   "babel": {
     "presets": [
@@ -41,8 +42,7 @@
     }
   },
   "files": [
-    "dist/*",
-    "lib/*"
+    "dist/*"
   ],
   "dependencies": {
     "axios": "^0.10.0",

@@ -1,6 +1,6 @@
 docs/
 coverage/
 node_modules/
-
+lib/
 .DS_Store
 sauce.json
