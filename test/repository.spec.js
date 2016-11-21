@@ -1,6 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
+import wait from './helpers/wait';
 import testUser from './fixtures/user.json';
 import loadImage from './fixtures/imageBlob';
 import {assertSuccessful, assertFailure} from './helpers/callbacks';
@@ -358,16 +359,16 @@ describe('Repository', function() {
 
       it('should rename files', function(done) {
          remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
-            remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
-               remoteRepo.getContents('master', fileName, 'raw', assertFailure(done, function(err) {
+            wait()().then(() => remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
+               wait()().then(() => remoteRepo.getContents('master', fileName, 'raw', assertFailure(done, function(err) {
                   expect(err.response.status).to.be(404);
                   remoteRepo.getContents('master', 'new_name', 'raw', assertSuccessful(done, function(err, fileText) {
                      expect(fileText).to.be(initialText);
 
                      done();
                   }));
-               }));
-            }));
+               })));
+            })));
          }));
       });
 
