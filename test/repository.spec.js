@@ -240,6 +240,16 @@ describe('Repository', function() {
             done();
          }));
       });
+      
+      it('should list review comments', function(done) {
+        const repo = github.getRepo('michael', 'github');
+
+        repo.listPullRequestReviewComments(401, assertSuccessful(done, function(err, reviewComments) {
+          expect(reviewComments).to.be.an.array();
+          //expect(reviewComments[0]).to.have.own('body', 'Comment test'); //TODO: Need to establish a test PR with test review comments
+          done();
+        }));
+      });
    });
 
    describe('creating/modifiying', function() {
