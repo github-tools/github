@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "github-api",
   "version": "2.4.0",
   "license": "BSD-3-Clause-Clear",
@@ -98,4 +98,5 @@
   "bugs": {
     "url": "https://github.com/github-tools/github/issues"
   }
+hello
 }
