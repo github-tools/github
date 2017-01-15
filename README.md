@@ -10,7 +10,7 @@ Github.js provides a minimal higher-level wrapper around Github's API.
 
 ## Usage
 
-```javascript
+```js
 /*
    Data can be retrieved from the API either using callbacks (as in versions < 1.0)
    or using a new promise-based API. The promise-based API returns the raw Axios
@@ -29,35 +29,36 @@ gist.create({
          content: "Aren't gists great!"
       }
    }
-}).then(function({data}) {
+})
+.then(({data}) => {
    // Promises!
    let createdGist = data;
    return gist.read();
-}).then(function({data}) {
+})
+.then(({data}) => {
    let retrievedGist = data;
    // do interesting things
 });
 ```
 
-```javascript
-var GitHub = require('github-api');
+```js
+import GitHub from 'github-api';
 
 // basic auth
-var gh = new GitHub({
+const gh = new GitHub({
    username: 'FOO',
    password: 'NotFoo'
-   /* also acceptable:
-      token: 'MY_OAUTH_TOKEN'
-    */
+   // also acceptable:
+   // token: 'MY_OAUTH_TOKEN'
 });
 
-var me = gh.getUser(); // no user specified defaults to the user for whom credentials were provided
-me.listNotifications(function(err, notifications) {
+const me = gh.getUser(); // no user specified defaults to the user for whom credentials were provided
+me.listNotifications((err, notifications) => {
    // do some stuff
 });
 
-var clayreimann = gh.getUser('clayreimann');
-clayreimann.listStarredRepos(function(err, repos) {
+const clayreimann = gh.getUser('clayreimann');
+clayreimann.listStarredRepos((err, repos) => {
    // look at all the starred repos!
 });
 ```
@@ -71,7 +72,7 @@ should include updated JSDoc.
 Github.js is available from `npm` or [unpkg][unpkg].
 
 ```shell
-npm install github-api
+npm install github-api --save
 ```
 
 ```html
