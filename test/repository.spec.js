@@ -14,6 +14,7 @@ describe('Repository', function() {
    let imageBlob;
    const testRepoName = getTestRepoName();
    const v10SHA = '20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
+   const testPRNumber = 153;
    const statusUrl =
     'https://api.github.com/repos/github-tools/github/statuses/20fcff9129005d14cc97b9d59b8a3d37f4fb633b';
 
@@ -479,10 +480,21 @@ describe('Repository', function() {
          }));
       });
 
+      it('should list pull request commits', function(done) {
+         const repo = github.getRepo('github-tools', 'github');
+         repo.listPullRequestCommits(testPRNumber, assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            expect(commits).to.have.length(1);
+            expect(commits[0]).to.have.own('sha');
+
+            done();
+         }));
+      });
+
       it('should get pull requests on repo', function(done) {
          const repo = github.getRepo('github-tools', 'github');
 
-         repo.getPullRequest(153, assertSuccessful(done, function(err, pr) {
+         repo.getPullRequest(testPRNumber, assertSuccessful(done, function(err, pr) {
             expect(pr).to.have.own('title');
             expect(pr).to.have.own('body');
             expect(pr).to.have.own('url');
