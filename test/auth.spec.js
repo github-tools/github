@@ -13,7 +13,7 @@ describe('Github', function() {
          github = new Github({
             username: testUser.USERNAME,
             password: testUser.PASSWORD,
-            auth: 'basic'
+            auth: 'basic',
          });
 
          user = github.getUser();
@@ -70,7 +70,7 @@ describe('Github', function() {
          github = new Github({
             username: testUser.USERNAME,
             password: 'fake124',
-            auth: 'basic'
+            auth: 'basic',
          });
 
          user = github.getUser();
@@ -83,7 +83,7 @@ describe('Github', function() {
 
       it('should fail authentication and return err', function(done) {
          user.listNotifications(assertFailure(done, function(err) {
-            expect(err.status).to.be.equal(401, 'Return 401 status for bad auth');
+            expect(err.response.status).to.be.equal(401, 'Return 401 status for bad auth');
             expect(err.response.data.message).to.equal('Bad credentials');
 
             done();

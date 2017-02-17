@@ -4,8 +4,7 @@ node_js:
   - '6'
   - '5'
   - '4'
-  - '0.12'
-  
+
 cache:
   directories:
     - node_modules
@@ -14,10 +13,10 @@ before_script:
   - npm run lint
   # - npm run build # will need this when we do sauce testing of compiled files
 script:
-  - npm test
+  - npm run test-coverage
   # - npm run test-dist # test the compiled files
-# after_success:
-#   - npm run codecov # disabled temporarialy while I work out how to generate accurate coverage of ES2015 code
+after_success:
+  - npm run codecov
 before_deploy:
     - npm run build
 deploy:

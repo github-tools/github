@@ -11,7 +11,7 @@ describe('Markdown', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       markdown = github.getMarkdown();
@@ -19,7 +19,7 @@ describe('Markdown', function() {
 
    it('should convert markdown to html as plain Markdown', function(done) {
       const options = {
-         text: 'Hello world github/linguist#1 **cool**, and #1!'
+         text: 'Hello world github/linguist#1 **cool**, and #1!',
       };
 
       markdown.render(options)
@@ -33,7 +33,7 @@ describe('Markdown', function() {
       const options = {
          text: 'Hello world github/linguist#1 **cool**, and #1!',
          mode: 'gfm',
-         context: 'github/gollum'
+         context: 'github/gollum',
       };
       markdown.render(options)
          .then(function({data: html}) {

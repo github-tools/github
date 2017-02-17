@@ -12,7 +12,7 @@ describe('RateLimit', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       rateLimit = github.getRateLimit();

@@ -2,20 +2,43 @@ import expect from 'must';
 
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
+import wait from './helpers/wait';
 import {assertSuccessful} from './helpers/callbacks';
+import getTestRepoName from './helpers/getTestRepoName';
 
 describe('Issue', function() {
    let github;
+   const testRepoName = getTestRepoName();
    let remoteIssues;
 
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
-      remoteIssues = github.getIssues(testUser.USERNAME, 'TestRepo');
+      return github
+         .getUser()
+         .createRepo({name: testRepoName})
+         .then(wait(5000))
+         .then(function() {
+            remoteIssues = github.getIssues(testUser.USERNAME, testRepoName);
+            return remoteIssues.createIssue({
+               title: 'Test issue',
+               body: 'Test issue body',
+            });
+         })
+         .then(function() {
+            return remoteIssues.createMilestone({
+               title: 'Default Milestone',
+               description: 'Test',
+            });
+         });
+   });
+
+   after(function() {
+      return github.getRepo(testUser.USERNAME, testRepoName).deleteRepo();
    });
 
    describe('reading', function() {
@@ -69,6 +92,7 @@ describe('Issue', function() {
       let createdIssueId;
       let issueCommentId;
       let createdMilestoneId;
+      let createdLabel;
 
       // 200ms between tests so that Github has a chance to settle
       beforeEach(function(done) {
@@ -78,7 +102,7 @@ describe('Issue', function() {
       it('should create issue', function(done) {
          const newIssue = {
             title: 'New issue',
-            body: 'New issue body'
+            body: 'New issue body',
          };
 
          remoteIssues.createIssue(newIssue, assertSuccessful(done, function(err, issue) {
@@ -94,7 +118,7 @@ describe('Issue', function() {
       it('should edit issue', function(done) {
          const newProps = {
             title: 'Edited title',
-            state: 'closed'
+            state: 'closed',
          };
 
          remoteIssues.editIssue(createdIssueId, newProps, assertSuccessful(done, function(err, issue) {
@@ -148,7 +172,7 @@ describe('Issue', function() {
       it('should create a milestone', function(done) {
          let milestone = {
             title: 'v42',
-            description: 'The ultimate version'
+            description: 'The ultimate version',
          };
 
          remoteIssues.createMilestone(milestone)
@@ -162,7 +186,7 @@ describe('Issue', function() {
       });
       it('should update a milestone', function(done) {
          let milestone = {
-            description: 'Version 6 * 7'
+            description: 'Version 6 * 7',
          };
 
          expect(createdMilestoneId).to.be.a.number();
@@ -177,6 +201,72 @@ describe('Issue', function() {
       it('should delete a milestone', function(done) {
          expect(createdMilestoneId).to.be.a.number();
          remoteIssues.deleteMilestone(createdMilestoneId)
+            .then(({status}) => {
+               expect(status).to.equal(204);
+               done();
+            }).catch(done);
+      });
+
+      it('should create a label', (done) => {
+         let label = {
+            name: 'test',
+            color: '123456',
+         };
+
+         remoteIssues.createLabel(label)
+            .then(({data: _createdLabel}) => {
+               expect(_createdLabel).to.have.own('name', label.name);
+               expect(_createdLabel).to.have.own('color', label.color);
+
+               createdLabel = label.name;
+               done();
+            }).catch(done);
+      });
+
+      it('should retrieve a single label', (done) => {
+         let label = {
+            name: 'test',
+            color: '123456',
+         };
+
+         remoteIssues.getLabel(label.name)
+            .then(({data: retrievedLabel}) => {
+               expect(retrievedLabel).to.have.own('name', label.name);
+               expect(retrievedLabel).to.have.own('color', label.color);
+
+               done();
+            }).catch(done);
+      });
+
+      it('should update a label', (done) => {
+         let label = {
+            color: '789abc',
+         };
+
+         expect(createdLabel).to.be.a.string();
+         remoteIssues.editLabel(createdLabel, label)
+            .then(({data: updatedLabel}) => {
+               expect(updatedLabel).to.have.own('name', createdLabel);
+               expect(updatedLabel).to.have.own('color', label.color);
+
+               done();
+            }).catch(done);
+      });
+
+      it('should list labels', (done) => {
+         expect(createdLabel).to.be.a.string();
+
+         remoteIssues.listLabels({}, assertSuccessful(done, function(err, labels) {
+            expect(labels).to.be.an.array();
+            const hasLabel = labels.some((label) => label.name === createdLabel);
+            expect(hasLabel).to.be.true();
+            done();
+         }));
+      });
+
+      it('should delete a label', (done) => {
+         expect(createdLabel).to.be.a.string();
+         remoteIssues.deleteLabel(createdLabel)
             .then(({status}) => {
                expect(status).to.equal(204);
                done();
