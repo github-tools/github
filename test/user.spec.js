@@ -42,6 +42,10 @@ describe('User', function() {
       user.listNotifications(assertArray(done));
    });
 
+   it('should get user activity', function(done) {
+      user.listEvents(assertArray(done));
+   });
+
    it('should get user notifications with options', function(done) {
       const filterOpts = {
          all: true,
