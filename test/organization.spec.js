@@ -95,13 +95,13 @@ describe('Organization', function() {
          }));
       });
 
-      it('should list the teams in the organization', function() {
-         return organization.getTeams()
-           .then(({data}) => {
-              const hasTeam = data.some((member) => member.slug === testRepoName);
+      it('should list the teams in the organization', function(done) {
+         organization.getTeams(assertSuccessful(done, function(err, teams) {
+            const hasTeam = teams.some((member) => member.slug === testRepoName);
 
-              expect(hasTeam).to.be.true();
-           });
+            expect(hasTeam).to.be.true();
+            done();
+         }));
       });
 
       it('should create a project', function(done) {
