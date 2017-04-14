@@ -99,7 +99,7 @@ describe('Repository', function() {
       });
 
       it('should get tree', function(done) {
-         remoteRepo.getTree('master', assertSuccessful(done, function(err, response) {
+         remoteRepo.getTree('master', true, assertSuccessful(done, function(err, response) {
             let {tree} = response;
             expect(tree).to.be.an.array();
             expect(tree.length).to.be.above(0);
