@@ -1,0 +1,4 @@
+Language:        JavaScript
+BasedOnStyle:    Google
+ColumnLimit:     80
+
