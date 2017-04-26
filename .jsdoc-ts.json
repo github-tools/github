@@ -1,0 +1,24 @@
+
+{
+    "tags": {
+        "dictionaries": ["jsdoc"]
+    },
+    "source": {
+        "include": ["lib/", "package.json", "README.md"],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": true,
+        "jsdoc2tsd": {
+           "interfacePrefix": ""
+        }
+    },
+    "opts": {
+        "destination": "./",
+        "encoding": "utf8",
+        "recurse": true,
+        "template": "./node_modules/tsd-jsdoc"
+    }
+}
