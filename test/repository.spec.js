@@ -260,6 +260,15 @@ describe('Repository', function() {
             done();
          }));
       });
+
+      it('should list pullrequest reviews', function(done) {
+         remoteRepo.listPullRequestReviews(454, assertSuccessful(done, function(err, reviews) {
+            expect(reviews).to.be.an.array();
+            expect(reviews[0]).to.have.own('body', 'Please add tests for this');
+
+            done();
+         }));
+      });
    });
 
    describe('creating/modifiying', function() {
