@@ -263,7 +263,7 @@ describe('Repository', function() {
       });
    });
 
-   describe.only('creating/modifiying', function() {
+   describe('creating/modifiying', function() {
       const fileName = 'test.md';
 
       const initialText = 'This is a test.';
