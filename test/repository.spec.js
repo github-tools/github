@@ -3,6 +3,7 @@ import expect from 'must';
 import Github from '../lib/GitHub';
 import wait from './helpers/wait';
 import testUser from './fixtures/user.json';
+import altUser from './fixtures/alt-user.json';
 import loadImage from './fixtures/imageBlob';
 import {assertSuccessful, assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
@@ -262,7 +263,7 @@ describe('Repository', function() {
       });
    });
 
-   describe('creating/modifiying', function() {
+   describe.only('creating/modifiying', function() {
       const fileName = 'test.md';
 
       const initialText = 'This is a test.';
@@ -343,8 +344,18 @@ describe('Repository', function() {
          }));
       });
 
-      it('should test whether user is collaborator', function(done) {
-         remoteRepo.isCollaborator(testUser.USERNAME, assertSuccessful(done));
+      it('should add repo collaborator', async function() {
+         expect(await remoteRepo.isCollaborator(altUser.USERNAME)).to.be.false;
+         await remoteRepo.addCollaborator(altUser.USERNAME);
+         expect(await remoteRepo.isCollaborator(altUser.USERNAME)).to.be.true;
+      });
+
+      it('should test whether user is collaborator', async function() {
+         expect(await remoteRepo.isCollaborator(testUser.USERNAME)).to.be.true;
+      });
+
+      it('should test whether user is not collaborator', async function() {
+         expect(await remoteRepo.isCollaborator(altUser.USERNAME)).to.be.false;
       });
 
       it('should write to repo', function(done) {

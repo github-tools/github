@@ -4,10 +4,7 @@ import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
 import {assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
-
-const altUser = {
-   USERNAME: 'mtscout6-test',
-};
+import altUser from './fixtures/alt-user.json';
 
 function createTestTeam() {
    const name = getTestRepoName();
