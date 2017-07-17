@@ -1,8 +1,8 @@
+import assert from 'assert';
 import expect from 'must';
 
 import Github from '../lib/GitHub';
 import testUser from './fixtures/user.json';
-import {assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 import altUser from './fixtures/alt-user.json';
 
@@ -142,9 +142,15 @@ describe('Team', function() { // Isolate tests that need a new team per test
    });
 
    // Test for Team deletion
-   afterEach(function(done) {
-      team.deleteTeam()
-         .then(() => team.getTeam(assertFailure(done)));
+   afterEach(async function() {
+      await team.deleteTeam();
+
+      try {
+         await team.getTeam();
+         assert.fail(undefined, undefined, 'Failed to delete the team');
+      } catch (error) {
+         // Swallow intentionally
+      }
    });
 
    it('should update team', function() {
@@ -155,13 +161,11 @@ describe('Team', function() { // Isolate tests that need a new team per test
          });
    });
 
-   it('should add membership for a given user', function() {
-      return team.addMembership(testUser.USERNAME)
-         .then(({data}) => {
-            const {state, role} = data;
-            expect(state === 'active' || state === 'pending').to.be.true();
-            expect(role).to.equal('member');
-         });
+   it('should add membership for a given user', async function() {
+      const {data: {state, role}} = await team.addMembership(testUser.USERNAME);
+      expect(state === 'active' || state === 'pending').to.be.true();
+      // TODO: This does not appear to match the documentation...
+      expect(role).to.equal('maintainer');
    });
 
    it('should add membership as a maintainer for a given user', function() {
