@@ -6,7 +6,7 @@
 [![Travis](https://img.shields.io/travis/github-tools/github.svg?maxAge=60)][travis-ci]
 [![Codecov](https://img.shields.io/codecov/c/github/github-tools/github.svg?maxAge=2592000)][codecov]
 
-Github.js provides a minimal higher-level wrapper around Github's API.
+`Github.js` provides a minimal higher-level wrapper around Github's API.
 
 ## Usage
 
@@ -68,7 +68,7 @@ clayreimann.listStarredRepos(function(err, repos) {
 should include updated JSDoc.
 
 ## Installation
-Github.js is available from `npm` or [unpkg][unpkg].
+`Github.js` is available from `npm` or [unpkg][unpkg].
 
 ```shell
 npm install github-api
@@ -83,10 +83,10 @@ npm install github-api
 ```
 
 ## Compatibility
-`Github.js` is tested on Node.js:
+`Github.js` is tested on `Node.js`:
 * 6.x
 
-Note: `Github.js` uses Promise, hence it will not work in Node.js < 4 without polyfill.
+Note: `Github.js` uses Promise, hence it will not work in `Node.js` < 4 without polyfill.
 
 [codecov]: https://codecov.io/github/github-tools/github?branch=master
 [docs]: http://github-tools.github.io/github/
