@@ -21,7 +21,9 @@ describe('Organization', function() {
    });
 
    after(function() {
-      return github.getProject(createdProject.id).deleteProject();
+      if (createdProject) {
+         return github.getProject(createdProject.id).deleteProject();
+      }
    });
 
    describe('reading', function() {
@@ -95,13 +97,10 @@ describe('Organization', function() {
          }));
       });
 
-      it('should list the teams in the organization', function() {
-         return organization.getTeams()
-           .then(({data}) => {
-              const hasTeam = data.some((member) => member.slug === testRepoName);
-
-              expect(hasTeam).to.be.true();
-           });
+      it('should list the teams in the organization', async function() {
+         const {data} = await organization.getTeams();
+         const hasTeam = data.some((member) => member.slug === testRepoName);
+         expect(hasTeam).to.be.true();
       });
 
       it('should create a project', function(done) {
