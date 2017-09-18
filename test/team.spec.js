@@ -159,7 +159,7 @@ describe('Team', function() { // Isolate tests that need a new team per test
    });
 
    it('should add membership for a given user', function() {
-      return team.addMembership(testUser.USERNAME)
+      return team.addMembership(altUser.USERNAME)
          .then(({data}) => {
             const {state, role} = data;
             expect(state === 'active' || state === 'pending').to.be.true();

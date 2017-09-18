@@ -17,11 +17,13 @@ describe('Organization', function() {
          password: testUser.PASSWORD,
          auth: 'basic',
       });
-      return;
+      createdProject = undefined;
    });
 
    after(function() {
-      return github.getProject(createdProject.id).deleteProject();
+      if (createdProject) {
+         return github.getProject(createdProject.id).deleteProject();
+      }
    });
 
    describe('reading', function() {
