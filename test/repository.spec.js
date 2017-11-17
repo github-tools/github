@@ -47,7 +47,7 @@ describe('Repository', function() {
 
       it('should get blob', function(done) {
          remoteRepo.getSha('master', 'README.md', assertSuccessful(done, function(err, response) {
-            remoteRepo.getBlob(response.sha, true, assertSuccessful(done, function(err, content) {
+            remoteRepo.getBlob(response.sha, assertSuccessful(done, function(err, content) {
                expect(content).to.be.include('# Github.js');
 
                done();
