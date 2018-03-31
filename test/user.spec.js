@@ -34,6 +34,14 @@ describe('User', function() {
       user.listOrgs(assertArray(done));
    });
 
+   it('should get user followers', function(done) {
+      user.listFollowers(assertArray(done));
+   });
+
+   it('should get user following list', function(done) {
+      user.listFollowing(assertArray(done));
+   });
+
    it('should get user gists', function(done) {
       user.listGists(assertArray(done));
    });
