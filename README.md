@@ -1,3 +1,6 @@
+# Maintainers wanted
+[Apply within](https://github.com/github-tools/github/issues/539)
+
 # Github.js
 
 [![Downloads per month](https://img.shields.io/npm/dm/github-api.svg?maxAge=2592000)][npm-package]
