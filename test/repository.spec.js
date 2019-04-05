@@ -169,7 +169,7 @@ describe('Repository', function() {
 
       it('should fail when null ref is passed', function(done) {
          remoteRepo.getSingleCommit(null, assertFailure(done, function(err) {
-            expect(err.response.status).to.be(404);
+            expect(err.response.status).to.be(422);
             done();
          }));
       });
