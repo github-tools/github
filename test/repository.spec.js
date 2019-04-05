@@ -600,6 +600,22 @@ describe('Repository', function() {
          }));
       });
 
+      it('should succeed on proper commit', function(done) {
+         let parentSHA = '';
+         let treeSHA = '';
+         remoteRepo.getRef('heads/master').then((ref) => {
+            parentSHA = ref.data.object.sha;
+            return remoteRepo.getCommit(parentSHA);
+         }).then((commit) => {
+            treeSHA = commit.data.tree.sha;
+            return remoteRepo.commit(parentSHA, treeSHA, 'is this thing on?');
+         }).then((commit) => {
+            expect(commit.data.author).to.have.own('name', 'Mike de Boer');
+            expect(commit.data.author).to.have.own('email', 'mike@c9.io');
+            done();
+         });
+      });
+
       it('should create a release', function(done) {
          const releaseDef = {
             name: releaseName,
