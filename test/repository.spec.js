@@ -616,6 +616,29 @@ describe('Repository', function() {
          });
       });
 
+      it('should allow commit to change author', function(done) {
+         let parentSHA = '';
+         let treeSHA = '';
+         remoteRepo.getRef('heads/master').then((ref) => {
+            parentSHA = ref.data.object.sha;
+            return remoteRepo.getCommit(parentSHA);
+         }).then((commit) => {
+            treeSHA = commit.data.tree.sha;
+            return remoteRepo.commit(parentSHA, treeSHA, 'Who made this commit?', {
+               author: {
+                  name: 'Jimothy Halpert',
+                  email: 'jim@dundermifflin.com',
+               },
+            });
+         }).then((commit) => {
+            expect(commit.data.author).to.have.own('name', 'Jimothy Halpert');
+            expect(commit.data.author).to.have.own('email', 'jim@dundermifflin.com');
+            done();
+         }).catch((err) => {
+            throw err;
+         });
+      });
+
       it('should create a release', function(done) {
          const releaseDef = {
             name: releaseName,
