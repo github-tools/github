@@ -12,7 +12,7 @@
   <script>mocha.setup('bdd')</script>
   <script>
      describe('the dist file', function() {
-        it('should work', function(done) {
+        it('should load a Gist', function(done) {
            var github = new GitHub();
            var gist = github.getGist('e265df71e7532f3a4bdd');
            gist.read()
