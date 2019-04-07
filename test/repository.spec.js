@@ -459,6 +459,11 @@ describe('Repository', function() {
       });
 
       it('should list tags on repo', function(done) {
+         const options = {
+            per_page: 30 //eslint-disable-line
+         };
+
+         remoteRepo.listTags(options, assertSuccessful(done));
          remoteRepo.listTags(assertSuccessful(done));
       });
 
@@ -628,6 +633,15 @@ describe('Repository', function() {
       });
 
       it('should read all releases', function(done) {
+         const options = {
+            per_page: 30 //eslint-disable-line
+         };
+
+         remoteRepo.listReleases(options, assertSuccessful(done, function(err, releases) {
+            expect(releases).to.be.an.array();
+            done();
+         }));
+
          remoteRepo.listReleases(assertSuccessful(done, function(err, releases) {
             expect(releases).to.be.an.array();
             done();
