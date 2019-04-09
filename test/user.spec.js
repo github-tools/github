@@ -61,6 +61,13 @@ describe('User', function() {
       user.listStarredRepos(assertArray(done));
    });
 
+   it('should show user\'s starred gists', function(done) {
+      const option = {
+         since: '2015-01-01T00:00:00Z',
+      };
+      user.listStarredGists(option, assertArray(done));
+   });
+
    it('should follow user', function(done) {
       user.follow('ingalls', assertSuccessful(done));
    });
