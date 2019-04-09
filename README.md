@@ -86,10 +86,7 @@ npm install github-api
 ```
 
 ## Compatibility
-`Github.js` is tested on `Node.js`:
-* 6.x
-
-Note: `Github.js` uses Promise, hence it will not work in `Node.js` < 4 without polyfill.
+`Github.js` is tested on node's LTS and current versions.
 
 [codecov]: https://codecov.io/github/github-tools/github?branch=master
 [docs]: http://github-tools.github.io/github/
