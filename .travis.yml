@@ -1,9 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-  - '6'
-  - '5'
-  - '4'
+  - '11'
+  - '10'
+  - '8'
 
 cache:
   directories:
