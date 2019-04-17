@@ -1,24 +1,21 @@
 sudo: false
 language: node_js
 node_js:
-  - '11'
-  - '10'
-  - '8'
-
+- '11'
+- '10'
+- '8'
 cache:
   directories:
-    - node_modules
+  - node_modules
 before_install: npm install -g npm@latest
 before_script:
-  - npm run lint
-  # - npm run build # will need this when we do sauce testing of compiled files
+- npm run lint
 script:
-  - npm run test-coverage
-  # - npm run test-dist # test the compiled files
+- npm run test-coverage
 after_success:
-  - npm run codecov
+- npm run codecov
 before_deploy:
-    - npm run build
+- npm run build
 deploy:
   provider: npm
   skip_cleanup: true
@@ -26,4 +23,4 @@ deploy:
     tags: true
   email: clayreimann@gmail.com
   api_key:
-    secure: TZHqJ9Kh2Qf0GAVDjEOQ01Ez6rGMYHKwVLOKTbnb7nSzF7iiGNT4UwzvYawm0T9p1k7X1WOqW3l7OEbIwoKl7/9azT4BBJm7qUMRfB9Zio5cL3rKubJVz7+LEEIW4iBeDWLanhUDgy9BO2JKCt8bfp/U2tltgXtu9Fm/UFPALI8=
+    secure: WnLh1m02aF7NvFNILCZ8KsjPuDeSddQI87y8dwAixStr2FhQyz8FIKZN2Qj1N1Q9ZJvBETe5HWs1c9yOjTKBkD0d/eU2hlpnB9WXEFRJVDjiUuMnpAMMvuqTZwYg6kXq5N+of95PX58AYiBiV/qwsdUr/MgjEEYLt5UZgRYQRvE=
