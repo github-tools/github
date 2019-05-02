@@ -112,6 +112,10 @@ describe('Repository', function() {
          remoteRepo.fork(assertSuccessful(done));
       });
 
+      it('should fork repo to org', function(done) {
+         remoteRepo.forkToOrg(testUser.ORGANIZATION, assertSuccessful(done));
+      });
+
       it('should list forks of repo', function(done) {
          remoteRepo.listForks(assertSuccessful(done, function(err, forks) {
             expect(forks).to.be.an.array();
