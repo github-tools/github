@@ -87,7 +87,7 @@ describe('User', function() {
          return user.unfollow(userToFollow);
       })
 
-      it('should attempt to follow yourself', function(done) {
+      it('should not list yourself as one of your followers', function(done) {
          user.follow(userToFollow, assertSuccessful(done, function(err, resp) {
             user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
                expect((following.some(user => user['login'] === userToFollow))).to.be.false();
@@ -104,24 +104,7 @@ describe('User', function() {
          return user.follow(userToUnfollow);
       })
 
-      it('should attempt to unfollow a user', function(done) {
-         user.unfollow(userToUnfollow, assertSuccessful(done, function(err, resp) {
-            user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
-               expect((following.some(user => user['login'] === userToUnfollow))).to.be.false();
-               done();
-            }));
-         }));
-      });
-   })
-
-   describe('unfollowing yourself', function(done) {
-      const userToUnfollow = testUser.USERNAME;
-
-      before(function() {
-         return user.follow(userToUnfollow);
-      })
-
-      it('should attempt to unfollow yourself', function(done) {
+      it('should unfollow a user', function(done) {
          user.unfollow(userToUnfollow, assertSuccessful(done, function(err, resp) {
             user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
                expect((following.some(user => user['login'] === userToUnfollow))).to.be.false();
