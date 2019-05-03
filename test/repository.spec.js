@@ -121,7 +121,7 @@ describe('Repository', function() {
       });
 
       it('should list commits with no options', function(done) {
-         remoteRepo.listCommits(null, assertSuccessful(done, function(err, commits) {
+         remoteRepo.listCommits(assertSuccessful(done, function(err, commits) {
             expect(commits).to.be.an.array();
             expect(commits.length).to.be.above(0);
 
