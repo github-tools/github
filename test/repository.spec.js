@@ -132,6 +132,18 @@ describe('Repository', function() {
          }));
       });
 
+      it('should list commits with null options', function(done) {
+         remoteRepo.listCommits(null, assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            expect(commits.length).to.be.above(0);
+
+            expect(commits[0]).to.have.own('commit');
+            expect(commits[0]).to.have.own('author');
+
+            done();
+         }));
+      });
+
       it('should list commits with all options', function(done) {
          const since = new Date(2015, 0, 1);
          const until = new Date(2016, 0, 20);
