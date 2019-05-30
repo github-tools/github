@@ -34,6 +34,9 @@ let name;
 
 describe('Team', function() { // Isolate tests that are based on a fixed team
    before(function() {
+      // eslint-disable-next-line no-invalid-this
+      this.timeout(30000);
+
       const github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
