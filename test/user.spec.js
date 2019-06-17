@@ -83,12 +83,12 @@ describe('User', function() {
 
       before(function() {
          return user.unfollow(userToFollow);
-      })
+      });
 
       it('should follow user', function(done) {
          user.follow(userToFollow, assertSuccessful(done, function(err, resp) {
-            user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
-               expect((following.some(user => user['login'] === userToFollow))).to.be.true();
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToFollow))).to.be.true();
                done();
             }));
          }));
@@ -100,34 +100,34 @@ describe('User', function() {
 
       before(function() {
          return user.unfollow(userToFollow);
-      })
+      });
 
       it('should not list yourself as one of your followers', function(done) {
          user.follow(userToFollow, assertSuccessful(done, function(err, resp) {
-            user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
-               expect((following.some(user => user['login'] === userToFollow))).to.be.false();
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToFollow))).to.be.false();
                done();
             }));
          }));
       });
-   })
+   });
 
    describe('unfollowing a user', function(done) {
       const userToUnfollow = 'ingalls';
 
       before(function() {
          return user.follow(userToUnfollow);
-      })
+      });
 
       it('should unfollow a user', function(done) {
          user.unfollow(userToUnfollow, assertSuccessful(done, function(err, resp) {
-            user._request('GET', `/user/following`, null, assertSuccessful(done, function(err, following) {
-               expect((following.some(user => user['login'] === userToUnfollow))).to.be.false();
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToUnfollow))).to.be.false();
                done();
             }));
          }));
       });
-   })
+   });
 
    it('should list the email addresses of the user', function(done) {
       user.getEmails(assertSuccessful(done));
