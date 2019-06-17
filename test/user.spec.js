@@ -1,5 +1,5 @@
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 
 describe('User', function() {

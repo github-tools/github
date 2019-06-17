@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertFailure} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
