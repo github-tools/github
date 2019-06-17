@@ -112,6 +112,10 @@ describe('Repository', function() {
          remoteRepo.fork(assertSuccessful(done));
       });
 
+      it('should fork repo to org', function(done) {
+         remoteRepo.forkToOrg(testUser.ORGANIZATION, assertSuccessful(done));
+      });
+
       it('should list forks of repo', function(done) {
          remoteRepo.listForks(assertSuccessful(done, function(err, forks) {
             expect(forks).to.be.an.array();
@@ -121,6 +125,18 @@ describe('Repository', function() {
       });
 
       it('should list commits with no options', function(done) {
+         remoteRepo.listCommits(assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            expect(commits.length).to.be.above(0);
+
+            expect(commits[0]).to.have.own('commit');
+            expect(commits[0]).to.have.own('author');
+
+            done();
+         }));
+      });
+
+      it('should list commits with null options', function(done) {
          remoteRepo.listCommits(null, assertSuccessful(done, function(err, commits) {
             expect(commits).to.be.an.array();
             expect(commits.length).to.be.above(0);
@@ -169,7 +185,7 @@ describe('Repository', function() {
 
       it('should fail when null ref is passed', function(done) {
          remoteRepo.getSingleCommit(null, assertFailure(done, function(err) {
-            expect(err.response.status).to.be(404);
+            expect(err.response.status).to.be(422);
             done();
          }));
       });
@@ -598,6 +614,45 @@ describe('Repository', function() {
             expect(err.response.status).to.be(422);
             done();
          }));
+      });
+
+      it('should succeed on proper commit', function(done) {
+         let parentSHA = '';
+         let treeSHA = '';
+         remoteRepo.getRef('heads/master').then((ref) => {
+            parentSHA = ref.data.object.sha;
+            return remoteRepo.getCommit(parentSHA);
+         }).then((commit) => {
+            treeSHA = commit.data.tree.sha;
+            return remoteRepo.commit(parentSHA, treeSHA, 'is this thing on?');
+         }).then((commit) => {
+            expect(commit.data.author).to.have.own('name', 'Mike de Boer');
+            expect(commit.data.author).to.have.own('email', 'mike@c9.io');
+            done();
+         });
+      });
+
+      it('should allow commit to change author', function(done) {
+         let parentSHA = '';
+         let treeSHA = '';
+         remoteRepo.getRef('heads/master').then((ref) => {
+            parentSHA = ref.data.object.sha;
+            return remoteRepo.getCommit(parentSHA);
+         }).then((commit) => {
+            treeSHA = commit.data.tree.sha;
+            return remoteRepo.commit(parentSHA, treeSHA, 'Who made this commit?', {
+               author: {
+                  name: 'Jimothy Halpert',
+                  email: 'jim@dundermifflin.com',
+               },
+            });
+         }).then((commit) => {
+            expect(commit.data.author).to.have.own('name', 'Jimothy Halpert');
+            expect(commit.data.author).to.have.own('email', 'jim@dundermifflin.com');
+            done();
+         }).catch((err) => {
+            throw err;
+         });
       });
 
       it('should create a release', function(done) {

@@ -12,7 +12,7 @@
   <script>mocha.setup('bdd')</script>
   <script>
      describe('the dist file', function() {
-        it('should work', function(done) {
+        it('should load a Gist', function(done) {
            var github = new GitHub();
            var gist = github.getGist('e265df71e7532f3a4bdd');
            gist.read()
@@ -20,6 +20,24 @@
                  console.log(http.data);
                  done();
               });
+        });
+
+        it('should render markdown', function(done) {
+           var shouldBe = '<p>Hello world github/linguist#1 <strong>cool</strong>, and #1!</p>\n';
+           var github = new GitHub();
+           var markdown = github.getMarkdown();
+           const options = {
+              text: 'Hello world github/linguist#1 **cool**, and #1!',
+           };
+
+           markdown.render(options)
+              .then(function({data: html}) {
+                 console.log(html);
+                 if (html !== shouldBe) {
+                    throw new Error(html + ' should be ' + shouldBe)
+                 }
+                 done();
+              }).catch(done);
         });
      });
   </script>
