@@ -2,7 +2,7 @@ import expect from 'must';
 
 import Github from '../lib/GitHub';
 import wait from './helpers/wait';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
