@@ -1,5 +1,18 @@
-# Maintainers wanted
-[Apply within](https://github.com/github-tools/github/issues/539)
+# Deprecation Notice
+This library will be deprecating over the next year. We recommend users looking for a good GitHub JavaScript client library try [Octokit](https://github.com/octokit/rest.js/). Our current plan for 2019:
+
+**June-July**
+ - review all open pull requests, either closing them or merging them
+ - look through the ~100 open issues and determine if they're features, bugs, questions and so on
+ 
+**July-August**
+ - submit new PRs to resolve the reported bugs and features
+ 
+**September-December**
+ - refuse all new feature issues
+ - resolve security vulnerabilities
+
+Note that this isn't set in stone, so please come leave your feedback [here](https://github.com/github-tools/github/issues/564).
 
 # Github.js
 
