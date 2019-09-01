@@ -255,6 +255,17 @@ describe('Repository', function() {
          }));
       });
 
+      it('should get combined view of commit statuses for a SHA from a repo', function(done) {
+         remoteRepo.getCombinedStatus(v10SHA, assertSuccessful(done, function(err, combinedStatusesView) {
+            expect(combinedStatusesView.sha).to.equal(v10SHA);
+            expect(combinedStatusesView.state).to.equal('success');
+            expect(combinedStatusesView.statuses[0].context).to.equal('continuous-integration/travis-ci/push');
+            expect(combinedStatusesView.total_count).to.equal(1);
+
+            done();
+         }));
+      });
+
       it('should get a SHA from a repo', function(done) {
          remoteRepo.getSha('master', '.gitignore', assertSuccessful(done));
       });
