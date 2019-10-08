@@ -107,11 +107,11 @@ We welcome contributions of all types! This section will guide you through setti
 4. From the root of the cloned repo, run `npm install`.
 5. Email jaredrewerts@gmail.com with the subject **GitHub API - Personal Access Token Request**
 
-A personal access token for our test user, @github-tools-tests, will be generated for you.
+A personal access token for our test user, @github-tools-test, will be generated for you.
 
-6. Set the environment variable `GHTOOLS_USER` to `github-tools-tests`.
+6. Set the environment variable `GHTOOLS_USER` to `github-tools-test`.
 
-`export GHTOOLS_USER=github-tools-tests`
+`export GHTOOLS_USER=github-tools-test`
 
 7. Set the environment variable `GHTOOLS_PASSWORD` to the personal access token that was generated for you.
 
