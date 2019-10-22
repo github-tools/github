@@ -29,6 +29,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(473);
          });
    });
 
@@ -42,6 +43,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(8);
          });
    });
 
@@ -57,6 +59,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(161);
          });
    });
 
@@ -70,6 +73,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(4);
          });
    });
 
