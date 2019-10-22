@@ -8911,7 +8911,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:11 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -8939,7 +8939,7 @@
   {
     "scope": "https://api.github.com:443",
     "method": "GET",
-    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=2&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100",
+    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=2&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100&page=2",
     "body": "",
     "status": 200,
     "response": {
@@ -17848,7 +17848,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:14 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -17876,7 +17876,7 @@
   {
     "scope": "https://api.github.com:443",
     "method": "GET",
-    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=3&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100",
+    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=3&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100&page=3",
     "body": "",
     "status": 200,
     "response": {
@@ -26785,7 +26785,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:17 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -26813,7 +26813,7 @@
   {
     "scope": "https://api.github.com:443",
     "method": "GET",
-    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=4&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100",
+    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=4&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100&page=4",
     "body": "",
     "status": 200,
     "response": {
@@ -35722,7 +35722,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:20 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -35750,7 +35750,7 @@
   {
     "scope": "https://api.github.com:443",
     "method": "GET",
-    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=5&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100",
+    "path": "/search/repositories?q=tetris+language%3Aassembly&sort=stars&order=desc&type=all&per_page=100&page=5&q=tetris+language:assembly&sort=stars&order=desc&type=all&per_page=100&page=5",
     "body": "",
     "status": 200,
     "response": {
@@ -42256,7 +42256,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:22 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -42885,7 +42885,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:23 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -48918,7 +48918,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:24 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -48946,7 +48946,7 @@
   {
     "scope": "https://api.github.com:443",
     "method": "GET",
-    "path": "/search/issues?q=windows+pip+label%3Abug+language%3Apython+state%3Aopen+&sort=created&order=asc&type=all&per_page=100&page=2&q=windows+pip+label:bug+language:python+state:open+&sort=created&order=asc&type=all&per_page=100",
+    "path": "/search/issues?q=windows+pip+label%3Abug+language%3Apython+state%3Aopen+&sort=created&order=asc&type=all&per_page=100&page=2&q=windows+pip+label:bug+language:python+state:open+&sort=created&order=asc&type=all&per_page=100&page=2",
     "body": "",
     "status": 200,
     "response": {
@@ -53447,7 +53447,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:26 GMT",
       "content-type": "application/json; charset=utf-8",
@@ -53564,7 +53564,7 @@
         }
       ]
     },
-    "headers": {
+    "rawHeaders": {
       "server": "GitHub.com",
       "date": "Wed, 22 Jun 2016 02:15:27 GMT",
       "content-type": "application/json; charset=utf-8",
