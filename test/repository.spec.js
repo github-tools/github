@@ -385,6 +385,16 @@ describe('Repository', function() {
          }));
       });
 
+      it('should successfully write to repo when not providing optional options argument', function(done) {
+         const promise = remoteRepo.writeFile('master', fileName, initialText, initialMessage);
+         promise.then(() => remoteRepo.getContents('master', fileName, 'raw',
+            assertSuccessful(done, function(err, fileText) {
+               expect(fileText).to.be(initialText);
+
+               done();
+            })))
+      });
+
       it('should rename files', function(done) {
          remoteRepo.writeFile('master', fileName, initialText, initialMessage, assertSuccessful(done, function() {
             wait()().then(() => remoteRepo.move('master', fileName, 'new_name', assertSuccessful(done, function() {
