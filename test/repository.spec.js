@@ -173,6 +173,24 @@ describe('Repository', function() {
          }));
       });
 
+      it('should list commits on a PR with no options', function(done) {
+         const PR_NUMBER = 588;
+         remoteRepo.listCommitsOnPR(PR_NUMBER, assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            expect(commits.length).to.be.equal(2);
+
+            let message1 = 'fix(repository): prevents lib from crashing when not providing optional arguments';
+            expect(commits[0].author).to.have.own('login', 'hazmah0');
+            expect(commits[0].commit).to.have.own('message', message1);
+
+            let message2 = 'test(repository): updates test to use promise instead of callback';
+            expect(commits[1].author).to.have.own('login', 'hazmah0');
+            expect(commits[1].commit).to.have.own('message', message2);
+
+            done();
+         }));
+      });
+
       it('should get the latest commit from master', function(done) {
          remoteRepo.getSingleCommit('master', assertSuccessful(done, function(err, commit) {
             expect(commit).to.have.own('sha');
