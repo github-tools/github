@@ -3,27 +3,11 @@
 
 # Github.js
 
+asdasd asdas dasd
+asdasd
+sd
 
 ## Usage
-
-```javascript
-/*
-   Data can be retrieved from the API either using callbacks (as in versions < 1.0)
-   or using a new promise-based API. The promise-based API returns the raw Axios
-   request promise.
-      "file1.txt": {
-         content: "Aren't gists great!"
-      }
-   }
-}).then(function({data}) {
-   // Promises!
-   let createdGist = data;
-   return gist.read();
-}).then(function({data}) {
-   let retrievedGist = data;
-   // do interesting things
-});
-```
 
    password: 'NotFoo'
    /* also acceptable:
