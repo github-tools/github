@@ -26,22 +26,6 @@ clayreimann.listStarredRepos(function(err, repos) {
 });
 ```
 
-## API Documentation
-
-[API documentation][docs] is hosted on github pages, and is generated from JSDoc; any contributions
-should include updated JSDoc.
-```html
-<!-- just github-api source (5.3kb) -->
-<script src="https://unpkg.com/github-api/dist/GitHub.min.js"></script>
-
-<!-- standalone (20.3kb) -->
-<script src="https://unpkg.com/github-api/dist/GitHub.bundle.min.js"></script>
-```
-
-[npm-package]: https://www.npmjs.com/package/github-api/
-[unpkg]: https://unpkg.com/github-api/
-[travis-ci]: https://travis-ci.org/github-tools/github
-
 ## Contributing
 
 We welcome contributions of all types! This section will guide you through setting up your development environment.
