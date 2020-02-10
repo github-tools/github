@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful} from './helpers/callbacks';
 
 describe('RateLimit', function() {
@@ -12,7 +12,7 @@ describe('RateLimit', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
 
       rateLimit = github.getRateLimit();

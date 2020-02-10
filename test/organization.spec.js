@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
@@ -9,14 +9,21 @@ describe('Organization', function() {
    let github;
    const ORG_NAME = 'github-tools';
    const MEMBER_NAME = 'clayreimann';
+   let createdProject;
 
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
+      createdProject = undefined;
+   });
 
+   after(function() {
+      if (createdProject) {
+         return github.getProject(createdProject.id).deleteProject();
+      }
    });
 
    describe('reading', function() {
@@ -35,7 +42,7 @@ describe('Organization', function() {
             .then(function({data: members}) {
                expect(members).to.be.an.array();
 
-               let hasClayReimann = members.reduce((found, member) => member.login === MEMBER_NAME || found, false);
+               const hasClayReimann = members.some((member) => member.login === MEMBER_NAME);
                expect(hasClayReimann).to.be.true();
 
                done();
@@ -76,28 +83,48 @@ describe('Organization', function() {
          }));
       });
 
-      // TODO: The longer this is in place the slower it will get if we don't cleanup random test teams
-      it('should list the teams in the organization', function() {
-         return organization.getTeams()
-           .then(({data}) => {
-              const hasTeam = data.reduce(
-                 (found, member) => member.slug === 'fixed-test-team-1' || found,
-                 false);
-
-              expect(hasTeam).to.be.true();
-           });
-      });
-
       it('should create an organization team', function(done) {
          const options = {
             name: testRepoName,
             description: 'Created by unit tests',
-            privacy: 'secret'
+            privacy: 'secret',
          };
 
          organization.createTeam(options, assertSuccessful(done, function(err, team) {
             expect(team.name).to.equal(testRepoName);
             expect(team.organization.login).to.equal(testUser.ORGANIZATION); // jscs:ignore
+            done();
+         }));
+      });
+
+      it('should list the teams in the organization', function() {
+         return organization.getTeams()
+           .then(({data}) => {
+              const hasTeam = data.some((member) => member.slug === testRepoName);
+
+              expect(hasTeam).to.be.true();
+           });
+      });
+
+      it('should create a project', function(done) {
+         organization.createProject({
+            name: testRepoName,
+            body: 'body',
+         }, assertSuccessful(done, function(err, project) {
+            createdProject = project;
+            expect(project).to.own('name', testRepoName);
+            expect(project).to.own('body', 'body');
+            done();
+         }));
+      });
+
+      it('should list repo projects', function(done) {
+         organization.listProjects(assertSuccessful(done, function(err, projects) {
+            expect(projects).to.be.an.array();
+
+            const hasProject = projects.some((project) => project.name === testRepoName);
+
+            expect(hasProject).to.be.true();
             done();
          }));
       });

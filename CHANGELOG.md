@@ -1,5 +1,19 @@
 # Change Log
 
+## 2.4.0 - 2016/09/16
+### Features
+* add `Issue.createLabel`
+* add `Repository.createKey`
+* add `Repository.deleteKey`
+* add `Repository.getBranch`
+* add `Repository.listKeys`
+* add `Repository.getKey`
+* add `Repository.updatePullRequest`
+* deprecate `Repository.updatePullRequst`
+
+### Fixes
+* Request URL for deleting a hook (`Repository.deleteHook`)
+
 ## 2.3.0 - 2016/06/17
 ### Features
 * add `Repository.mergePullRequest`
