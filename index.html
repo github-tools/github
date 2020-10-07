@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+	<meta charset="UTF-8">
+	<title>GitHub API</title>
+	<!-- Import the Bootstrap CSS CDN -->
+	<link rel='stylesheet' href='/plugin/bootstrap/3.3.7/css/bootstrap.min.css'>
+	<link rel='stylesheet' href='/plugin/dataTables/1.10.22/css/dataTables.bootstrap3.min.css'>
+	<link rel='stylesheet' href='/plugin/fontawesome/5.0.13/web-fonts-with-css/css/fontawesome-all.min.css'>
+</header>
+<body>
+	<section>
+		<div class='container'>
+			<div><h3 class="text-center mt-5">GitHub API</h3></div>
+			<h4 id="userName" class="text-center mt-5"></h4>
+			<table id="tableAPI" class='table table-striped table-dark table-bordered'>
+				<thead>
+				<tr style='text-align:center';>
+					<th scope='col'>#</th>
+					<th scope='col'>Date</th>
+					<th scope='col'>Project</th>
+					<th scope='col'>Languages</th>
+					<th scope='col'>Contributors</th>
+				</tr>
+				</thead>
+				<tbody id="include"></tbody>
+			</table>
+		</div>
+	</section>
+
+	 <!-- Javascript Plugins  -->
+	 <script type="text/javascript" src='/plugin/jQuery/2.2.4/js/jquery.min.js'></script>
+	 <script type="text/javascript" src='/plugin/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+	 <script type='text/javascript'src='/plugin/dataTables/1.10.22/js/jquery.dataTables.min.js'></script>
+	 <script type='text/javascript' src='/plugin/dataTables/1.10.22/js/dataTables.bootstrap.min.js'></script>
+	 <script type="text/javascript" src='/plugin/gAnalitycs.js'></script>
+	 <!-- Main Javascript File  -->
+	 <script type='text/javascript' src='/github-api/api.js'></script>
+	 <script type='text/javascript' src='/github-api/api-front.js'></script>
+	 <script type='text/javascript'>make();</script>
+</body>
+</html>
