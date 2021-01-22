@@ -52,7 +52,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "debug": "^2.2.0",
     "js-base64": "^2.1.9",
     "utf8": "^2.1.1"
