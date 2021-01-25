@@ -392,7 +392,7 @@ describe('Repository', function() {
                expect(fileText).to.be(initialText);
 
                done();
-            })))
+            })));
       });
 
       it('should rename files', function(done) {
