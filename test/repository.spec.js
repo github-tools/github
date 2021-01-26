@@ -173,6 +173,24 @@ describe('Repository', function() {
          }));
       });
 
+      it('should list commits on a PR with no options', function(done) {
+         const PR_NUMBER = 588;
+         remoteRepo.listCommitsOnPR(PR_NUMBER, assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            expect(commits.length).to.be.equal(2);
+
+            let message1 = 'fix(repository): prevents lib from crashing when not providing optional arguments';
+            expect(commits[0].author).to.have.own('login', 'hazmah0');
+            expect(commits[0].commit).to.have.own('message', message1);
+
+            let message2 = 'test(repository): updates test to use promise instead of callback';
+            expect(commits[1].author).to.have.own('login', 'hazmah0');
+            expect(commits[1].commit).to.have.own('message', message2);
+
+            done();
+         }));
+      });
+
       it('should get the latest commit from master', function(done) {
          remoteRepo.getSingleCommit('master', assertSuccessful(done, function(err, commit) {
             expect(commit).to.have.own('sha');
@@ -250,6 +268,17 @@ describe('Repository', function() {
             });
 
             expect(correctUrls).to.be(true);
+
+            done();
+         }));
+      });
+
+      it('should get combined view of commit statuses for a SHA from a repo', function(done) {
+         remoteRepo.getCombinedStatus(v10SHA, assertSuccessful(done, function(err, combinedStatusesView) {
+            expect(combinedStatusesView.sha).to.equal(v10SHA);
+            expect(combinedStatusesView.state).to.equal('success');
+            expect(combinedStatusesView.statuses[0].context).to.equal('continuous-integration/travis-ci/push');
+            expect(combinedStatusesView.total_count).to.equal(1);
 
             done();
          }));
@@ -372,6 +401,16 @@ describe('Repository', function() {
                done();
             })));
          }));
+      });
+
+      it('should successfully write to repo when not providing optional options argument', function(done) {
+         const promise = remoteRepo.writeFile('master', fileName, initialText, initialMessage);
+         promise.then(() => remoteRepo.getContents('master', fileName, 'raw',
+            assertSuccessful(done, function(err, fileText) {
+               expect(fileText).to.be(initialText);
+
+               done();
+            })));
       });
 
       it('should rename files', function(done) {

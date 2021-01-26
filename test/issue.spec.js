@@ -241,6 +241,7 @@ describe('Issue', function() {
       it('should update a label', (done) => {
          let label = {
             color: '789abc',
+            name: createdLabel,
          };
 
          expect(createdLabel).to.be.a.string();
