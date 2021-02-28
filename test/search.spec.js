@@ -29,6 +29,27 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(473);
+         });
+   });
+
+   it('should search repositories for specific page', function() {
+      let options;
+      let search = github.search({
+         q: 'tetris language:assembly',
+         sort: 'stars',
+         order: 'desc',
+         type: 'all',
+         per_page: '100',
+         page: '2',
+      });
+
+      return search.forRepositories(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(100);
+            expect(data[0].name).to.be.equal('nand2tetris');
          });
    });
 
@@ -42,6 +63,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(8);
          });
    });
 
@@ -57,6 +79,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(161);
          });
    });
 
@@ -70,6 +93,7 @@ describe('Search', function() {
          .then(function({data}) {
             expect(data).to.be.an.array();
             expect(data.length).to.be.above(0);
+            expect(data.length).to.be.equal(4);
          });
    });
 
