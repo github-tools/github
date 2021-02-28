@@ -633,6 +633,16 @@ describe('Repository', function() {
          remoteRepo.createBlob(imageBlob, assertSuccessful(done));
       });
 
+      it('should read the same unicode string blob as it was written', function(done) {
+        let content = 'The temperature is 25°C'
+        remoteRepo.createBlob({content: content, encoding: 'utf-8'}, assertSuccessful(done, function(_, resp) {
+          remoteRepo.getBlob(resp.sha, assertSuccessful(done, function(_, returnedContent) {
+            expect(returnedContent).to.be(content);
+            done();
+          }));
+        }));
+      });
+
       it('should star the repo', function(done) {
          remoteRepo.star(assertSuccessful(done, function() {
             remoteRepo.isStarred(assertSuccessful(done));
