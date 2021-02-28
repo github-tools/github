@@ -28,7 +28,22 @@ describe('Search', function() {
       return search.forRepositories(options)
          .then(function({data}) {
             expect(data).to.be.an.array();
-            expect(data.length).to.be.above(0);
+            expect(data.length).to.be.above(100);
+         });
+   });
+
+   it('should not paginate when provided an optional page parameter', function() {
+      let options = {page: 1};
+      let search = github.search({
+         q: 'tetris language:assembly',
+         sort: 'stars',
+         order: 'desc',
+      });
+
+      return search.forRepositories(options)
+         .then(function({data}) {
+            expect(data).to.be.an.array();
+            expect(data.length).to.equal(100);
          });
    });
 
