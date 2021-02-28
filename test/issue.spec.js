@@ -163,6 +163,23 @@ describe('Issue', function() {
 
       it('should delete issue comment', function(done) {
          remoteIssues.deleteIssueComment(issueCommentId, assertSuccessful(done, function(err, response) {
+            expect(response.).to.be.true();
+
+            done();
+         }));
+      });
+
+      it('should set labels to an issue', function(done) {
+         const labelName = 'test label'
+         remoteIssues.setLabels(issueCommentId, [labelName], assertSuccessful(done, function(err, response) {
+            expect(response[0]).to.have.own('name', labelName);
+
+            done();
+         }));
+      });
+
+      it('should remove labels to an issue', function(done) {
+         remoteIssues.removeLabel(issueCommentId, 'test label', assertSuccessful(done, function(err, response) {
             expect(response).to.be.true();
 
             done();
