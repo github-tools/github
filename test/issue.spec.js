@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import wait from './helpers/wait';
 import {assertSuccessful} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
@@ -241,6 +241,7 @@ describe('Issue', function() {
       it('should update a label', (done) => {
          let label = {
             color: '789abc',
+            name: createdLabel,
          };
 
          expect(createdLabel).to.be.a.string();

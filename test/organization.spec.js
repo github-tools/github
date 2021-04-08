@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 import getTestRepoName from './helpers/getTestRepoName';
 
@@ -17,7 +17,7 @@ describe('Organization', function() {
          password: testUser.PASSWORD,
          auth: 'basic',
       });
-      return;
+      createdProject = undefined;
    });
 
    after(function() {

@@ -2,7 +2,7 @@ import expect from 'must';
 import nock from 'nock';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 
 describe('Search', function() {
    this.timeout(20 * 1000); // eslint-disable-line no-invalid-this

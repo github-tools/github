@@ -3,7 +3,7 @@ import expect from 'must';
 import nock from 'nock';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful, assertFailure} from './helpers/callbacks';
 import fixtureExhausted from './fixtures/repos-ratelimit-exhausted.js';
 import fixtureOk from './fixtures/repos-ratelimit-ok.js';

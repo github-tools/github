@@ -1,3 +1,6 @@
+ # Maintainers wanted
+[Apply within](https://github.com/github-tools/github/issues/539)
+
 # Github.js
 
 [![Downloads per month](https://img.shields.io/npm/dm/github-api.svg?maxAge=2592000)][npm-package]
@@ -6,7 +9,7 @@
 [![Travis](https://img.shields.io/travis/github-tools/github.svg?maxAge=60)][travis-ci]
 [![Codecov](https://img.shields.io/codecov/c/github/github-tools/github.svg?maxAge=2592000)][codecov]
 
-Github.js provides a minimal higher-level wrapper around Github's API.
+`Github.js` provides a minimal higher-level wrapper around Github's API.
 
 ## Usage
 
@@ -68,7 +71,7 @@ clayreimann.listStarredRepos(function(err, repos) {
 should include updated JSDoc.
 
 ## Installation
-Github.js is available from `npm` or [unpkg][unpkg].
+`Github.js` is available from `npm` or [unpkg][unpkg].
 
 ```shell
 npm install github-api
@@ -83,10 +86,7 @@ npm install github-api
 ```
 
 ## Compatibility
-`Github.js` is tested on Node.js:
-* 6.x
-
-Note: `Github.js` uses Promise, hence it will not work in Node.js < 4 without polyfill.
+`Github.js` is tested on node's LTS and current versions.
 
 [codecov]: https://codecov.io/github/github-tools/github?branch=master
 [docs]: http://github-tools.github.io/github/
@@ -94,3 +94,33 @@ Note: `Github.js` uses Promise, hence it will not work in Node.js < 4 without po
 [npm-package]: https://www.npmjs.com/package/github-api/
 [unpkg]: https://unpkg.com/github-api/
 [travis-ci]: https://travis-ci.org/github-tools/github
+
+## Contributing
+
+We welcome contributions of all types! This section will guide you through setting up your development environment.
+
+### Setup
+
+1. [Install Node](https://nodejs.org/en/) version 8,10 or 11. It can often help to use a Node version switcher such as [NVM](https://github.com/nvm-sh/nvm).
+2. Fork this repo to your GitHub account.
+3. Clone the fork to your development machine (`git clone https://github.com/{YOUR_USERNAME}/github`).
+4. From the root of the cloned repo, run `npm install`.
+5. Email jaredrewerts@gmail.com with the subject **GitHub API - Personal Access Token Request**
+
+A personal access token for our test user, @github-tools-test, will be generated for you.
+
+6. Set the environment variable `GHTOOLS_USER` to `github-tools-test`.
+
+`export GHTOOLS_USER=github-tools-test`
+
+7. Set the environment variable `GHTOOLS_PASSWORD` to the personal access token that was generated for you.
+
+`export GHTOOLS_PASSWORD={YOUR_PAT}`
+
+**NOTE** Windows users can use [this guide](http://www.dowdandassociates.com/blog/content/howto-set-an-environment-variable-in-windows-command-line-and-registry/) to learn about setting environment variables on Windows.
+
+### Tests
+
+The main way we write code for `github-api` is using test-driven development. We use Mocha to run our tests. Given that the bulk of this library is just interacting with GitHub's API, nearly all of our tests are integration tests. 
+
+To run the test suite, run `npm run test`.
