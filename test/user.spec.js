@@ -1,5 +1,7 @@
+import expect from 'must';
+
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import {assertSuccessful, assertArray} from './helpers/callbacks';
 
 describe('User', function() {
@@ -10,7 +12,7 @@ describe('User', function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
       user = github.getUser();
    });
@@ -24,7 +26,7 @@ describe('User', function() {
          type: 'owner',
          sort: 'updated',
          per_page: 90, // eslint-disable-line
-         page: 10
+         page: 10,
       };
 
       user.listRepos(filterOpts, assertArray(done));
@@ -32,6 +34,14 @@ describe('User', function() {
 
    it('should get user orgs', function(done) {
       user.listOrgs(assertArray(done));
+   });
+
+   it('should get user followers', function(done) {
+      user.listFollowers(assertArray(done));
+   });
+
+   it('should get user following list', function(done) {
+      user.listFollowing(assertArray(done));
    });
 
    it('should get user gists', function(done) {
@@ -47,7 +57,7 @@ describe('User', function() {
          all: true,
          participating: true,
          since: '2015-01-01T00:00:00Z',
-         before: '2015-02-01T00:00:00Z'
+         before: '2015-02-01T00:00:00Z',
       };
 
       user.listNotifications(filterOpts, assertArray(done));
@@ -61,11 +71,65 @@ describe('User', function() {
       user.listStarredRepos(assertArray(done));
    });
 
-   it('should follow user', function(done) {
-      user.follow('ingalls', assertSuccessful(done));
+   it('should show user\'s starred gists', function(done) {
+      const option = {
+         since: '2015-01-01T00:00:00Z',
+      };
+      user.listStarredGists(option, assertArray(done));
    });
 
-   it('should unfollow user', function(done) {
-      user.unfollow('ingalls', assertSuccessful(done));
+   describe('following a user', function() {
+      const userToFollow = 'ingalls';
+
+      before(function() {
+         return user.unfollow(userToFollow);
+      });
+
+      it('should follow user', function(done) {
+         user.follow(userToFollow, assertSuccessful(done, function(err, resp) {
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToFollow))).to.be.true();
+               done();
+            }));
+         }));
+      });
+   });
+
+   describe('following yourself', function() {
+      const userToFollow = testUser.USERNAME;
+
+      before(function() {
+         return user.unfollow(userToFollow);
+      });
+
+      it('should not list yourself as one of your followers', function(done) {
+         user.follow(userToFollow, assertSuccessful(done, function(err, resp) {
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToFollow))).to.be.false();
+               done();
+            }));
+         }));
+      });
+   });
+
+   describe('unfollowing a user', function(done) {
+      const userToUnfollow = 'ingalls';
+
+      before(function() {
+         return user.follow(userToUnfollow);
+      });
+
+      it('should unfollow a user', function(done) {
+         user.unfollow(userToUnfollow, assertSuccessful(done, function(err, resp) {
+            user._request('GET', '/user/following', null, assertSuccessful(done, function(err, following) {
+               expect((following.some((user) => user['login'] === userToUnfollow))).to.be.false();
+               done();
+            }));
+         }));
+      });
+   });
+
+   it('should list the email addresses of the user', function(done) {
+      user.getEmails(assertSuccessful(done));
    });
 });

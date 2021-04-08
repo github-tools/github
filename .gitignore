@@ -4,7 +4,9 @@ docs/
 dist/
 coverage/
 node_modules/
-
+.nyc_output/
+/out/
 .DS_Store
 npm-debug.log
 sauce.json
+package-lock.json

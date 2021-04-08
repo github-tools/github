@@ -2,7 +2,7 @@ import fs from 'fs';
 import nock from 'nock';
 import path from 'path';
 import GitHub from '../../lib/GitHub';
-import testUser from './user.json';
+import testUser from './user.js';
 
 const gh = new GitHub();
 

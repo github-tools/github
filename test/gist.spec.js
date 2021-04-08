@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 import testGist from './fixtures/gist.json';
 import {assertSuccessful} from './helpers/callbacks';
 
@@ -10,18 +10,19 @@ describe('Gist', function() {
    let gistId;
    let github;
    let commentId;
+   let revisionId;
 
    before(function() {
       github = new Github({
          username: testUser.USERNAME,
          password: testUser.PASSWORD,
-         auth: 'basic'
+         auth: 'basic',
       });
    });
 
    describe('reading', function() {
       before(function() {
-         gist = github.getGist('f1c0f84e53aa6b98ec03');
+         gist = github.getGist('0ac3ef3451f4bdc9efec660ffce3e336');
       });
 
       it('should read a gist', function(done) {
@@ -51,6 +52,7 @@ describe('Gist', function() {
             expect(gist).to.have.own('public', testGist.public);
             expect(gist).to.have.own('description', testGist.description);
             gistId = gist.id;
+            revisionId = gist.history[0].version;
 
             done();
          }));
@@ -98,6 +100,36 @@ describe('Gist', function() {
 
       it('should delete comment', function(done) {
          gist.deleteComment(commentId, assertSuccessful(done));
+      });
+
+      it('should update gist', function(done) {
+         const newGist = {
+            files: {
+               'README.md': {
+                  content: 'README updated',
+               },
+            },
+         };
+         gist.update(newGist, assertSuccessful(done, function(err, gist) {
+            expect(gist.history.length).to.be(2);
+            expect(gist.files['README.md']).to.have.own('content', newGist.files['README.md'].content);
+            done();
+         }));
+      });
+
+      it('should list commits', function(done) {
+         gist.listCommits(assertSuccessful(done, function(err, commits) {
+            expect(commits).to.be.an.array();
+            done();
+         }));
+      });
+
+      it('should get revision', function(done) {
+         gist.getRevision(revisionId, assertSuccessful(done, function(err, gist) {
+            expect(gist.history.length).to.be(1);
+            expect(gist.files['README.md']).to.have.own('content', testGist.files['README.md'].content);
+            done();
+         }));
       });
    });
 
