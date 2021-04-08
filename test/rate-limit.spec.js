@@ -1,8 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.js';
-import {assertSuccessful} from './helpers/callbacks';
+
 
 describe('RateLimit', function() {
    let github;
@@ -18,18 +17,15 @@ describe('RateLimit', function() {
       rateLimit = github.getRateLimit();
    });
 
-   it('should get rate limit', function(done) {
-      rateLimit.getRateLimit(assertSuccessful(done, function(err, rateInfo) {
-         const rate = rateInfo.rate;
+   it('should get rate limit', async function() {
+      const {data: rateInfo} = await rateLimit.getRateLimit();
+      const rate = rateInfo.rate;
 
-         expect(rate).to.be.an.object();
-         expect(rate).to.have.own('limit');
-         expect(rate).to.have.own('remaining');
-         expect(rate.limit).to.be.a.number();
-         expect(rate.remaining).to.be.a.number();
-         expect(rate.remaining).to.be.at.most(rateInfo.rate.limit);
-
-         done();
-      }));
+      expect(rate).to.be.an.object();
+      expect(rate).to.have.own('limit');
+      expect(rate).to.have.own('remaining');
+      expect(rate.limit).to.be.a.number();
+      expect(rate.remaining).to.be.a.number();
+      expect(rate.remaining).to.be.at.most(rateInfo.rate.limit);
    });
 });
