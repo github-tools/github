@@ -3,7 +3,7 @@ import nock from 'nock';
 export default function fixture() {
    let scope;
    scope = nock('https://api.github.com:443', {"encodedQueryParams":true})
-     .get('/users/mikedeboertest/repos')
+     .get('/users/github-tools-test/repos')
      .query({"type":"all","sort":"updated","per_page":"100"})
      .reply(403, {"message":"API rate limit exceeded for 174.20.8.171. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://developer.github.com/v3/#rate-limiting"}, { server: 'GitHub.com',
      date: 'Sat, 18 Jun 2016 11:50:00 GMT',

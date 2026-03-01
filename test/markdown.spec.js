@@ -1,7 +1,7 @@
 import expect from 'must';
 
 import Github from '../lib/GitHub';
-import testUser from './fixtures/user.json';
+import testUser from './fixtures/user.js';
 
 describe('Markdown', function() {
    let github;
@@ -37,7 +37,7 @@ describe('Markdown', function() {
       };
       markdown.render(options)
          .then(function({data: html}) {
-            expect(html).to.be('<p>Hello world <a href="https://github.com/github/linguist/issues/1" class="issue-link js-issue-link" data-url="https://github.com/github/linguist/issues/1" data-id="1012654" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">github/linguist#1</a> <strong>cool</strong>, and <a href="https://github.com/gollum/gollum/issues/1" class="issue-link js-issue-link" data-url="https://github.com/gollum/gollum/issues/1" data-id="183433" data-error-text="Failed to load issue title" data-permission-text="Issue title is private">#1</a>!</p>'); // eslint-disable-line
+            expect(html).to.be('<p>Hello world <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1012654" data-permission-text="Title is private" data-url="https://github.com/github/linguist/issues/1" data-hovercard-type="issue" data-hovercard-url="/github/linguist/issues/1/hovercard" href="https://github.com/github/linguist/issues/1">github/linguist#1</a> <strong>cool</strong>, and <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="183433" data-permission-text="Title is private" data-url="https://github.com/gollum/gollum/issues/1" data-hovercard-type="issue" data-hovercard-url="/gollum/gollum/issues/1/hovercard" href="https://github.com/gollum/gollum/issues/1">gollum#1</a>!</p>'); // eslint-disable-line
             done();
          }).catch(done);
    });
