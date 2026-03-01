@@ -9,3 +9,4 @@ node_modules/
 .DS_Store
 npm-debug.log
 sauce.json
+package-lock.json
