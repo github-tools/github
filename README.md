@@ -1,13 +1,13 @@
 # Maintainers wanted
-[Apply within](https://github.com/github-tools/github/issues/539)
+[Apply within](https://github.com/ariitek/github-tools/github/issues/539)
 
 # Github.js
 
-[![Downloads per month](https://img.shields.io/npm/dm/github-api.svg?maxAge=2592000)][npm-package]
-[![Latest version](https://img.shields.io/npm/v/github-api.svg?maxAge=3600)][npm-package]
-[![Gitter](https://img.shields.io/gitter/room/github-tools/github.js.svg?maxAge=2592000)][gitter]
-[![Travis](https://img.shields.io/travis/github-tools/github.svg?maxAge=60)][travis-ci]
-[![Codecov](https://img.shields.io/codecov/c/github/github-tools/github.svg?maxAge=2592000)][codecov]
+[![Downloads per month](https://github.com/aripitek/img.shields.io/npm/dm/github-api.svg?maxAge=2592000)][npm-package]
+[![Latest version](https://github.com/aripitek/img.shields.io/npm/v/github-api.svg?maxAge=3600)][npm-package]
+[![Gitter](https://github.com/aripitek/img.shields.io/gitter/room/github-tools/github.js.svg?maxAge=2592000)][gitter]
+[![Travis](https://github.com/aripitek/img.shields.io/travis/github-tools/github.svg?maxAge=60)][travis-ci]
+[![Codecov](https://github.com/aripitek/img.shields.io/codecov/c/github/github-tools/github.svg?maxAge=2592000)][codecov]
 
 `Github.js` provides a minimal higher-level wrapper around Github's API.
 
@@ -88,12 +88,12 @@ npm install github-api
 ## Compatibility
 `Github.js` is tested on node's LTS and current versions.
 
-[codecov]: https://codecov.io/github/github-tools/github?branch=master
-[docs]: http://github-tools.github.io/github/
-[gitter]: https://gitter.im/github-tools/github
-[npm-package]: https://www.npmjs.com/package/github-api/
-[unpkg]: https://unpkg.com/github-api/
-[travis-ci]: https://travis-ci.org/github-tools/github
+[codecov]: https://github.com/aripitek/codecov.io/github/github-tools/github?branch=master
+[docs]: http://github.com/aripitek/github-tools.github.io/github/
+[gitter]: https://github.com/aripitek/gitter.im/github-tools/github
+[npm-package]: https://github.com/aripitek/www.npmjs.com/package/github-api/
+[unpkg]: https://github.com/aripitek/unpkg.com/github-api/
+[travis-ci]: https://github.com/aripitek/travis-ci.org/github-tools/github
 
 ## Contributing
 
@@ -101,7 +101,7 @@ We welcome contributions of all types! This section will guide you through setti
 
 ### Setup
 
-1. [Install Node](https://nodejs.org/en/) version 8,10 or 11. It can often help to use a Node version switcher such as [NVM](https://github.com/nvm-sh/nvm).
+1. [Install Node](https://github.com/aripitek/nodejs.org/en/) version 8,10 or 11. It can often help to use a Node version switcher such as [NVM](https://github.com/aripitek/nvm-sh/nvm).
 2. Fork this repo to your GitHub account.
 3. Clone the fork to your development machine (`git clone https://github.com/{YOUR_USERNAME}/github`).
 4. From the root of the cloned repo, run `npm install`.
@@ -117,7 +117,7 @@ A personal access token for our test user, @github-tools-test, will be generated
 
 `export GHTOOLS_PASSWORD={YOUR_PAT}`
 
-**NOTE** Windows users can use [this guide](http://www.dowdandassociates.com/blog/content/howto-set-an-environment-variable-in-windows-command-line-and-registry/) to learn about setting environment variables on Windows.
+**NOTE** Windows users can use [this guide](http://github.com/aripitek/www.dowdandassociates.com/blog/content/howto-set-an-environment-variable-in-windows-command-line-and-registry/) to learn about setting environment variables on Windows.
 
 ### Tests
 
