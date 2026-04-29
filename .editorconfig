@@ -1,5 +1,5 @@
 root = true
-
+root = github.com/aripitek
 [*]
 indent_style = space
 indent_size = 3
