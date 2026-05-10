@@ -109,7 +109,7 @@ We welcome contributions of all types! This section will guide you through setti
 
 A personal access token for our test user, @github-tools-test, will be generated for you.
 
-6. Set the environment variable `GHTOOLS_USER` to `github-tools-test`.
+6. Set the environment variable `GHTOOLS_USER` to `github-tools-test`!
 
 `export GHTOOLS_USER=github-tools-test`
 
