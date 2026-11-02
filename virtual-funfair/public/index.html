@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Virtual Funfair</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;font-family:system-ui,sans-serif;background:#111;color:#fff}
+  #setup{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(#ff7eb3,#7a5cff);z-index:5}
+  #setup.hidden{display:none}
+  canvas#preview{width:160px;height:160px;border-radius:50%;background:#0003}
+  button,input{font-size:16px;padding:10px 16px;border-radius:8px;border:0}
+  button{background:#ffd43b;cursor:pointer;font-weight:700}
+  #hud{position:fixed;left:8px;top:8px;font-size:13px;text-shadow:0 0 4px #000}
+  #log{position:fixed;left:8px;bottom:56px;font-size:13px;text-shadow:0 0 4px #000}
+  #chat{position:fixed;left:8px;bottom:8px;width:240px}
+  #pad{position:fixed;right:24px;bottom:24px;width:120px;height:120px;border-radius:50%;background:#fff3;touch-action:none}
+  #knob{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:#fffc}
+  video{display:none}
+</style>
+</head>
+<body>
+<div id="setup">
+  <h1>🎡 Virtual Funfair</h1>
+  <canvas id="preview" width="160" height="160"></canvas>
+  <input id="name" placeholder="Your name" maxlength="20">
+  <button id="upload">Upload photo</button>
+  <input id="file" type="file" accept="image/*" hidden>
+  <button id="camera">Take photo</button>
+  <button id="snap" hidden>📸 Capture</button>
+  <video id="video" playsinline muted></video>
+  <button id="enter" disabled>Create avatar &amp; enter</button>
+  <small id="status">Add a photo of yourself (full body works best).</small>
+</div>
+<div id="hud">WASD / arrows / joystick to move · <span id="count">1</span> online<br>
+  <button data-act="wave">👋 Wave (G)</button> <button data-act="help">🙋 Ask security for help (H)</button> <button data-act="report">📻 Report incident (R)</button> <span id="alert">🟢 Code green</span> <button data-act="collapse">🤕 Collapse (F)</button> <button data-act="ruckus">🔥 Cause a ruckus (T)</button></div>
+<div id="log"></div>
+<form id="chat"><input id="msg" placeholder="Chat…" maxlength="120" style="width:100%;box-sizing:border-box"></form>
+<div id="pad"><div id="knob"></div></div>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script>
+<script type="module" src="main.js"></script>
+</body>
+</html>
